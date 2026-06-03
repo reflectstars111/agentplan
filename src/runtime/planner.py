@@ -143,6 +143,19 @@ class Planner:
 
     # ── Helpers ────────────────────────────────────────────────
 
+    # Mapping from task_type to agent_type
+    _AGENT_TYPE_MAP: dict[str, str] = {
+        "retrieve": "worker",
+        "retrieve_memory": "worker",
+        "retrieve_chunks": "worker",
+        "reason": "worker",
+        "analyze": "worker",
+        "merge": "worker",
+        "general": "worker",
+        "writeback": "worker",
+        "verify": "verifier",
+    }
+
     def _make_task(
         self,
         task_type: str,
@@ -150,10 +163,11 @@ class Planner:
         deps: list[str] | None = None,
     ) -> Task:
         """Create a Task with consistent defaults."""
+        agent_type = self._AGENT_TYPE_MAP.get(task_type, "worker")
         return Task(
             task_id=f"task_{uuid.uuid4().hex[:12]}",
             task_type=task_type,
-            agent_type="worker",
+            agent_type=agent_type,
             dependencies=deps or [],
             input=input_data,
             priority=5,
