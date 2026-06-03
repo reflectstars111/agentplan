@@ -74,12 +74,18 @@ class KeywordIndex:
         return results
 
     def _escape_fts5(self, query: str) -> str:
-        """Escape FTS5 special characters and format for phrase matching."""
-        # Remove or escape characters that break FTS5 query syntax
-        clean = query.replace('"', '').replace("'", "")
-        # Wrap each word for prefix-like matching
+        """Escape FTS5 special characters and format for safe matching.
+
+        FTS5 special chars that act as operators: * " - ( ) + . : = ^ [ ] { } ~ ! & | < >
+        We wrap each term in double quotes to make them literal, avoiding
+        issues with hyphens (column subtraction), dots (column refs), etc.
+        """
+        import re
+        # Remove double quotes and split into words
+        clean = query.replace('"', '')
         terms = clean.split()
         if not terms:
             return '""'
-        # Use OR between terms for broad matching; FTS5 rank still works
-        return " OR ".join(terms)
+        # Wrap each term in double quotes — makes FTS5 treat them literally
+        quoted = [f'"{t}"' for t in terms]
+        return " OR ".join(quoted)
