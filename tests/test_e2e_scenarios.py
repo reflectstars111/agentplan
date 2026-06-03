@@ -19,6 +19,10 @@ from src.runtime.verifier import Verifier
 from src.runtime.writeback_gate import WritebackGate
 from src.runtime.trace_logger import TraceLogger
 from src.runtime.agent_runtime import AgentRuntime
+from src.runtime.intent_decoder import IntentDecoder
+from src.runtime.planner import Planner
+from src.runtime.scheduler import Scheduler
+from src.runtime.controller import Controller
 from src.models.memory import MemoryItem, MemoryType, MemoryStatus
 from eval.scenarios import ALL_SCENARIOS
 from eval.metrics import precision_at_k, recall_at_k, hit_at_k
@@ -218,3 +222,71 @@ class TestE2EScenarios:
         trace = runtime.get_trace(result["trace_id"])
         assert trace is not None
         assert len(trace.steps) >= 3  # retrieve + assemble + reason minimum
+
+
+@pytest.fixture
+def controller(tmp_path):
+    config = Config(default_token_budget=4000)
+    db_path = str(tmp_path / "e2e_task.db")
+    db = Database(db_path)
+    db.init_schema()
+
+    runtime = AgentRuntime(
+        file_store=FileStore(db),
+        memory_store=MemoryStore(db),
+        retriever=HybridRetriever(VectorIndex(dim=64), KeywordIndex(db), db, config),
+        mmu=ContextMMU(TokenBudgeter(), config),
+        verifier=Verifier(),
+        writeback_gate=WritebackGate(),
+        trace_logger=TraceLogger(db),
+        config=config,
+        embed_fn=_mock_embed_fn,
+        llm_fn=_mock_llm_fn,
+    )
+    return Controller(
+        agent_runtime=runtime,
+        intent_decoder=IntentDecoder(),
+        planner=Planner(),
+        scheduler=Scheduler(runtime),
+        trace_logger=TraceLogger(db),
+        config=config,
+    )
+
+
+class TestE2ETaskMode:
+    """E2E tests using the Phase 2 Controller (task mode)."""
+
+    def test_task_mode_doc_qa(self, controller):
+        """S1 task-mode: upload doc, process via task graph, verify output."""
+        controller.agent_runtime.upload_text(
+            content=(
+                "# Abstract\nWe propose RAPTOR, a novel method for few-shot "
+                "text classification using retrieval-augmented prompts.\n\n"
+                "# Experiments\nRAPTOR achieves state-of-the-art on 7/10 GLUE tasks."
+            ),
+            source_name="raptor_paper.pdf",
+        )
+        result = controller.process("What is the main contribution of RAPTOR?")
+        assert result["status"] == "completed"
+        assert "intent" in result
+        assert result["intent"]["intent_type"] == "document_qa"
+
+    def test_task_mode_multi_turn(self, controller):
+        """S3 task-mode: project continuity via task graph with memory."""
+        controller.agent_runtime.memory_store.insert(MemoryItem(
+            memory_id="mem_e2e_1", type=MemoryType.DECISION,
+            content="Use FastAPI with JWT for the API layer.",
+            importance=0.9, confidence=0.95, status=MemoryStatus.ACTIVE,
+        ))
+        result = controller.process("Let's design the token refresh flow.")
+        assert result["status"] == "completed"
+
+    def test_task_mode_general_fallback(self, controller):
+        """GENERAL intent: single-node task graph, completes successfully."""
+        result = controller.process("Hello, how are you?")
+        assert result["status"] == "completed"
+        assert result["task_graph_summary"]["node_count"] == 1
+
+    def test_all_scenarios_defined(self):
+        """Verify all 5 eval scenarios are present (Task 12 regression)."""
+        assert len(ALL_SCENARIOS) == 5
