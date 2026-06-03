@@ -46,6 +46,9 @@ class AgentRuntime:
         config: Config | None = None,
         embed_fn: Callable | None = None,
         llm_fn: Callable | None = None,
+        agent_id: str = "agent_worker_001",
+        role: str = "worker",
+        memory_scope: dict | None = None,
     ):
         self.file_store = file_store
         self.memory_store = memory_store
@@ -57,6 +60,9 @@ class AgentRuntime:
         self.config = config or Config()
         self.embed_fn = embed_fn or (lambda texts: [])
         self.llm_fn = llm_fn or self._default_llm
+        self.agent_id = agent_id
+        self.role = role
+        self.memory_scope = memory_scope or {}
 
     def upload_text(self, content: str, source_name: str) -> str:
         """Upload text content and index it. Returns source_id."""
@@ -167,7 +173,7 @@ class AgentRuntime:
             retrieval_results=results,
             working_memories=working_mems,
             task_id="",
-            agent_id="agent_worker_001",
+            agent_id=self.agent_id,
         )
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_assemble",

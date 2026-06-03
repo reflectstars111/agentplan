@@ -6,6 +6,7 @@ from src.runtime.intent_decoder import IntentDecoder
 from src.runtime.planner import Planner
 from src.runtime.scheduler import Scheduler
 from src.runtime.controller import Controller
+from src.runtime.agent_registry import AgentRegistry
 
 __all__ = [
     "TraceLogger",
@@ -16,4 +17,5 @@ __all__ = [
     "Planner",
     "Scheduler",
     "Controller",
+    "AgentRegistry",
 ]
