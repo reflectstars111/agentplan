@@ -32,6 +32,9 @@ class Controller:
         scheduler: Scheduler,
         trace_logger: TraceLogger,
         config: Config | None = None,
+        agent_registry=None,
+        blackboard=None,
+        merger=None,
     ):
         self.agent_runtime = agent_runtime
         self.intent_decoder = intent_decoder
@@ -39,6 +42,9 @@ class Controller:
         self.scheduler = scheduler
         self.trace_logger = trace_logger
         self.config = config or Config()
+        self.agent_registry = agent_registry
+        self.blackboard = blackboard
+        self.merger = merger
 
     def process(
         self, query: str, request_id: str = ""
