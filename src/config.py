@@ -39,6 +39,10 @@ class Config:
     writeback_min_score: float = 0.5     # Minimum WriteScore to persist
     writeback_user_confirm_threshold: float = 0.7  # Above this, ask user
 
+    # Task execution (Phase 2)
+    task_max_retries: int = 2
+    task_default_priority: int = 5
+
     # Trace
     trace_enabled: bool = True
 
