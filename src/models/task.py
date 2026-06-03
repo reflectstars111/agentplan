@@ -29,10 +29,14 @@ class Task:
     task_id: str
     task_type: str                      # e.g. "retrieve", "reason", "verify", "writeback"
     agent_type: str = "worker"           # which agent executes (Phase 2: all "worker")
+    agent_id: Optional[str] = None       # specific agent instance assigned at runtime
+    parent_task_id: Optional[str] = None  # parent task in hierarchy
     status: TaskStatus = TaskStatus.CREATED
     dependencies: list[str] = field(default_factory=list)
     input: dict = field(default_factory=dict)
+    input_refs: list[str] = field(default_factory=list)  # blackboard keys to read
     output: dict = field(default_factory=dict)
+    output_ref: Optional[str] = None     # blackboard key to write output to
     priority: int = 5
     retry_count: int = 0
     max_retries: int = 2

@@ -93,3 +93,16 @@ class TestTraceLogger:
         retrieved = logger2.get_trace(tid)
         assert retrieved is not None
         assert len(retrieved.steps) == 1
+
+
+class TestStepType:
+    def test_new_step_types_exist(self):
+        from src.models.trace import StepType
+        assert hasattr(StepType, "SPAWN_AGENT")
+        assert hasattr(StepType, "SEND_MESSAGE")
+        assert hasattr(StepType, "MERGE")
+
+    def test_step_type_count(self):
+        from src.models.trace import StepType
+        types = list(StepType)
+        assert len(types) >= 12  # 9 originals + 3 new

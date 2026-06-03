@@ -17,6 +17,9 @@ class StepType(str, Enum):
     VERIFY = "verify"
     WRITE_MEMORY = "write_memory"
     RESPOND = "respond"
+    SPAWN_AGENT = "spawn_agent"
+    SEND_MESSAGE = "send_message"
+    MERGE = "merge"
 
 
 class StepStatus(str, Enum):

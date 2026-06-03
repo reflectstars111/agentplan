@@ -43,6 +43,27 @@ class TestTask:
         t.status = TaskStatus.COMPLETED
         assert t.status == TaskStatus.COMPLETED
 
+    def test_with_agent_assignment(self):
+        t = Task(task_id="t5", task_type="retrieve", agent_id="agent_w1")
+        assert t.agent_id == "agent_w1"
+
+    def test_with_input_refs(self):
+        t = Task(task_id="t6", task_type="reason",
+                 input_refs=["retrieve_result", "memory_result"])
+        assert t.input_refs == ["retrieve_result", "memory_result"]
+
+    def test_with_output_ref(self):
+        t = Task(task_id="t7", task_type="retrieve",
+                 output_ref="retrieve_result")
+        assert t.output_ref == "retrieve_result"
+
+    def test_backward_compatible_defaults(self):
+        t = Task(task_id="t8", task_type="retrieve")
+        assert t.agent_id is None
+        assert t.parent_task_id is None
+        assert t.input_refs == []
+        assert t.output_ref is None
+
 
 class TestTaskGraph:
     def test_add_node(self):
