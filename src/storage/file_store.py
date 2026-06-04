@@ -47,12 +47,21 @@ class FileStore:
         # Delete existing chunks for this source (re-ingest)
         self.delete_source(source_id)
 
-        chunks = chunk_text(
-            content,
-            source_id=source_id,
-            source_type=source_type,
-            trust_level=trust_level,
-        )
+        # Dispatch to code chunker for code files
+        if source_type == "code":
+            from src.storage.code_chunker import chunk_code
+            language = self._guess_language(source_name)
+            chunks = chunk_code(
+                content, source_id=source_id,
+                language=language, trust_level=trust_level,
+            )
+        else:
+            chunks = chunk_text(
+                content,
+                source_id=source_id,
+                source_type=source_type,
+                trust_level=trust_level,
+            )
 
         for chunk in chunks:
             self._insert_chunk(chunk)
@@ -137,6 +146,15 @@ class FileStore:
             source_type="pdf",
             trust_level=TrustLevel.EXTERNAL_UNTRUSTED,
         )
+
+    def _guess_language(self, source_name: str) -> str:
+        """Guess programming language from file extension."""
+        ext = Path(source_name).suffix.lower()
+        lang_map = {
+            ".py": "python", ".js": "javascript", ".jsx": "javascript",
+            ".ts": "typescript", ".tsx": "typescript",
+        }
+        return lang_map.get(ext, "python")
 
     def _guess_type(self, file_path: Path) -> str:
         ext = file_path.suffix.lower()
