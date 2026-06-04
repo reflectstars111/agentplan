@@ -6,6 +6,8 @@ from src.models.intent import Intent, IntentType
 from src.models.task import Task, TaskStatus, TaskGraph
 from src.models.agent import AgentProcess, AgentRole, AgentStatus
 from src.models.blackboard import BlackboardEntry, SharedBlackboard
+from src.models.code_symbol import CodeSymbol
+from src.models.structure_node import StructureNode
 
 __all__ = [
     "MemoryItem", "MemoryType", "MemoryStatus",

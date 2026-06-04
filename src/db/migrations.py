@@ -100,6 +100,65 @@ CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(
 );
 """
 
+# Phase 4: Deep indexing tables
+STRUCTURE_NODES_TABLE = """
+CREATE TABLE IF NOT EXISTS structure_nodes (
+    node_id TEXT PRIMARY KEY,
+    source_id TEXT NOT NULL,
+    node_type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    parent_id TEXT,
+    depth INTEGER DEFAULT 0,
+    location_page INTEGER,
+    location_section TEXT,
+    location_line_start INTEGER,
+    location_line_end INTEGER,
+    chunk_ids TEXT DEFAULT '[]',
+    metadata TEXT DEFAULT '{}',
+    created_at TEXT NOT NULL
+);
+"""
+
+CODE_SYMBOLS_TABLE = """
+CREATE TABLE IF NOT EXISTS code_symbols (
+    symbol_id TEXT PRIMARY KEY,
+    source_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    symbol_type TEXT NOT NULL,
+    language TEXT NOT NULL,
+    signature TEXT DEFAULT '',
+    body TEXT NOT NULL,
+    docstring TEXT DEFAULT '',
+    location_line_start INTEGER,
+    location_line_end INTEGER,
+    parent_symbol_id TEXT,
+    chunk_id TEXT,
+    created_at TEXT NOT NULL
+);
+"""
+
+ENTITY_GRAPH_TABLE = """
+CREATE TABLE IF NOT EXISTS entity_graph (
+    entity_id TEXT PRIMARY KEY,
+    entity_name TEXT NOT NULL,
+    entity_type TEXT DEFAULT 'unknown',
+    source_chunk_ids TEXT DEFAULT '[]',
+    mention_count INTEGER DEFAULT 1,
+    created_at TEXT NOT NULL
+);
+"""
+
+DEPENDENCY_EDGES_TABLE = """
+CREATE TABLE IF NOT EXISTS dependency_edges (
+    edge_id TEXT PRIMARY KEY,
+    source_symbol_id TEXT NOT NULL,
+    target_symbol_id TEXT NOT NULL,
+    edge_type TEXT NOT NULL,
+    source_file TEXT,
+    created_at TEXT NOT NULL
+);
+"""
+
 ALL_MIGRATIONS = [
     ("memories", MEMORIES_TABLE),
     ("chunks", CHUNKS_TABLE),
@@ -108,6 +167,10 @@ ALL_MIGRATIONS = [
     ("tasks", TASKS_TABLE),
     ("memories_fts", MEMORIES_FTS),
     ("chunks_fts", CHUNKS_FTS),
+    ("structure_nodes", STRUCTURE_NODES_TABLE),
+    ("code_symbols", CODE_SYMBOLS_TABLE),
+    ("entity_graph", ENTITY_GRAPH_TABLE),
+    ("dependency_edges", DEPENDENCY_EDGES_TABLE),
 ]
 
 # Triggers to keep FTS in sync with base tables

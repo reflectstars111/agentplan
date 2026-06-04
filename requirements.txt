@@ -22,3 +22,7 @@ pytest-asyncio==0.25.0
 
 # Token estimation
 tiktoken==0.8.0
+
+# Code parsing
+tree-sitter==0.24.0
+tree-sitter-language-pack==1.8.1
