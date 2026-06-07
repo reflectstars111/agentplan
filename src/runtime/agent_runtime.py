@@ -159,7 +159,7 @@ class AgentRuntime:
     # ── Pipeline Steps ────────────────────────────────────────────
 
     def _step_retrieve(self, query: str, trace) -> list[RetrievalResult]:
-        results = self.retriever.retrieve(query, self.embed_fn, k=self.config.top_k_after_rerank)
+        results = self.retriever.retrieve_and_rerank(query, self.embed_fn, k=self.config.top_k_after_rerank)
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_retrieve",
             type=StepType.RETRIEVE_FILE,

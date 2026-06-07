@@ -48,6 +48,7 @@ class HybridRetriever:
         config: Config | None = None,
         structure_index=None,
         entity_index=None,
+        reranker=None,
     ):
         self.vector_index = vector_index
         self.keyword_index = keyword_index
@@ -55,6 +56,7 @@ class HybridRetriever:
         self.config = config or Config()
         self.structure_index = structure_index
         self.entity_index = entity_index
+        self.reranker = reranker
 
     def retrieve(
         self,
@@ -141,6 +143,28 @@ class HybridRetriever:
 
         results.sort(key=lambda r: r.score, reverse=True)
         return results[:k]
+
+    def retrieve_and_rerank(
+        self,
+        query: str,
+        embed_fn,
+        k: int = 10,
+        filters: RetrievalFilters | None = None,
+    ) -> list[RetrievalResult]:
+        """Retrieve candidates then rerank for precision.
+
+        Fetches 2*k candidates from retrieve(), then applies the reranker
+        to boost genuinely relevant chunks and suppress noise. Falls back
+        to plain retrieve() if no reranker is configured.
+        """
+        if self.reranker is None:
+            return self.retrieve(query, embed_fn, k=k, filters=filters)
+
+        candidates = self.retrieve(query, embed_fn, k=k * 2, filters=filters)
+        if not candidates:
+            return []
+
+        return self.reranker.rerank(candidates, query, top_k=k)
 
     # ── Scoring Components ─────────────────────────────────────
 

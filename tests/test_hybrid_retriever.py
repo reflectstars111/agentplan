@@ -144,3 +144,22 @@ class TestHybridRetriever:
             # The trust penalty should reduce scores somewhat
             # (exact value depends on weighting, just verify it's not > 0.95)
             assert r.score <= 0.95
+
+    def test_retrieve_and_rerank_falls_back_without_reranker(self, populated_store, retriever):
+        """retrieve_and_rerank() without a reranker should match retrieve()."""
+        retriever.reranker = None
+        results_a = retriever.retrieve("Python async API", _mock_embed_fn, k=5)
+        results_b = retriever.retrieve_and_rerank("Python async API", _mock_embed_fn, k=5)
+        assert len(results_a) == len(results_b)
+        assert [r.chunk_id for r in results_a] == [r.chunk_id for r in results_b]
+
+    def test_retrieve_and_rerank_with_reranker(self, populated_store, retriever):
+        """retrieve_and_rerank() with a reranker should return ≤k results."""
+        from src.index.reranker import Reranker
+        retriever.reranker = Reranker()
+        results = retriever.retrieve_and_rerank("Python async API", _mock_embed_fn, k=3)
+        assert len(results) <= 3
+        # All results should be valid
+        for r in results:
+            assert r.chunk_id
+            assert 0.0 <= r.score <= 1.0
