@@ -101,3 +101,31 @@ class TestTokenBudgeter:
         compressed, was_compressed = budgeter.compress(text, 5)
         assert len(compressed) < len(text)
         assert was_compressed is True
+
+    def test_compress_llm_falls_back_when_no_llm(self, budgeter):
+        """compress_llm() without llm_fn should fall back to heuristic."""
+        budgeter.llm_fn = None
+        text = "Short text."
+        compressed, was_compressed = budgeter.compress_llm(text, 500)
+        assert compressed == text
+        assert was_compressed is False
+
+    def test_compress_llm_uses_llm_when_available(self, budgeter):
+        """compress_llm() should call llm_fn when available."""
+        def mock_llm(ctx, prompt):
+            return "Compressed version."
+        budgeter.llm_fn = mock_llm
+        text = "A very long text that needs compression." * 10
+        compressed, was_compressed = budgeter.compress_llm(text, 10)
+        assert "Compressed version" in compressed
+        assert was_compressed is True
+
+    def test_compress_llm_falls_back_on_llm_error(self, budgeter):
+        """compress_llm() falls back when LLM returns error."""
+        def mock_llm(ctx, prompt):
+            return "[LLM Error: API unavailable]"
+        budgeter.llm_fn = mock_llm
+        text = "Text that needs compression. But LLM failed."
+        compressed, _ = budgeter.compress_llm(text, 5)
+        # Should fall back to heuristic (not the error message)
+        assert "LLM Error" not in compressed

@@ -22,8 +22,9 @@ DEFAULT_BUDGET_RATIOS = {
 class TokenBudgeter:
     """Token counting and budget allocation for context management."""
 
-    def __init__(self, model_name: str = "cl100k_base"):
+    def __init__(self, model_name: str = "cl100k_base", llm_fn=None):
         self.model_name = model_name
+        self.llm_fn = llm_fn
         self._encoder = None
         self._init_encoder()
 
@@ -177,3 +178,38 @@ class TokenBudgeter:
             return truncated, True
 
         return result, True
+
+    def compress_llm(
+        self, text: str, target_tokens: int
+    ) -> tuple[str, bool]:
+        """Use LLM to summarize text to fit target token budget.
+
+        Falls back to heuristic compress() if llm_fn is None or LLM call fails.
+
+        Args:
+            text: Original text to compress.
+            target_tokens: Target token budget.
+
+        Returns:
+            (compressed_text, was_compressed).
+        """
+        if self.llm_fn is None:
+            return self.compress(text, target_tokens)
+
+        if self.estimate(text) <= target_tokens:
+            return text, False
+
+        # Build a compression prompt
+        prompt = (
+            f"Summarize the following text concisely while preserving all key facts, "
+            f"entities, technical terms, and source references. "
+            f"Target: at most {target_tokens} tokens.\n\nText:\n{text}"
+        )
+        try:
+            summary = self.llm_fn(None, prompt)
+            if summary and not summary.startswith("[LLM Error"):
+                return summary, True
+        except Exception:
+            pass
+
+        return self.compress(text, target_tokens)

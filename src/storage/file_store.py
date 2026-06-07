@@ -26,6 +26,8 @@ class FileStore:
 
         if source_type == "pdf":
             return self._ingest_pdf(file_path, source_id)
+        elif source_type == "image":
+            return self._ingest_image(file_path, source_id)
         elif source_type == "word":
             return self._ingest_word(file_path, source_id)
         elif source_type in ("markdown", "md", "text", "txt", "py", "js", "ts"):
@@ -143,6 +145,19 @@ class FileStore:
         }
         return lang_map.get(ext, "python")
 
+    def _ingest_image(self, file_path: Path, source_id: str) -> str:
+        """Ingest an image file using OCR."""
+        from src.parsing.image_parser import ImageParser
+
+        self.delete_source(source_id)
+        parser = ImageParser()
+        result = parser.parse(file_path, source_id)
+
+        for chunk in result.chunks:
+            self._insert_chunk(chunk)
+
+        return source_id
+
     def _ingest_word(self, file_path: Path, source_id: str) -> str:
         """Ingest a Word (.docx) document using python-docx."""
         from src.parsing.word_parser import WordParser
@@ -161,6 +176,8 @@ class FileStore:
     def _guess_type(self, file_path: Path) -> str:
         ext = file_path.suffix.lower()
         mapping = {
+            ".png": "image", ".jpg": "image", ".jpeg": "image",
+            ".bmp": "image", ".gif": "image", ".tiff": "image", ".webp": "image",
             ".pdf": "pdf", ".docx": "word", ".doc": "word",
             ".md": "markdown", ".txt": "text",
             ".py": "code", ".js": "code", ".ts": "code",

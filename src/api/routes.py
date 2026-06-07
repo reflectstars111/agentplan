@@ -97,6 +97,64 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         ws = WebSource()
         return ws.fetch_and_index(url, runtime.file_store, req.get("source_name", ""))
 
+    @router.post("/upload/api")
+    async def upload_api(req: dict):
+        """Fetch and index data from an external JSON API."""
+        from src.sources.api_source import ApiSource
+        url = req.get("url", "")
+        if not url:
+            return {"error": "url is required"}
+        src = ApiSource()
+        return src.fetch_and_index(
+            url=url,
+            file_store=runtime.file_store,
+            method=req.get("method", "GET"),
+            headers=req.get("headers"),
+            body=req.get("body", ""),
+            json_path=req.get("json_path", ""),
+            source_name=req.get("source_name", ""),
+        )
+
+    @router.post("/upload/db")
+    async def upload_db(req: dict):
+        """Query a database and index the results."""
+        from src.sources.db_source import DbSource
+        db_path = req.get("db_path", "")
+        query = req.get("query", "")
+        if not db_path or not query:
+            return {"error": "db_path and query are required"}
+        src = DbSource()
+        return src.query_and_index(
+            db_path=db_path,
+            query=query,
+            file_store=runtime.file_store,
+            db_type=req.get("db_type", "sqlite"),
+            source_name=req.get("source_name", ""),
+        )
+
+    @router.post("/output/file")
+    async def output_file(req: dict):
+        """Write a response to a file on disk."""
+        from src.runtime.file_writer import FileWriter
+        content = req.get("content", "")
+        filename = req.get("filename", "output.md")
+        fmt = req.get("format", "text")
+        writer = FileWriter()
+        if fmt == "markdown":
+            from src.runtime.output_formatter import OutputFormatter
+            content = OutputFormatter.report(
+                title=filename, sections=[("Output", content)]
+            )
+        elif fmt == "json":
+            import json
+            try:
+                data = json.loads(content) if isinstance(content, str) else content
+                content = json.dumps(data, indent=2, ensure_ascii=False)
+            except json.JSONDecodeError:
+                pass
+        path = writer.write(content, filename)
+        return {"path": str(path), "filename": filename}
+
     @router.post("/query", response_model=QueryResponse)
     async def query(req: QueryRequest):
         """Process a natural language query through the full Agent-OS pipeline."""
