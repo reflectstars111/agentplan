@@ -34,6 +34,8 @@ class RetrievalFilters:
     source_id: Optional[str] = None        # specific file
     section: Optional[str] = None          # e.g. "3.2"
     min_recency: Optional[str] = None      # ISO date, only chunks newer than this
+    time_start: Optional[str] = None       # ISO datetime, filter chunks created >= this
+    time_end: Optional[str] = None         # ISO datetime, filter chunks created <= this
     language: Optional[str] = None         # "python", "javascript"
 
 
@@ -274,5 +276,11 @@ class HybridRetriever:
                 return False
         if filters.min_recency and row.get("created_at"):
             if row["created_at"] < filters.min_recency:
+                return False
+        if filters.time_start and row.get("created_at"):
+            if row["created_at"] < filters.time_start:
+                return False
+        if filters.time_end and row.get("created_at"):
+            if row["created_at"] > filters.time_end:
                 return False
         return True

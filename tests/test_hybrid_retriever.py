@@ -6,7 +6,7 @@ from src.db import Database
 from src.storage.file_store import FileStore
 from src.index.vector_index import VectorIndex
 from src.index.keyword_index import KeywordIndex
-from src.index.hybrid_retriever import HybridRetriever
+from src.index.hybrid_retriever import HybridRetriever, RetrievalFilters
 
 
 def _mock_embed_fn(texts: list[str]) -> np.ndarray:
@@ -163,3 +163,18 @@ class TestHybridRetriever:
         for r in results:
             assert r.chunk_id
             assert 0.0 <= r.score <= 1.0
+
+    def test_time_range_filter(self, populated_store, retriever):
+        """Filtering by time range should include/exclude chunks appropriately."""
+        from datetime import datetime, timezone
+        # All chunks created now — filter with future upper bound should include all
+        future = datetime(2099, 1, 1, tzinfo=timezone.utc).isoformat()
+        filters = RetrievalFilters(time_end=future)
+        results = retriever.retrieve("Python", _mock_embed_fn, k=5, filters=filters)
+        assert len(results) > 0  # All chunks are older than 2099
+
+        # All chunks created now — filter with past lower bound should include all
+        past = "2020-01-01T00:00:00"
+        filters = RetrievalFilters(time_start=past)
+        results = retriever.retrieve("Python", _mock_embed_fn, k=5, filters=filters)
+        assert len(results) > 0
