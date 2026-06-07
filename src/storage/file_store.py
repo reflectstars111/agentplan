@@ -26,6 +26,8 @@ class FileStore:
 
         if source_type == "pdf":
             return self._ingest_pdf(file_path, source_id)
+        elif source_type == "word":
+            return self._ingest_word(file_path, source_id)
         elif source_type in ("markdown", "md", "text", "txt", "py", "js", "ts"):
             content = file_path.read_text(encoding="utf-8", errors="replace")
             return self.ingest_text(content, source_name=file_path.name, source_type=source_type)
@@ -141,10 +143,26 @@ class FileStore:
         }
         return lang_map.get(ext, "python")
 
+    def _ingest_word(self, file_path: Path, source_id: str) -> str:
+        """Ingest a Word (.docx) document using python-docx."""
+        from src.parsing.word_parser import WordParser
+
+        # Delete existing chunks for this source (re-ingest)
+        self.delete_source(source_id)
+
+        parser = WordParser()
+        result = parser.parse(file_path, source_id)
+
+        for chunk in result.chunks:
+            self._insert_chunk(chunk)
+
+        return source_id
+
     def _guess_type(self, file_path: Path) -> str:
         ext = file_path.suffix.lower()
         mapping = {
-            ".pdf": "pdf", ".md": "markdown", ".txt": "text",
+            ".pdf": "pdf", ".docx": "word", ".doc": "word",
+            ".md": "markdown", ".txt": "text",
             ".py": "code", ".js": "code", ".ts": "code",
             ".rs": "code", ".go": "code", ".java": "code",
             ".html": "text", ".css": "code", ".json": "text",
