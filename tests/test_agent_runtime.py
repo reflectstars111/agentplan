@@ -11,6 +11,8 @@ from src.index.keyword_index import KeywordIndex
 from src.index.hybrid_retriever import HybridRetriever
 from src.index.entity_index import EntityIndex
 from src.storage.conversation_cache import ConversationCache
+from src.runtime.permission_checker import PermissionChecker
+from src.models.agent import AgentProcess, AgentRole, AgentStatus
 from src.context.token_budgeter import TokenBudgeter
 from src.context.mmu import ContextMMU
 from src.runtime.verifier import Verifier
@@ -235,3 +237,31 @@ class TestAgentRuntime:
         roles = [t["role"] for t in turns]
         assert "user" in roles
         assert "agent" in roles
+
+    def test_permission_checker_allows_default_access(self, tmp_path):
+        """Default PermissionChecker (no restrictions) should allow memory read/write."""
+        config = Config(default_token_budget=4000)
+        db_path = str(tmp_path / "perm_test.db")
+        db = Database(db_path)
+        db.init_schema()
+
+        checker = PermissionChecker()
+        runtime = AgentRuntime(
+            file_store=FileStore(db),
+            memory_store=MemoryStore(db),
+            retriever=HybridRetriever(VectorIndex(dim=64), KeywordIndex(db), db, config),
+            mmu=ContextMMU(TokenBudgeter(), config),
+            verifier=Verifier(),
+            writeback_gate=WritebackGate(),
+            trace_logger=TraceLogger(db),
+            config=config,
+            embed_fn=_mock_embed_fn,
+            llm_fn=_mock_llm_fn,
+            permission_checker=checker,
+            agent_id="agent_test_001",
+            role="worker",
+        )
+
+        runtime.upload_text(content="Test content for permissions.", source_name="test.txt")
+        result = runtime.process_query("Test query")
+        assert "response" in result

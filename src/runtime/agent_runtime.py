@@ -53,6 +53,7 @@ class AgentRuntime:
         entity_index=None,
         dependency_graph=None,
         conversation_cache=None,
+        permission_checker=None,
     ):
         self.file_store = file_store
         self.memory_store = memory_store
@@ -71,6 +72,20 @@ class AgentRuntime:
         self.entity_index = entity_index
         self.dependency_graph = dependency_graph
         self.conversation_cache = conversation_cache
+        self.permission_checker = permission_checker
+
+        # Build a default AgentProcess for permission checks
+        if permission_checker:
+            from src.models.agent import AgentProcess, AgentRole, AgentStatus
+            self._agent_process = AgentProcess(
+                agent_id=self.agent_id,
+                role=AgentRole(self.role) if self.role in [r.value for r in AgentRole] else AgentRole.WORKER,
+                status=AgentStatus.READY,
+                available_tools=[],
+                memory_scope=self.memory_scope,
+            )
+        else:
+            self._agent_process = None
 
     def upload_text(self, content: str, source_name: str) -> str:
         """Upload text content and index it. Returns source_id."""
@@ -263,7 +278,17 @@ class AgentRuntime:
         return results
 
     def _step_assemble(self, query: str, results, trace):
-        working_mems = self.memory_store.list_active()
+        # Check memory read permission
+        working_mems = []
+        if self.permission_checker and self._agent_process:
+            can_read = self.permission_checker.verify_permissions(
+                self._agent_process, "memory_read", scope="working_memory"
+            )
+            if can_read.get("allowed", True):
+                working_mems = self.memory_store.list_active()
+        else:
+            working_mems = self.memory_store.list_active()
+
         conv_history = (
             self.conversation_cache.get_recent_turns(10)
             if self.conversation_cache else None
@@ -333,15 +358,24 @@ class AgentRuntime:
             )
 
             if decision.action == "write":
-                item = MemoryItem(
-                    memory_id=f"mem_{uuid.uuid4().hex[:12]}",
-                    type=MemoryType.CONVERSATION_SUMMARY,
-                    content=content,
-                    summary=response[:100],
-                    importance=0.6,
-                    confidence=0.8,
-                )
-                self.memory_store.insert(item)
+                # Check memory write permission
+                can_write = True
+                if self.permission_checker and self._agent_process:
+                    result_p = self.permission_checker.verify_permissions(
+                        self._agent_process, "memory_write", scope="working_memory"
+                    )
+                    can_write = result_p.get("allowed", True)
+
+                if can_write:
+                    item = MemoryItem(
+                        memory_id=f"mem_{uuid.uuid4().hex[:12]}",
+                        type=MemoryType.CONVERSATION_SUMMARY,
+                        content=content,
+                        summary=response[:100],
+                        importance=0.6,
+                        confidence=0.8,
+                    )
+                    self.memory_store.insert(item)
 
             self.trace_logger.add_step(trace.trace_id, TraceStep(
                 step_id="step_writeback",
