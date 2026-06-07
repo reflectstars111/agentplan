@@ -7,6 +7,9 @@ from src.runtime.planner import Planner
 from src.runtime.scheduler import Scheduler
 from src.runtime.controller import Controller
 from src.runtime.agent_registry import AgentRegistry
+from src.runtime.permission_checker import PermissionChecker
+from src.runtime.input_sanitizer import InputSanitizer
+from src.runtime.audit_log import AuditLog
 
 __all__ = [
     "TraceLogger",
@@ -18,4 +21,7 @@ __all__ = [
     "Scheduler",
     "Controller",
     "AgentRegistry",
+    "PermissionChecker",
+    "InputSanitizer",
+    "AuditLog",
 ]
