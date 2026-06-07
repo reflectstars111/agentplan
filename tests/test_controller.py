@@ -120,3 +120,22 @@ class TestController:
     def test_process_general_fallback(self, controller):
         result = controller.process("Hello!")
         assert result["status"] == "completed"
+
+    def test_controller_trace_has_plan_and_schedule_steps(self, controller):
+        """Controller.process() must record intent_decode + plan + schedule + respond."""
+        result = controller.process("What is FastAPI?")
+        assert result["status"] == "completed"
+
+        # Find the controller-level trace (has plan + schedule steps)
+        traces = controller.trace_logger.list_recent(limit=20)
+        found = False
+        for trace in traces:
+            step_types = [s.type.value for s in trace.steps]
+            if "plan" in step_types and "schedule" in step_types:
+                found = True
+                assert "intent_decode" in step_types
+                assert "respond" in step_types
+                assert len(trace.steps) >= 4
+                break
+
+        assert found, "No trace found with plan and schedule steps"

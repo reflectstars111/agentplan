@@ -81,8 +81,29 @@ class Controller:
         # Phase 2: Plan
         task_graph = self.planner.plan(intent)
 
+        self.trace_logger.add_step(trace.trace_id, TraceStep(
+            step_id="step_plan",
+            type=StepType.PLAN,
+            input={"intent_type": intent.intent_type.value, "entities": intent.entities},
+            output={
+                "node_count": task_graph.node_count(),
+                "nodes": list(task_graph.nodes.keys()),
+            },
+        ))
+
         # Phase 3: Schedule + Execute
         exec_result = self.scheduler.execute(task_graph, request_id)
+
+        self.trace_logger.add_step(trace.trace_id, TraceStep(
+            step_id="step_schedule",
+            type=StepType.SCHEDULE,
+            input={"node_count": task_graph.node_count()},
+            output={
+                "completed": len(exec_result["results"]),
+                "failed": len(exec_result.get("failed_tasks", [])),
+                "status": exec_result["status"],
+            },
+        ))
 
         # Phase 4: Assemble response
         final_response = self._assemble_response(task_graph, exec_result, intent)
