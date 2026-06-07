@@ -51,9 +51,22 @@ class PDFParser:
 
     def _parse_opendataloader(self, file_path: Path, source_id: str) -> PDFParseResult:
         """Parse using OpenDataLoader PDF."""
+        import os
         import opendataloader_pdf
         import tempfile
         import json
+
+        # Ensure Java 11+ is on PATH
+        env = os.environ.copy()
+        java_homes = [
+            r"C:/Program Files/Java/jdk-11.0.30/bin",
+            r"C:/Program Files/Microsoft/jdk-11.0.31.11-hotspot/bin",
+        ]
+        for jh in java_homes:
+            if os.path.isdir(jh):
+                env["PATH"] = jh + ";" + env.get("PATH", "")
+                env["JAVA_HOME"] = jh.replace("/bin", "")
+                break
 
         with tempfile.TemporaryDirectory() as tmpdir:
             opendataloader_pdf.convert(
@@ -61,22 +74,24 @@ class PDFParser:
                 output_dir=tmpdir,
                 format="json",
             )
-            # OpenDataLoader produces {filename}.json in output dir
-            json_path = Path(tmpdir) / f"{file_path.stem}.json"
-            if not json_path.exists():
-                # Try glob for any json file
-                json_files = list(Path(tmpdir).glob("*.json"))
-                if not json_files:
-                    raise FileNotFoundError(f"No JSON output from OpenDataLoader for {file_path.name}")
-                json_path = json_files[0]
+            json_files = list(Path(tmpdir).glob("*.json"))
+            if not json_files:
+                raise FileNotFoundError(f"No JSON output from OpenDataLoader for {file_path.name}")
+            json_path = json_files[0]
 
             with open(json_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
         chunks = self._odl_to_chunks(data, source_id)
+        pages = data.get("number of pages", len(data.get("kids", [])))
         return PDFParseResult(
             chunks=chunks,
-            metadata={"pages": data.get("pages", 0), "parser": "opendataloader"},
+            metadata={
+                "pages": pages,
+                "parser": "opendataloader",
+                "title": data.get("title", ""),
+                "author": data.get("author", ""),
+            },
             parser_used="opendataloader",
         )
 
@@ -112,29 +127,32 @@ class PDFParser:
         )
 
     def _odl_to_chunks(self, data: dict, source_id: str) -> list[DocumentChunk]:
-        """Convert OpenDataLoader JSON output to DocumentChunks."""
+        """Convert OpenDataLoader JSON output to DocumentChunks.
+
+        OpenDataLoader JSON schema:
+          { "file name": ..., "number of pages": N,
+            "kids": [ { "type": "paragraph"|"heading"|"table"|..., "content": "...",
+                        "page number": N, "font": "...", "font size": N, ... } ] }
+        """
         chunks = []
         idx = 0
-        elements = data.get("elements", data.get("content", []))
+        kids = data.get("kids", [])
 
-        for elem in elements:
-            elem_type = elem.get("type", "paragraph")
-            text = elem.get("text", elem.get("content", ""))
+        for kid in kids:
+            elem_type = kid.get("type", "paragraph")
+            text = kid.get("content", "").strip()
             if not text:
                 continue
 
-            chunk_type = ChunkType.PARAGRAPH
-            if elem_type in ("table", "tabular"):
-                chunk_type = ChunkType.TABLE
-            elif elem_type in ("formula", "equation", "latex"):
-                chunk_type = ChunkType.CODE
-            elif elem_type in ("figure", "image", "picture"):
-                chunk_type = ChunkType.FIGURE
-            elif elem_type in ("heading", "title", "header"):
-                chunk_type = ChunkType.HEADING
+            chunk_type = {
+                "heading": ChunkType.HEADING,
+                "table": ChunkType.TABLE,
+                "figure": ChunkType.FIGURE,
+            }.get(elem_type, ChunkType.PARAGRAPH)
 
-            page = elem.get("page", elem.get("page_number"))
-            section = elem.get("section", elem.get("heading"))
+            page = kid.get("page number")
+            font_size = kid.get("font size")
+            section_name = text if elem_type == "heading" else None
 
             chunks.append(DocumentChunk(
                 chunk_id=f"chunk_{source_id}_{idx:04d}",
@@ -143,7 +161,7 @@ class PDFParser:
                 text=text,
                 chunk_type=chunk_type,
                 trust_level=TrustLevel.EXTERNAL_UNTRUSTED,
-                location=ChunkLocation(page=page, section=section),
+                location=ChunkLocation(page=page, section=section_name),
             ))
             idx += 1
 
