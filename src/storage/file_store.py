@@ -121,31 +121,16 @@ class FileStore:
         self.db.commit()
 
     def _ingest_pdf(self, file_path: Path, source_id: str) -> str:
-        """Ingest a PDF file using PyMuPDF."""
-        try:
-            import fitz  # PyMuPDF
-        except ImportError:
-            raise ImportError(
-                "PyMuPDF (fitz) is required for PDF ingestion. pip install PyMuPDF"
-            )
+        """Ingest a PDF using OpenDataLoader (auto) or PyMuPDF (fallback)."""
+        from src.parsing.pdf_parser import PDFParser
 
-        doc = fitz.open(str(file_path))
-        full_text_parts = []
+        parser = PDFParser(mode="auto")
+        result = parser.parse(file_path, source_id)
 
-        for page_num, page in enumerate(doc):
-            text = page.get_text()
-            if text.strip():
-                full_text_parts.append(f"[Page {page_num + 1}]\n{text}")
+        for chunk in result.chunks:
+            self._insert_chunk(chunk)
 
-        doc.close()
-        full_text = "\n\n".join(full_text_parts)
-
-        return self.ingest_text(
-            content=full_text,
-            source_name=file_path.name,
-            source_type="pdf",
-            trust_level=TrustLevel.EXTERNAL_UNTRUSTED,
-        )
+        return source_id
 
     def _guess_language(self, source_name: str) -> str:
         """Guess programming language from file extension."""

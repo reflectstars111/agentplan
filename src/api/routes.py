@@ -67,6 +67,20 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         finally:
             tmp_path.unlink(missing_ok=True)
 
+    @router.post("/upload/github")
+    async def upload_github(req: dict):
+        """Clone and index a GitHub repository."""
+        from src.sources.github_source import GithubSource
+
+        repo_url = req.get("repo_url", "")
+        branch = req.get("branch", "main")
+        if not repo_url:
+            return {"error": "repo_url is required"}
+
+        gs = GithubSource()
+        result = gs.clone_and_index(repo_url, runtime.file_store, branch)
+        return result
+
     @router.post("/query", response_model=QueryResponse)
     async def query(req: QueryRequest):
         """Process a natural language query through the full Agent-OS pipeline."""
