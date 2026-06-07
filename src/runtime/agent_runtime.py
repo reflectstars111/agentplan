@@ -157,6 +157,11 @@ class AgentRuntime:
         if request_id is None:
             request_id = f"req_{uuid.uuid4().hex[:12]}"
 
+        # Drive agent state machine
+        if self._agent_process:
+            from src.models.agent import AgentStatus
+            self._agent_process.transition(AgentStatus.RUNNING)
+
         # 1. Start trace
         trace = self.trace_logger.start_trace(request_id)
 
@@ -184,6 +189,9 @@ class AgentRuntime:
             # 6. Evaluate memory writeback
             self._step_writeback(query, response, verify_result, trace)
 
+            if self._agent_process:
+                self._agent_process.transition(AgentStatus.COMPLETED)
+
             return {
                 "response": response,
                 "trace_id": trace.trace_id,
@@ -192,6 +200,8 @@ class AgentRuntime:
                 "unverified_claims": verify_result.unverified_claims,
             }
         except Exception as e:
+            if self._agent_process:
+                self._agent_process.transition(AgentStatus.FAILED)
             self.trace_logger.add_step(trace.trace_id, TraceStep(
                 step_id=f"step_error",
                 type=StepType.RESPOND,

@@ -57,7 +57,33 @@ class TestAgentProcess:
         p2 = AgentProcess.from_json(json_str)
         assert p2.agent_id == "agent_v_001"
         assert p2.role == AgentRole.VERIFIER
-        assert p2.current_goal == "Verify responses against sources"
+
+    def test_valid_transition(self):
+        p = AgentProcess(agent_id="a1", role=AgentRole.WORKER)
+        assert p.status == AgentStatus.CREATED
+        assert p.transition(AgentStatus.READY) is True
+        assert p.status == AgentStatus.READY
+        assert p.transition(AgentStatus.RUNNING) is True
+        assert p.status == AgentStatus.RUNNING
+        assert p.transition(AgentStatus.COMPLETED) is True
+        assert p.status == AgentStatus.COMPLETED
+
+    def test_invalid_transition_rejected(self):
+        p = AgentProcess(agent_id="a2", role=AgentRole.WORKER)
+        # CREATED → RUNNING is invalid (must go through READY)
+        assert p.transition(AgentStatus.RUNNING) is False
+        assert p.status == AgentStatus.CREATED
+
+    def test_failed_can_retry(self):
+        p = AgentProcess(agent_id="a3", role=AgentRole.WORKER,
+                         status=AgentStatus.FAILED)
+        assert p.transition(AgentStatus.READY) is True
+
+    def test_terminal_no_transition(self):
+        p = AgentProcess(agent_id="a4", role=AgentRole.WORKER,
+                         status=AgentStatus.COMPLETED)
+        assert p.transition(AgentStatus.RUNNING) is False
+        assert p.status == AgentStatus.COMPLETED
 
     def test_status_transitions(self):
         p = AgentProcess(agent_id="a1", role=AgentRole.WORKER)

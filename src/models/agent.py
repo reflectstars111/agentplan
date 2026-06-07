@@ -48,3 +48,29 @@ class AgentProcess:
     parent_agent: Optional[str] = None
     created_at: str = ""
     last_active_at: Optional[str] = None
+
+    # Valid state transitions (agent_os_initial_plan.md §7.2)
+    _TRANSITIONS = None
+
+    def transition(self, new_status: "AgentStatus") -> bool:
+        """Transition to a new status if valid. Returns True if transitioned."""
+        cls = type(self)
+        if cls._TRANSITIONS is None:
+            cls._TRANSITIONS = {
+                AgentStatus.CREATED: {AgentStatus.READY},
+                AgentStatus.READY: {AgentStatus.RUNNING},
+                AgentStatus.RUNNING: {AgentStatus.WAITING, AgentStatus.BLOCKED,
+                                      AgentStatus.VERIFYING, AgentStatus.COMPLETED,
+                                      AgentStatus.FAILED, AgentStatus.TERMINATED},
+                AgentStatus.WAITING: {AgentStatus.READY, AgentStatus.TERMINATED},
+                AgentStatus.BLOCKED: {AgentStatus.READY, AgentStatus.TERMINATED},
+                AgentStatus.VERIFYING: {AgentStatus.COMPLETED, AgentStatus.FAILED},
+                AgentStatus.COMPLETED: set(),
+                AgentStatus.FAILED: {AgentStatus.READY},
+                AgentStatus.TERMINATED: set(),
+            }
+        valid = cls._TRANSITIONS.get(self.status, set())
+        if new_status in valid:
+            self.status = new_status
+            return True
+        return False
