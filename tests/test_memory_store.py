@@ -100,3 +100,33 @@ class TestMemoryStore:
         result = store.get("mem_001")
         assert result.content == updated.content
         assert result.version == 2
+
+    def test_last_used_at_round_trip(self, store):
+        """last_used_at field survives insert + get round-trip."""
+        now = datetime.now(timezone.utc)
+        item = MemoryItem(
+            memory_id="mem_last_used_test",
+            type=MemoryType.PROJECT_STATE,
+            content="test last_used_at",
+            last_used_at=now,
+        )
+        store.insert(item)
+        retrieved = store.get("mem_last_used_test")
+        assert retrieved is not None
+        assert retrieved.last_used_at is not None
+        diff = abs((retrieved.last_used_at - now).total_seconds())
+        assert diff < 5
+
+
+    def test_touch_updates_last_used_at(self, store):
+        """touch() should set last_used_at to now."""
+        item = MemoryItem(
+            memory_id="mem_touch_test",
+            type=MemoryType.PROJECT_STATE,
+            content="test touch",
+        )
+        store.insert(item)
+        store.touch("mem_touch_test")
+        retrieved = store.get("mem_touch_test")
+        assert retrieved is not None
+        assert retrieved.last_used_at is not None

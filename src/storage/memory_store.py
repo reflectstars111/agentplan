@@ -16,11 +16,16 @@ class MemoryStore:
     def insert(self, item: MemoryItem) -> None:
         """Insert or replace a memory item."""
         now = datetime.now(timezone.utc).isoformat()
+        last_used = (
+            item.last_used_at.isoformat()
+            if item.last_used_at and hasattr(item.last_used_at, 'isoformat')
+            else None
+        )
         sql = """
         INSERT OR REPLACE INTO memories
             (memory_id, type, content, summary, entities, importance, confidence,
-             source, scope, status, version, source_ref, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             source, scope, status, version, source_ref, last_used_at, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         self.db.execute(sql, (
             item.memory_id,
@@ -35,6 +40,7 @@ class MemoryStore:
             item.status.value,
             item.version,
             item.source_ref,
+            last_used,
             item.created_at.isoformat() if hasattr(item.created_at, 'isoformat') else str(item.created_at),
             now,
         ))
@@ -110,8 +116,24 @@ class MemoryStore:
         row = self.db.execute("SELECT COUNT(*) as cnt FROM memories").fetchone()
         return row["cnt"] if row else 0
 
+    def touch(self, memory_id: str) -> None:
+        """Update last_used_at to now for a memory record."""
+        now = datetime.now(timezone.utc).isoformat()
+        self.db.execute(
+            "UPDATE memories SET last_used_at = ? WHERE memory_id = ?",
+            (now, memory_id),
+        )
+        self.db.commit()
+
     def _row_to_item(self, row: dict) -> MemoryItem:
         """Convert a database row dict to a MemoryItem."""
+        last_used = None
+        if row.get("last_used_at"):
+            try:
+                last_used = datetime.fromisoformat(row["last_used_at"])
+            except (ValueError, TypeError):
+                pass
+
         return MemoryItem(
             memory_id=row["memory_id"],
             type=MemoryType(row["type"]),
@@ -125,6 +147,7 @@ class MemoryStore:
             status=MemoryStatus(row["status"]) if row.get("status") else MemoryStatus.ACTIVE,
             version=row.get("version", 1),
             source_ref=row.get("source_ref"),
+            last_used_at=last_used,
             created_at=datetime.fromisoformat(row["created_at"]) if row.get("created_at") else datetime.now(timezone.utc),
             updated_at=datetime.fromisoformat(row["updated_at"]) if row.get("updated_at") else datetime.now(timezone.utc),
         )

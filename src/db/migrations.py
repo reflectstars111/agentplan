@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS memories (
     status TEXT DEFAULT 'active',      -- active | superseded | archived
     version INTEGER DEFAULT 1,
     source_ref TEXT,
+    last_used_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );
