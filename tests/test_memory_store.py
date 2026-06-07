@@ -130,3 +130,25 @@ class TestMemoryStore:
         retrieved = store.get("mem_touch_test")
         assert retrieved is not None
         assert retrieved.last_used_at is not None
+
+    def test_archive_and_restore(self, store):
+        """archive_old() should move old memories to archived status."""
+        item = MemoryItem(
+            memory_id="mem_archive_test",
+            type=MemoryType.PROJECT_STATE,
+            content="old memory for archiving",
+            status=MemoryStatus.ACTIVE,
+        )
+        store.insert(item)
+        # Archive with 0 days — everything is "old"
+        count = store.archive_old(days=0)
+        assert count >= 1
+
+        archived = store.list_archived()
+        assert any(m.memory_id == "mem_archive_test" for m in archived)
+
+        # Restore
+        store.restore("mem_archive_test")
+        restored = store.get("mem_archive_test")
+        assert restored is not None
+        assert restored.status == MemoryStatus.ACTIVE

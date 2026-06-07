@@ -49,3 +49,45 @@ class AgentRegistry:
     def list_types(self) -> list[str]:
         """Return all registered agent types."""
         return list(self._agents.keys())
+
+    def spawn(
+        self,
+        agent_type: str,
+        agent_id: str,
+        role: str = "",
+        runtime: "AgentRuntime | None" = None,
+    ) -> "AgentProcess":
+        """Dynamically create and register a new agent instance.
+
+        Maps to agent_os_initial_plan.md §6.3 (SPAWN_AGENT instruction).
+
+        Args:
+            agent_type: Type key for the new agent (e.g. "worker").
+            agent_id: Unique ID for the new agent instance.
+            role: Override role (defaults to agent_type).
+            runtime: Optional AgentRuntime for the new agent.
+
+        Returns:
+            The newly created AgentProcess.
+
+        Raises:
+            ValueError if agent_type is already registered with this agent_id.
+        """
+        if self.has_agent(agent_id):
+            raise ValueError(f"Agent '{agent_id}' already registered")
+
+        from src.models.agent import AgentProcess, AgentRole, AgentStatus
+        role_enum = AgentRole.WORKER
+        if role:
+            try:
+                role_enum = AgentRole(role)
+            except ValueError:
+                role_enum = AgentRole.WORKER
+
+        process = AgentProcess(
+            agent_id=agent_id,
+            role=role_enum,
+            status=AgentStatus.CREATED,
+        )
+        self._agents[agent_id] = (process, runtime)
+        return process

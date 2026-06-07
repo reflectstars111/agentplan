@@ -33,6 +33,13 @@ class TestAgentRegistry:
         registry.register("planner", AgentProcess(agent_id="p", role=AgentRole.PLANNER), None)
         assert registry.has_agent("planner")
 
+    def test_spawn_creates_new_agent(self, registry):
+        """spawn() should dynamically create and register a new agent."""
+        process = registry.spawn("worker", "agent_dynamic_001")
+        assert process.agent_id == "agent_dynamic_001"
+        assert process.status.value == "created"
+        assert registry.has_agent("agent_dynamic_001")
+
     def test_default_runtime_returns_worker(self, registry):
         proc = AgentProcess(agent_id="w", role=AgentRole.WORKER)
         registry.register("worker", proc, None)

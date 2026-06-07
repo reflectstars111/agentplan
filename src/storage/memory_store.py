@@ -116,6 +116,31 @@ class MemoryStore:
         row = self.db.execute("SELECT COUNT(*) as cnt FROM memories").fetchone()
         return row["cnt"] if row else 0
 
+    def archive_old(self, days: int = 90) -> int:
+        """Archive memories not touched in N days. Returns count archived."""
+        from datetime import datetime, timezone, timedelta
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        rows = self.db.execute(
+            "SELECT memory_id FROM memories WHERE status = 'active' "
+            "AND (last_used_at IS NULL OR last_used_at < ?)",
+            (cutoff,),
+        ).fetchall()
+        count = len(rows)
+        for r in rows:
+            self.update_status(r["memory_id"], MemoryStatus.ARCHIVED)
+        return count
+
+    def list_archived(self) -> list[MemoryItem]:
+        """List all archived (L5 cold storage) memories."""
+        rows = self.db.execute(
+            "SELECT * FROM memories WHERE status = 'archived' ORDER BY updated_at DESC"
+        ).fetchall()
+        return [self._row_to_item(dict(r)) for r in rows]
+
+    def restore(self, memory_id: str) -> None:
+        """Restore an archived memory back to active."""
+        self.update_status(memory_id, MemoryStatus.ACTIVE)
+
     def touch(self, memory_id: str) -> None:
         """Update last_used_at to now for a memory record."""
         now = datetime.now(timezone.utc).isoformat()
