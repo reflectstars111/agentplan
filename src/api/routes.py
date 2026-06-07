@@ -86,6 +86,16 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         )
         return result
 
+    @router.post("/upload/url")
+    async def upload_url(req: dict):
+        """Fetch and index a web page."""
+        from src.sources.web_source import WebSource
+        url = req.get("url", "")
+        if not url:
+            return {"error": "url is required"}
+        ws = WebSource()
+        return ws.fetch_and_index(url, runtime.file_store, req.get("source_name", ""))
+
     @router.post("/query", response_model=QueryResponse)
     async def query(req: QueryRequest):
         """Process a natural language query through the full Agent-OS pipeline."""
