@@ -39,6 +39,7 @@ class MemoryItem:
     status: MemoryStatus = MemoryStatus.ACTIVE
     version: int = 1
     source_ref: Optional[str] = None  # e.g. "file:repo_001/README.md"
+    last_used_at: Optional[datetime] = None  # §4.3: time of last retrieval (§5.1 时间索引)
     created_at: datetime = field(
         default_factory=lambda: datetime.now(timezone.utc),
         metadata=config(encoder=lambda d: d.isoformat(), decoder=lambda s: datetime.fromisoformat(s)),

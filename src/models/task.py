@@ -37,6 +37,8 @@ class Task:
     input_refs: list[str] = field(default_factory=list)  # blackboard keys to read
     output: dict = field(default_factory=dict)
     output_ref: Optional[str] = None     # blackboard key to write output to
+    output_target: Optional[str] = None   # full target path e.g. "project_blackboard.repo_summary" (§8.1)
+    context_slice: list[str] = field(default_factory=list)  # context keys to include (§8.1)
     priority: int = 5
     retry_count: int = 0
     max_retries: int = 2
