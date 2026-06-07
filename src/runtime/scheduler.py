@@ -31,10 +31,12 @@ class Scheduler:
         agent_runtime: AgentRuntime,
         agent_registry=None,
         blackboard=None,
+        trace_logger=None,
     ):
         self.agent_runtime = agent_runtime
         self.agent_registry = agent_registry
         self.blackboard = blackboard
+        self.trace_logger = trace_logger
 
     def execute(
         self, task_graph: TaskGraph, request_id: str = "",
@@ -129,6 +131,20 @@ class Scheduler:
                 results[task.task_id] = result
                 completed.add(task.task_id)
                 trace_ids.append(task.trace_id or "")
+
+                # Record per-task trace step if trace_logger configured
+                if self.trace_logger:
+                    from src.models.trace import TraceStep, StepType, StepStatus
+                    self.trace_logger.add_step(task.trace_id or f"trace_{task.task_id}", TraceStep(
+                        step_id=f"step_{task.task_id}",
+                        type=StepType.LLM_REASONING,
+                        input={"task_type": task.task_type, "query": task.input.get("query", task.input.get("task", ""))},
+                        output={
+                            "response_length": len(result.get("response", "")),
+                            "verified": result.get("verified", False),
+                        },
+                        status=StepStatus.SUCCESS,
+                    ))
 
                 # Write to shared blackboard if configured
                 if self.blackboard and task.output_ref:
