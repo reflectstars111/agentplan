@@ -66,15 +66,33 @@ def create_llm_fn(
 def _create_openai_compatible_llm(
     model: str, api_key: str, base_url: str | None, temperature: float
 ) -> Callable:
-    """Create LLM function using OpenAI-compatible API."""
-    from openai import OpenAI
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    """Create LLM function using OpenAI-compatible API.
+
+    Client is created lazily on first call, so startup doesn't fail
+    if the API key env var hasn't been read yet.
+    """
+    _client = None
+
+    def _get_client():
+        nonlocal _client
+        if _client is None:
+            from openai import OpenAI
+            key = api_key
+            if not key:
+                key = os.environ.get("OPENAI_API_KEY") or os.environ.get("DEEPSEEK_API_KEY") or ""
+            if not key:
+                raise ValueError(
+                    "No API key found. Set environment variable: "
+                    "OPENAI_API_KEY, DEEPSEEK_API_KEY, or ANTHROPIC_API_KEY"
+                )
+            _client = OpenAI(api_key=key, base_url=base_url)
+        return _client
 
     def llm_fn(context_pack, query: str) -> str:
         from src.llm.prompts.templates import build_prompt
         prompt = build_prompt(context_pack, query, role="worker")
         try:
-            response = client.chat.completions.create(
+            response = _get_client().chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=temperature,

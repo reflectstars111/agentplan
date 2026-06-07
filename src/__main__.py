@@ -31,10 +31,15 @@ def build_runtime(llm_provider="mock", llm_model=""):
 
     # Embedding function
     from src.embedding import create_mock_embed_fn, create_openai_embed_fn
-    if llm_provider in ("openai", "deepseek"):
-        embed_fn = create_openai_embed_fn()
+    if llm_provider == "openai":
+        api_key = os.environ.get("OPENAI_API_KEY", "")
+        embed_fn = create_openai_embed_fn(api_key=api_key) if api_key else create_mock_embed_fn(dim=1536)
+        if not api_key:
+            print("Warning: OPENAI_API_KEY not set, using mock embeddings")
     else:
         embed_fn = create_mock_embed_fn(dim=1536)
+        if llm_provider == "deepseek":
+            print("Note: DeepSeek has no embeddings API. Using mock embeddings (deterministic hash).")
 
     # LLM function
     from src.llm.llm_factory import create_llm_fn
