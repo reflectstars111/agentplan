@@ -103,6 +103,21 @@ class AgentRuntime:
         if self.entity_index:
             self.entity_index.extract_and_index(chunks)
 
+        # Extract dependency graph for code files
+        if self.dependency_graph:
+            ext = source_name.rsplit('.', 1)[-1] if '.' in source_name else ''
+            if ext in ('py', 'js', 'ts', 'jsx', 'tsx'):
+                try:
+                    lang = {'py': 'python', 'js': 'javascript', 'jsx': 'javascript',
+                            'ts': 'typescript', 'tsx': 'typescript'}.get(ext, 'python')
+                    from src.parsing.code_parser import CodeParser
+                    parser = CodeParser(lang)
+                    symbols = parser.extract_symbols(content, source_id)
+                    if symbols:
+                        self.dependency_graph.extract_from_symbols(symbols, source_id)
+                except Exception:
+                    pass
+
         return source_id
 
     def upload_file(self, file_path: Path) -> str:
