@@ -42,6 +42,8 @@ class Config:
     # Task execution (Phase 2)
     task_max_retries: int = 2
     task_default_priority: int = 5
+    parallel_enabled: bool = False       # Phase 5: enable parallel agent execution
+    max_parallel_agents: int = 4         # max concurrent agents
 
     # LLM API (Post-MVP)
     llm_provider: str = "mock"           # "openai" | "deepseek" | "anthropic" | "mock"

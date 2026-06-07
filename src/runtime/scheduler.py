@@ -4,10 +4,12 @@ Executes a TaskGraph by walking nodes in dependency order, delegating each
 node's execution to AgentRuntime.process_query().
 
 Phase 3: Supports AgentRegistry-based routing and SharedBlackboard output.
+Post-MVP: Supports parallel execution of independent nodes via ThreadPoolExecutor.
 
 Maps to agent_os_initial_plan.md §6.2 (Controller execution cycle) and §8.3.
 """
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 from src.models.task import Task, TaskStatus, TaskGraph
 from src.models.blackboard import BlackboardEntry
@@ -35,13 +37,16 @@ class Scheduler:
         self.blackboard = blackboard
 
     def execute(
-        self, task_graph: TaskGraph, request_id: str = ""
+        self, task_graph: TaskGraph, request_id: str = "",
+        parallel: bool = False,
     ) -> dict[str, Any]:
         """Execute all tasks in topological order.
 
         Args:
             task_graph: The TaskGraph to execute.
             request_id: Optional request ID for trace linking.
+            parallel: If True, execute independent nodes in parallel via ThreadPoolExecutor.
+                      Default False for backward compatibility.
 
         Returns:
             Dict with:
@@ -60,15 +65,27 @@ class Scheduler:
             ready = task_graph.get_ready_nodes(completed)
 
             if not ready:
-                # Remaining nodes have unsatisfiable dependencies due to failures
                 self._skip_remaining(task_graph, completed, failed)
                 break
 
-            for task_id in ready:
-                task = task_graph.get_node(task_id)
-                self._execute_one(task, task_graph, completed, failed, results, trace_ids)
+            if parallel and len(ready) > 1:
+                max_workers = min(len(ready), getattr(self, '_max_workers', 4))
+                with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                    futures = {}
+                    for task_id in ready:
+                        task = task_graph.get_node(task_id)
+                        f = executor.submit(
+                            self._execute_one, task, task_graph,
+                            completed, failed, results, trace_ids,
+                        )
+                        futures[f] = task_id
+                    for f in as_completed(futures):
+                        f.result()  # Will raise if the task function raised
+            else:
+                for task_id in ready:
+                    task = task_graph.get_node(task_id)
+                    self._execute_one(task, task_graph, completed, failed, results, trace_ids)
 
-        # Determine final status
         status = "completed" if not failed else "partial_failure"
 
         return {
