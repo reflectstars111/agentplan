@@ -12,8 +12,13 @@ class GithubSource:
         repo_url: str,
         file_store,
         branch: str = "main",
+        embed_fn=None,
+        vector_index=None,
     ) -> dict:
         """Clone repo and index all code/doc files.
+
+        If embed_fn and vector_index are provided, also generates
+        embeddings for FAISS vector search.
 
         Returns: {repo_name, files_indexed, source_ids, error?}
         """
@@ -68,6 +73,13 @@ class GithubSource:
                         source_id = file_store.ingest_file(file_path)
                         source_ids.append(source_id)
                         files_indexed += 1
+                        # Also index in vector store if embed_fn available
+                        if embed_fn and vector_index:
+                            chunks = file_store.get_chunks(source_id)
+                            for chunk in chunks:
+                                emb = embed_fn([chunk.text])
+                                if emb is not None and len(emb) > 0:
+                                    vector_index.add(chunk.chunk_id, emb[0])
                     except Exception:
                         pass
 
