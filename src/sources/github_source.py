@@ -22,13 +22,30 @@ class GithubSource:
         except ImportError:
             return {"error": "GitPython not installed. pip install GitPython"}
 
+        # Try specified branch, fallback to common defaults
+        branches_to_try = [branch]
+        if branch != "master":
+            branches_to_try.append("master")
+        if branch != "main":
+            branches_to_try.append("main")
+
+        repo_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
+        clone_error = ""
+
         with tempfile.TemporaryDirectory() as tmpdir:
-            try:
-                repo = Repo.clone_from(
-                    repo_url, tmpdir, branch=branch, depth=1,
-                )
-            except Exception as e:
-                return {"error": f"Clone failed: {e}"}
+            repo = None
+            for b in branches_to_try:
+                try:
+                    repo = Repo.clone_from(repo_url, tmpdir, branch=b, depth=1)
+                    break
+                except Exception as e:
+                    clone_error = str(e)
+                    continue
+
+            if repo is None:
+                return {
+                    "error": f"Clone failed. Tried branches {branches_to_try}: {clone_error}"
+                }
 
             repo_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
             files_indexed = 0
