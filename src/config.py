@@ -43,6 +43,13 @@ class Config:
     task_max_retries: int = 2
     task_default_priority: int = 5
 
+    # LLM API (Post-MVP)
+    llm_provider: str = "mock"           # "openai" | "deepseek" | "anthropic" | "mock"
+    llm_model: str = "gpt-4o"            # or "deepseek-chat", "claude-sonnet-4-6"
+    llm_api_key_env: str = "OPENAI_API_KEY"  # env var name
+    llm_base_url: str = ""               # override API base URL (empty = use default)
+    llm_temperature: float = 0.3
+
     # Multi-agent (Phase 3)
     agent_default_context_budget: int = 24000
     merge_confidence_threshold: float = 0.5
