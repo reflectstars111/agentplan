@@ -96,12 +96,14 @@ class AgentRuntime:
         self,
         query: str,
         request_id: str | None = None,
+        model: str = "",
     ) -> dict[str, Any]:
         """Execute the full Agent-OS pipeline for a user query.
 
         Args:
             query: The user's natural language query.
             request_id: Optional request ID (auto-generated if not provided).
+            model: Optional model override (e.g. "deepseek-chat").
 
         Returns:
             Dict with keys: response, trace_id, verified, context_pack_id.
@@ -120,7 +122,7 @@ class AgentRuntime:
             context_pack = self._step_assemble(query, retrieval_results, trace)
 
             # 4. LLM reasoning
-            response = self._step_reason(context_pack, query, trace)
+            response = self._step_reason(context_pack, query, trace, model)
 
             # 5. Verify the response
             verify_result = self._step_verify(response, context_pack, trace)
@@ -188,12 +190,16 @@ class AgentRuntime:
         ))
         return context_pack
 
-    def _step_reason(self, context_pack, query: str, trace) -> str:
-        response = self.llm_fn(context_pack, query)
+    def _step_reason(self, context_pack, query: str, trace, model: str = "") -> str:
+        # Pass model override; llm_fn handles it if supported, ignores if not
+        try:
+            response = self.llm_fn(context_pack, query, model_override=model)
+        except TypeError:
+            response = self.llm_fn(context_pack, query)
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_reason",
             type=StepType.LLM_REASONING,
-            input={"query": query, "context_id": context_pack.context_id},
+            input={"query": query, "context_id": context_pack.context_id, "model": model},
             output={"response_length": len(response), "response_preview": response[:200]},
         ))
         return response

@@ -7,6 +7,7 @@ from src.runtime.controller import Controller
 
 class TaskRequest(BaseModel):
     query: str
+    model: str = ""
 
 
 class TaskResponse(BaseModel):
@@ -23,7 +24,8 @@ def create_task_router(controller: Controller) -> APIRouter:
     @router.post("", response_model=TaskResponse)
     async def execute_task(req: TaskRequest):
         """Execute a full task cycle: IntentDecode → Plan → Schedule → Execute."""
-        result = controller.process(req.query)
+        kwargs = {"model": req.model} if req.model else {}
+        result = controller.process(req.query, **kwargs)
         return TaskResponse(
             response=result["response"],
             status=result["status"],

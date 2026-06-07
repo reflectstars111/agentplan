@@ -88,12 +88,12 @@ def _create_openai_compatible_llm(
             _client = OpenAI(api_key=key, base_url=base_url)
         return _client
 
-    def llm_fn(context_pack, query: str) -> str:
+    def llm_fn(context_pack, query: str, model_override: str = "") -> str:
         from src.llm.prompts.templates import build_prompt
         prompt = build_prompt(context_pack, query, role="worker")
         try:
             response = _get_client().chat.completions.create(
-                model=model,
+                model=model_override or model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=temperature,
             )

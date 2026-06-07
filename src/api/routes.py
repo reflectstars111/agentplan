@@ -17,6 +17,7 @@ class UploadTextResponse(BaseModel):
 
 class QueryRequest(BaseModel):
     query: str
+    model: str = ""  # optional model override (e.g. "deepseek-chat")
 
 
 class QueryResponse(BaseModel):
@@ -88,7 +89,7 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
     @router.post("/query", response_model=QueryResponse)
     async def query(req: QueryRequest):
         """Process a natural language query through the full Agent-OS pipeline."""
-        result = runtime.process_query(req.query)
+        result = runtime.process_query(req.query, model=req.model)
         return QueryResponse(
             response=result["response"],
             trace_id=result["trace_id"],

@@ -12,6 +12,7 @@ function App() {
   const [ok, setOk] = useState(false);
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<Mode>("simple");
+  const [model, setModel] = useState("deepseek-chat");
   const [response, setResponse] = useState("");
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [intent, setIntent] = useState<any>(null);
@@ -45,7 +46,7 @@ function App() {
     if (!query.trim()) return; setLoading(true);
     setResponse(""); setTrace([]); setIntent(null); setTaskGraph(null);
     try {
-      const d = mode === "simple" ? await querySimple(query) : await queryTask(query);
+      const d = mode === "simple" ? await querySimple(query, model) : await queryTask(query, model);
       setResponse(d.response || JSON.stringify(d, null, 2));
       setVerified(d.verified ?? null);
       if (d.intent) setIntent(d.intent);
@@ -78,6 +79,14 @@ function App() {
             <div className="modes">
               <button className={mode === "simple" ? "active" : ""} onClick={() => setMode("simple")}>Simple</button>
               <button className={mode === "task" ? "active" : ""} onClick={() => setMode("task")}>Task Graph</button>
+            </div>
+            <div className="model-select">
+              <label>Model</label>
+              <select value={model} onChange={e => setModel(e.target.value)}>
+                <option value="deepseek-chat">DeepSeek Chat (V3)</option>
+                <option value="deepseek-v4-flash">DeepSeek V4 Flash</option>
+                <option value="deepseek-v4-pro">DeepSeek V4 Pro</option>
+              </select>
             </div>
             <textarea value={query} onChange={e => setQuery(e.target.value)}
               placeholder={mode === "simple" ? "Ask a question..." : "Describe a complex task..."} rows={4} />

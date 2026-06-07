@@ -47,18 +47,14 @@ class Controller:
         self.merger = merger
 
     def process(
-        self, query: str, request_id: str = ""
+        self, query: str, request_id: str = "", model: str = ""
     ) -> dict[str, Any]:
         """Full task execution cycle.
-
-        1. Decode intent from user query
-        2. Plan a TaskGraph
-        3. Schedule and execute all nodes
-        4. Assemble final response
 
         Args:
             query: User's natural language request.
             request_id: Optional request ID (auto-generated if empty).
+            model: Optional LLM model override.
 
         Returns:
             Dict with: response, intent, task_graph_summary, results, status, trace_ids

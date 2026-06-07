@@ -2,43 +2,32 @@ const BASE = "http://localhost:8000";
 
 export async function uploadText(content: string, source_name: string) {
   const r = await fetch(`${BASE}/upload`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content, source_name }),
   });
   return r.json();
 }
 
-export async function uploadFile(file: File) {
-  const fd = new FormData();
-  fd.append("file", file);
-  const r = await fetch(`${BASE}/upload/file`, { method: "POST", body: fd });
-  return r.json();
-}
-
 export async function uploadGithub(repo_url: string, branch = "main") {
   const r = await fetch(`${BASE}/upload/github`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ repo_url, branch }),
   });
   return r.json();
 }
 
-export async function querySimple(query: string) {
+export async function querySimple(query: string, model: string) {
   const r = await fetch(`${BASE}/query`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, model }),
   });
   return r.json();
 }
 
-export async function queryTask(query: string) {
+export async function queryTask(query: string, model: string) {
   const r = await fetch(`${BASE}/task`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, model }),
   });
   return r.json();
 }
