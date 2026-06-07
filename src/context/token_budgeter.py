@@ -125,3 +125,55 @@ class TokenBudgeter:
         if len(text) <= max_chars:
             return text
         return text[:max_chars] + "..."
+
+    def compress(
+        self, text: str, target_tokens: int
+    ) -> tuple[str, bool]:
+        """Semantic compression: keep key sentences when budget is tight.
+
+        Instead of raw truncation, extracts first N complete sentences that
+        fit within the target budget. Returns (compressed_text, was_compressed).
+
+        Args:
+            text: The original text.
+            target_tokens: Target token budget for the compressed output.
+
+        Returns:
+            (compressed_text, was_compressed) — was_compressed is True if
+            any content was dropped.
+        """
+        if self.estimate(text) <= target_tokens:
+            return text, False
+
+        if target_tokens <= 0:
+            return "", True
+
+        import re
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        if len(sentences) <= 1:
+            # Single sentence: fall back to truncation
+            truncated = self.truncate_to_budget(text, target_tokens)
+            return truncated, len(truncated) < len(text)
+
+        # Build summary from first N sentences that fit
+        result = ""
+        used = 0
+        kept = 0
+        for sent in sentences:
+            sent_tokens = self.estimate(sent)
+            if used + sent_tokens <= target_tokens:
+                result = (result + " " + sent).strip() if result else sent
+                used += sent_tokens
+                kept += 1
+            else:
+                break
+
+        if kept == len(sentences):
+            return result, False  # All sentences fit
+
+        if kept == 0:
+            # Even first sentence doesn't fit — truncate it
+            truncated = self.truncate_to_budget(text, target_tokens)
+            return truncated, True
+
+        return result, True

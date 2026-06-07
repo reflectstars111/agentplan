@@ -79,3 +79,25 @@ class TestTokenBudgeter:
         tokens = budgeter.estimate("hello world")
         # "hello world" should be ~2-3 tokens with cl100k_base
         assert 1 <= tokens <= 5
+
+    def test_compress_keeps_sentences_within_budget(self, budgeter):
+        """Compress should preserve complete sentences when possible."""
+        text = "Python is a language. FastAPI is a framework. Kafka is a platform."
+        # Target: enough for ~2 sentences
+        compressed, was_compressed = budgeter.compress(text, 20)
+        assert "Python" in compressed
+        assert was_compressed or len(compressed) <= len(text)
+
+    def test_compress_no_compression_when_fits(self, budgeter):
+        """Compress should return original when within budget."""
+        text = "Short text."
+        compressed, was_compressed = budgeter.compress(text, 500)
+        assert compressed == text
+        assert was_compressed is False
+
+    def test_compress_handles_single_long_sentence(self, budgeter):
+        """Compress single long sentence by truncation."""
+        text = "A" * 100
+        compressed, was_compressed = budgeter.compress(text, 5)
+        assert len(compressed) < len(text)
+        assert was_compressed is True

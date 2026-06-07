@@ -245,7 +245,13 @@ class ContextMMU:
             if tokens_used + item_tokens > budget:
                 remaining = budget - tokens_used
                 if remaining > 0:
-                    item["text"] = self.budgeter.truncate_to_budget(text, remaining)
+                    # Try semantic compression first, fall back to truncation
+                    compressed, was_compressed = self.budgeter.compress(text, remaining)
+                    if was_compressed:
+                        item["text"] = compressed
+                        item["compressed"] = True
+                    else:
+                        item["text"] = compressed
                     item_tokens = self.budgeter.estimate(item["text"])
                 else:
                     break
