@@ -9,6 +9,8 @@ from dataclasses_json import dataclass_json, config
 
 class StepType(str, Enum):
     INTENT_DECODE = "intent_decode"
+    PLAN = "plan"
+    SCHEDULE = "schedule"
     RETRIEVE_MEMORY = "retrieve_memory"
     RETRIEVE_FILE = "retrieve_file"
     CONTEXT_ASSEMBLE = "context_assemble"
