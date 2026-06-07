@@ -52,6 +52,7 @@ class AgentRuntime:
         page_fault=None,
         entity_index=None,
         dependency_graph=None,
+        conversation_cache=None,
     ):
         self.file_store = file_store
         self.memory_store = memory_store
@@ -69,6 +70,7 @@ class AgentRuntime:
         self.page_fault = page_fault
         self.entity_index = entity_index
         self.dependency_graph = dependency_graph
+        self.conversation_cache = conversation_cache
 
     def upload_text(self, content: str, source_name: str) -> str:
         """Upload text content and index it. Returns source_id."""
@@ -129,14 +131,22 @@ class AgentRuntime:
         trace = self.trace_logger.start_trace(request_id)
 
         try:
+            # Record user message in conversation cache
+            if self.conversation_cache:
+                self.conversation_cache.add_user_message(query)
+
             # 2. Retrieve relevant chunks
             retrieval_results = self._step_retrieve(query, trace)
 
-            # 3. Assemble context pack
+            # 3. Assemble context pack (with conversation history)
             context_pack = self._step_assemble(query, retrieval_results, trace)
 
             # 4. LLM reasoning
             response = self._step_reason(context_pack, query, trace, model)
+
+            # Record agent response in conversation cache
+            if self.conversation_cache:
+                self.conversation_cache.add_agent_response(response)
 
             # 5. Verify the response
             verify_result = self._step_verify(response, context_pack, trace)
@@ -254,10 +264,15 @@ class AgentRuntime:
 
     def _step_assemble(self, query: str, results, trace):
         working_mems = self.memory_store.list_active()
+        conv_history = (
+            self.conversation_cache.get_recent_turns(10)
+            if self.conversation_cache else None
+        )
         context_pack = self.mmu.assemble(
             query=query,
             retrieval_results=results,
             working_memories=working_mems,
+            conversation_history=conv_history,
             task_id="",
             agent_id=self.agent_id,
         )

@@ -10,6 +10,7 @@ from src.index.vector_index import VectorIndex
 from src.index.keyword_index import KeywordIndex
 from src.index.hybrid_retriever import HybridRetriever
 from src.index.entity_index import EntityIndex
+from src.storage.conversation_cache import ConversationCache
 from src.context.token_budgeter import TokenBudgeter
 from src.context.mmu import ContextMMU
 from src.runtime.verifier import Verifier
@@ -201,3 +202,36 @@ class TestAgentRuntime:
         assert len(chunks) > 0
         entities = entity_index.get_entities_for_chunk(chunks[0].chunk_id)
         assert len(entities) > 0
+
+    def test_conversation_cache_tracks_turns(self, tmp_path):
+        """ConversationCache should record user and agent turns across queries."""
+        config = Config(default_token_budget=4000)
+        db_path = str(tmp_path / "conv_cache_test.db")
+        db = Database(db_path)
+        db.init_schema()
+
+        conv_cache = ConversationCache(max_turns=20)
+        file_store = FileStore(db)
+        runtime = AgentRuntime(
+            file_store=file_store,
+            memory_store=MemoryStore(db),
+            retriever=HybridRetriever(VectorIndex(dim=64), KeywordIndex(db), db, config),
+            mmu=ContextMMU(TokenBudgeter(), config),
+            verifier=Verifier(),
+            writeback_gate=WritebackGate(),
+            trace_logger=TraceLogger(db),
+            config=config,
+            embed_fn=_mock_embed_fn,
+            llm_fn=_mock_llm_fn,
+            conversation_cache=conv_cache,
+        )
+
+        runtime.upload_text(content="Python is a programming language.", source_name="python.txt")
+        runtime.process_query("What is Python?")
+        runtime.process_query("Tell me more about it.")
+
+        turns = conv_cache.get_recent_turns(10)
+        assert len(turns) >= 4  # 2 user + 2 agent messages
+        roles = [t["role"] for t in turns]
+        assert "user" in roles
+        assert "agent" in roles
