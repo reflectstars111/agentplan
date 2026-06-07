@@ -32,11 +32,13 @@ class Scheduler:
         agent_registry=None,
         blackboard=None,
         trace_logger=None,
+        page_fault=None,
     ):
         self.agent_runtime = agent_runtime
         self.agent_registry = agent_registry
         self.blackboard = blackboard
         self.trace_logger = trace_logger
+        self.page_fault = page_fault
 
     def execute(
         self, task_graph: TaskGraph, request_id: str = "",
@@ -121,9 +123,15 @@ class Scheduler:
             try:
                 # Build query: combine the task input with the task type
                 query = task.input.get("query", task.input.get("task", ""))
-                result = runtime.process_query(
-                    query, request_id=task.task_id
-                )
+                # Use page-fault-aware execution if configured
+                if self.page_fault and hasattr(runtime, 'process_query_with_page_fault'):
+                    result = runtime.process_query_with_page_fault(
+                        query, request_id=task.task_id,
+                    )
+                else:
+                    result = runtime.process_query(
+                        query, request_id=task.task_id,
+                    )
 
                 task.status = TaskStatus.COMPLETED
                 task.output = result

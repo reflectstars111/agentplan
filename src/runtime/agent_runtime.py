@@ -49,6 +49,7 @@ class AgentRuntime:
         agent_id: str = "agent_worker_001",
         role: str = "worker",
         memory_scope: dict | None = None,
+        page_fault=None,
     ):
         self.file_store = file_store
         self.memory_store = memory_store
@@ -63,6 +64,7 @@ class AgentRuntime:
         self.agent_id = agent_id
         self.role = role
         self.memory_scope = memory_scope or {}
+        self.page_fault = page_fault
 
     def upload_text(self, content: str, source_name: str) -> str:
         """Upload text content and index it. Returns source_id."""
@@ -146,6 +148,76 @@ class AgentRuntime:
             ))
             return {
                 "response": f"Error processing query: {e}",
+                "trace_id": trace.trace_id,
+                "verified": False,
+                "context_pack_id": "",
+                "unverified_claims": [],
+            }
+
+    def process_query_with_page_fault(
+        self,
+        query: str,
+        request_id: str | None = None,
+        model: str = "",
+    ) -> dict[str, Any]:
+        """Process query with automatic ContextPageFault retry.
+
+        If the LLM response signals missing context, triggers page fault
+        retrieval and re-runs reasoning up to 2 times. Falls back to
+        process_query() if no page_fault is configured.
+        """
+        if self.page_fault is None:
+            return self.process_query(query, request_id, model)
+
+        if request_id is None:
+            request_id = f"req_{uuid.uuid4().hex[:12]}"
+
+        trace = self.trace_logger.start_trace(request_id)
+
+        try:
+            # First attempt: normal pipeline
+            retrieval_results = self._step_retrieve(query, trace)
+            context_pack = self._step_assemble(query, retrieval_results, trace)
+            response = self._step_reason(context_pack, query, trace, model)
+
+            # Page fault loop
+            self.page_fault.reset()
+            for _ in range(3):
+                pf_result = self.page_fault.check_and_handle(
+                    response=response,
+                    context_pack=context_pack,
+                    original_query=query,
+                    embed_fn=self.embed_fn,
+                )
+                if not pf_result.triggered:
+                    break
+                # Use updated context pack from page fault
+                if pf_result.updated_pack:
+                    context_pack = pf_result.updated_pack
+                response = self._step_reason(context_pack, query, trace, model)
+
+            # Verify
+            verify_result = self._step_verify(response, context_pack, trace)
+
+            # Writeback
+            self._step_writeback(query, response, verify_result, trace)
+
+            return {
+                "response": response,
+                "trace_id": trace.trace_id,
+                "verified": verify_result.is_verified,
+                "context_pack_id": context_pack.context_id,
+                "unverified_claims": verify_result.unverified_claims,
+            }
+        except Exception as e:
+            self.trace_logger.add_step(trace.trace_id, TraceStep(
+                step_id="step_error",
+                type=StepType.RESPOND,
+                status=StepStatus.FAILED,
+                error=str(e),
+            ))
+            return {
+                "response": f"Error: {e}",
                 "trace_id": trace.trace_id,
                 "verified": False,
                 "context_pack_id": "",

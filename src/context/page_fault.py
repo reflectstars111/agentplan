@@ -102,7 +102,7 @@ class ContextPageFault:
     def _needs_more_context(self, response: str) -> bool:
         """Check if the response signals insufficient context."""
         uncertainty_patterns = [
-            r"(?:I don't have|I do not have|no (?:relevant |specific )?information|not enough (?:context|information))",
+            r"(?:i don't have|i do not have|no (?:relevant |specific )?information|not enough (?:context|information))",
             r"(?:cannot|can't|unable to) (?:answer|determine|find|locate)",
             r"(?:insufficient|missing|lack(?:ing)?) (?:context|data|information|details)",
         ]
