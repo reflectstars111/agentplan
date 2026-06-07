@@ -31,6 +31,9 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# Model files (downloaded at runtime, too large for GitHub)
+models/bge-m3/
+
 # Environment
 .env
 .env.local
