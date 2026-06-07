@@ -1,0 +1,33 @@
+.app { max-width: 1200px; margin: 0 auto; font-family: system-ui, sans-serif; color: #e0e0e0; background: #1a1a2e; min-height: 100vh; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid #333; background: #16213e; }
+header h1 { margin: 0; font-size: 20px; color: #00d4ff; }
+.dot { font-size: 13px; padding: 3px 10px; border-radius: 10px; }
+.dot.green { color: #0f0; border: 1px solid #0f0; }
+.dot.red { color: #f44; border: 1px solid #f44; }
+.main { display: grid; grid-template-columns: 280px 1fr; gap: 16px; padding: 16px 24px; }
+.card { background: #16213e; border: 1px solid #333; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.card h3 { margin: 0 0 10px; font-size: 14px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+button { background: #0f3460; color: #e0e0e0; border: 1px solid #333; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; margin: 3px 6px 3px 0; }
+button:hover { background: #1a5276; }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.active { background: #00d4ff; color: #000; border-color: #00d4ff; }
+button.submit { width: 100%; margin-top: 8px; padding: 10px; font-size: 14px; font-weight: 600; background: #00d4ff; color: #000; }
+.modes { display: flex; gap: 0; margin-bottom: 8px; }
+.modes button { flex: 1; margin: 0; border-radius: 0; }
+.modes button:first-child { border-radius: 6px 0 0 6px; }
+.modes button:last-child { border-radius: 0 6px 6px 0; }
+textarea { width: calc(100% - 20px); background: #0a0a1a; color: #e0e0e0; border: 1px solid #333; border-radius: 6px; padding: 10px; font-size: 13px; font-family: inherit; resize: vertical; }
+.msg { font-size: 12px; color: #0f0; margin-top: 8px; }
+.response { background: #0a0a1a; border: 1px solid #333; border-radius: 6px; padding: 14px; font-size: 13px; white-space: pre-wrap; line-height: 1.5; min-height: 200px; }
+.hint { color: #666; font-size: 13px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 12px; margin-bottom: 8px; }
+.badge.ok { color: #0f0; border: 1px solid #0f0; }
+.badge.fail { color: #f44; border: 1px solid #f44; }
+.timeline { font-size: 12px; }
+.step { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid #222; }
+.step .type { color: #aaa; width: 160px; }
+.mark { font-weight: bold; }
+.mark.success { color: #0f0; }
+.mark.failed { color: #f44; }
+.mark.skipped { color: #888; }
+.err { color: #f44; font-size: 11px; }
