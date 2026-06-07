@@ -48,18 +48,29 @@ def create_openai_embed_fn(api_key: str | None = None, model: str = "text-embedd
 
 
 _bge_model = None
+_BGE_LOCAL_PATH = None
 
-def create_bge_embed_fn(model_name: str = "BAAI/bge-m3"):
+
+def _get_bge_path() -> str:
+    """Find BGE-M3 model: local path first, then HF hub download."""
+    from pathlib import Path
+    global _BGE_LOCAL_PATH
+    if _BGE_LOCAL_PATH:
+        return _BGE_LOCAL_PATH
+    # Check local project directory
+    local = Path(__file__).parent.parent / "models" / "bge-m3"
+    if local.exists() and (local / "config.json").exists():
+        _BGE_LOCAL_PATH = str(local)
+        return _BGE_LOCAL_PATH
+    # Fallback: let HuggingFace download
+    return "BAAI/bge-m3"
+
+
+def create_bge_embed_fn(model_name: str | None = None):
     """Create a BGE-M3 embedding function (local CPU inference).
 
-    BGE-M3 supports 100+ languages, 8192 token input, and produces
-    dense (1024-dim), sparse, and ColBERT vectors. We use the dense
-    output for FAISS vector search.
-
-    Model is loaded once and cached globally.
-
-    Args:
-        model_name: HuggingFace model ID. Default "BAAI/bge-m3".
+    Uses models/bge-m3/ if available, otherwise downloads from HuggingFace.
+    BGE-M3: 100+ languages, 8192 token input, 1024-dim dense vectors.
 
     Returns:
         Callable that takes list[str] and returns np.ndarray (1024-dim).
@@ -67,15 +78,15 @@ def create_bge_embed_fn(model_name: str = "BAAI/bge-m3"):
     global _bge_model
     import numpy as np
 
+    path = model_name or _get_bge_path()
+
     def bge_embed(texts: list[str]) -> np.ndarray:
         global _bge_model
         if _bge_model is None:
             from FlagEmbedding import BGEM3FlagModel
-            print(f"Loading BGE-M3 model ({model_name})...")
-            _bge_model = BGEM3FlagModel(model_name, use_fp16=False)
-            print("BGE-M3 model loaded.")
-        # BGE-M3 requires "query: " prefix for queries, but for
-        # document embedding we pass the text as-is
+            print(f"Loading BGE-M3 from {path}...")
+            _bge_model = BGEM3FlagModel(path, use_fp16=False)
+            print("BGE-M3 loaded.")
         embeddings = _bge_model.encode(
             texts, batch_size=8, max_length=8192,
         )["dense_vecs"]
