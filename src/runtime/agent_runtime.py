@@ -50,6 +50,8 @@ class AgentRuntime:
         role: str = "worker",
         memory_scope: dict | None = None,
         page_fault=None,
+        entity_index=None,
+        dependency_graph=None,
     ):
         self.file_store = file_store
         self.memory_store = memory_store
@@ -65,18 +67,24 @@ class AgentRuntime:
         self.role = role
         self.memory_scope = memory_scope or {}
         self.page_fault = page_fault
+        self.entity_index = entity_index
+        self.dependency_graph = dependency_graph
 
     def upload_text(self, content: str, source_name: str) -> str:
         """Upload text content and index it. Returns source_id."""
         source_id = self.file_store.ingest_text(content, source_name)
 
-        # Also index in vector store
+        # Index in vector store
         chunks = self.file_store.get_chunks(source_id)
         for chunk in chunks:
             if self.embed_fn:
                 emb = self.embed_fn([chunk.text])
                 if emb is not None and len(emb) > 0:
                     self.retriever.vector_index.add(chunk.chunk_id, emb[0])
+
+        # Extract and index entities
+        if self.entity_index:
+            self.entity_index.extract_and_index(chunks)
 
         return source_id
 
@@ -91,6 +99,10 @@ class AgentRuntime:
                 emb = self.embed_fn([chunk.text])
                 if emb is not None and len(emb) > 0:
                     self.retriever.vector_index.add(chunk.chunk_id, emb[0])
+
+        # Extract and index entities
+        if self.entity_index:
+            self.entity_index.extract_and_index(chunks)
 
         return source_id
 

@@ -9,6 +9,7 @@ from src.storage.memory_store import MemoryStore
 from src.index.vector_index import VectorIndex
 from src.index.keyword_index import KeywordIndex
 from src.index.hybrid_retriever import HybridRetriever
+from src.index.entity_index import EntityIndex
 from src.context.token_budgeter import TokenBudgeter
 from src.context.mmu import ContextMMU
 from src.runtime.verifier import Verifier
@@ -161,3 +162,42 @@ class TestAgentRuntime:
 
         assert r1["trace_id"] != r2["trace_id"]
         assert r1["trace_id"] != r3["trace_id"]
+
+    def test_upload_text_extracts_entities(self, tmp_path):
+        """EntityIndex should be populated during upload_text."""
+        config = Config(default_token_budget=4000)
+        db_path = str(tmp_path / "entity_test.db")
+        db = Database(db_path)
+        db.init_schema()
+
+        entity_index = EntityIndex(db)
+        file_store = FileStore(db)
+        memory_store = MemoryStore(db)
+        vector_index = VectorIndex(dim=64)
+        keyword_index = KeywordIndex(db)
+        retriever = HybridRetriever(vector_index, keyword_index, db, config)
+        mmu = ContextMMU(TokenBudgeter(), config)
+
+        runtime = AgentRuntime(
+            file_store=file_store,
+            memory_store=memory_store,
+            retriever=retriever,
+            mmu=mmu,
+            verifier=Verifier(),
+            writeback_gate=WritebackGate(),
+            trace_logger=TraceLogger(db),
+            config=config,
+            embed_fn=_mock_embed_fn,
+            entity_index=entity_index,
+        )
+
+        runtime.upload_text(
+            content="FastAPI is a modern Python web framework. Apache Kafka is a streaming platform.",
+            source_name="test.txt",
+        )
+
+        # Entity index should have entities extracted
+        chunks = file_store.get_chunks("file:test.txt")
+        assert len(chunks) > 0
+        entities = entity_index.get_entities_for_chunk(chunks[0].chunk_id)
+        assert len(entities) > 0

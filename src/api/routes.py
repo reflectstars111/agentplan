@@ -83,6 +83,7 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
             repo_url, runtime.file_store, branch,
             embed_fn=runtime.embed_fn,
             vector_index=runtime.retriever.vector_index,
+            entity_index=runtime.entity_index,
         )
         return result
 

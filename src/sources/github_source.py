@@ -14,6 +14,7 @@ class GithubSource:
         branch: str = "main",
         embed_fn=None,
         vector_index=None,
+        entity_index=None,
     ) -> dict:
         """Clone repo and index all code/doc files.
 
@@ -80,6 +81,10 @@ class GithubSource:
                                 emb = embed_fn([chunk.text])
                                 if emb is not None and len(emb) > 0:
                                     vector_index.add(chunk.chunk_id, emb[0])
+                        # Also extract entities
+                        if entity_index:
+                            chunks = file_store.get_chunks(source_id)
+                            entity_index.extract_and_index(chunks)
                     except Exception:
                         pass
 
