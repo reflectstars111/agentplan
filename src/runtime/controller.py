@@ -35,6 +35,7 @@ class Controller:
         agent_registry=None,
         blackboard=None,
         merger=None,
+        interrupt_handler=None,
     ):
         self.agent_runtime = agent_runtime
         self.intent_decoder = intent_decoder
@@ -45,6 +46,7 @@ class Controller:
         self.agent_registry = agent_registry
         self.blackboard = blackboard
         self.merger = merger
+        self.interrupt_handler = interrupt_handler
 
     def process(
         self, query: str, request_id: str = "", model: str = ""
@@ -78,6 +80,11 @@ class Controller:
             },
         ))
 
+        # Check for halt before planning
+        if self.interrupt_handler and self.interrupt_handler.is_halted():
+            return {"response": "Task halted by interrupt.", "status": "halted",
+                    "intent": intent.to_dict(), "results": {}, "trace_ids": []}
+
         # Phase 2: Plan
         task_graph = self.planner.plan(intent)
 
@@ -90,6 +97,12 @@ class Controller:
                 "nodes": list(task_graph.nodes.keys()),
             },
         ))
+
+        # Check for halt before execution
+        if self.interrupt_handler and self.interrupt_handler.is_halted():
+            return {"response": "Task halted before execution.", "status": "halted",
+                    "intent": intent.to_dict(), "task_graph_summary": {
+                        "node_count": task_graph.node_count()}, "results": {}, "trace_ids": []}
 
         # Phase 3: Schedule + Execute
         exec_result = self.scheduler.execute(task_graph, request_id)

@@ -19,6 +19,7 @@ from src.runtime.intent_decoder import IntentDecoder
 from src.runtime.planner import Planner
 from src.runtime.scheduler import Scheduler
 from src.runtime.controller import Controller
+from src.runtime.interrupt_handler import InterruptHandler
 from src.models.trace import StepType
 
 
@@ -139,3 +140,38 @@ class TestController:
                 break
 
         assert found, "No trace found with plan and schedule steps"
+
+    def test_interrupt_handler_halt_stops_execution(self, tmp_path):
+        """Controller with InterruptHandler should return halted status."""
+        config = Config(default_token_budget=4000)
+        db_path = str(tmp_path / "halt_test.db")
+        db = Database(db_path)
+        db.init_schema()
+
+        runtime = AgentRuntime(
+            file_store=FileStore(db),
+            memory_store=MemoryStore(db),
+            retriever=HybridRetriever(VectorIndex(dim=64), KeywordIndex(db), db, config),
+            mmu=ContextMMU(TokenBudgeter(), config),
+            verifier=Verifier(),
+            writeback_gate=WritebackGate(),
+            trace_logger=TraceLogger(db),
+            config=config,
+            embed_fn=_mock_embed_fn,
+            llm_fn=_mock_llm_fn,
+        )
+
+        interrupt = InterruptHandler()
+        controller = Controller(
+            agent_runtime=runtime,
+            intent_decoder=IntentDecoder(),
+            planner=Planner(),
+            scheduler=Scheduler(runtime),
+            trace_logger=TraceLogger(db),
+            config=config,
+            interrupt_handler=interrupt,
+        )
+
+        interrupt.halt("test halt")
+        result = controller.process("What is Python?")
+        assert result["status"] == "halted"
