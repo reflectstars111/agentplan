@@ -1,18 +1,24 @@
 """Agent-OS startup: build full stack and start server.
 
 Usage:
-    python -m src                          # start with mock LLM
-    python -m src --llm openai             # use OpenAI
-    python -m src --llm deepseek           # use DeepSeek
+    python -m src                          # start with BGE-M3 embedding + mock LLM
+    python -m src --llm deepseek           # BGE-M3 embedding + DeepSeek LLM
+    python -m src --llm openai             # BGE-M3 embedding + OpenAI LLM
+    python -m src --embed mock             # use mock embeddings (fast startup)
     python -m src --port 8000 --host 0.0.0.0
 """
 
 import argparse
 import os
 
-def build_runtime(llm_provider="mock", llm_model=""):
+BGE_DIM = 1024  # BGE-M3 output dimension
+
+
+def build_runtime(llm_provider="mock", llm_model="", embed_provider="bge"):
     """Build the full AgentRuntime with all components wired."""
-    from src.config import Config, config
+    from src.config import Config
+    config = Config(embedding_dim=BGE_DIM if embed_provider == "bge" else 1536)
+
     from src.db import Database
     from src.storage.file_store import FileStore
     from src.storage.memory_store import MemoryStore
@@ -29,17 +35,18 @@ def build_runtime(llm_provider="mock", llm_model=""):
     db = Database(config.db_path)
     db.init_schema()
 
-    # Embedding function
-    from src.embedding import create_mock_embed_fn, create_openai_embed_fn
-    if llm_provider == "openai":
-        api_key = os.environ.get("OPENAI_API_KEY", "")
-        embed_fn = create_openai_embed_fn(api_key=api_key) if api_key else create_mock_embed_fn(dim=1536)
-        if not api_key:
-            print("Warning: OPENAI_API_KEY not set, using mock embeddings")
+    # Embedding: BGE-M3 (local, default) or mock (fast)
+    from src.embedding import create_mock_embed_fn, create_bge_embed_fn
+    if embed_provider == "bge":
+        try:
+            embed_fn = create_bge_embed_fn()
+            print(f"Embedding: BGE-M3 (local CPU, {BGE_DIM}-dim, 100+ languages)")
+        except Exception as e:
+            print(f"Warning: BGE-M3 load failed ({e}), falling back to mock")
+            embed_fn = create_mock_embed_fn(dim=1536)
     else:
         embed_fn = create_mock_embed_fn(dim=1536)
-        if llm_provider == "deepseek":
-            print("Note: DeepSeek has no embeddings API. Using mock embeddings (deterministic hash).")
+        print("Embedding: mock (deterministic hash)")
 
     # LLM function
     from src.llm.llm_factory import create_llm_fn
@@ -70,12 +77,13 @@ def main():
     parser = argparse.ArgumentParser(description="Agent-OS Runtime")
     parser.add_argument("--llm", default="mock", choices=["mock", "openai", "deepseek", "anthropic"])
     parser.add_argument("--model", default="", help="Model name override")
+    parser.add_argument("--embed", default="bge", choices=["bge", "mock"])
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--host", default="127.0.0.1")
     args = parser.parse_args()
 
-    print(f"Agent-OS starting with LLM: {args.llm}")
-    runtime = build_runtime(args.llm, args.model)
+    print(f"Agent-OS: LLM={args.llm}, Embed={args.embed}")
+    runtime = build_runtime(args.llm, args.model, args.embed)
 
     from src.api.main import create_app
     app = create_app(runtime)
