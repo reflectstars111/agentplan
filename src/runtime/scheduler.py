@@ -67,6 +67,8 @@ class Scheduler:
         # Main execution loop
         while not task_graph.all_completed():
             ready = task_graph.get_ready_nodes(completed)
+            # Sort by priority descending (highest priority first, per §8.3)
+            ready.sort(key=lambda tid: task_graph.get_node(tid).priority, reverse=True)
 
             if not ready:
                 self._skip_remaining(task_graph, completed, failed)

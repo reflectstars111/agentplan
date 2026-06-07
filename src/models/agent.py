@@ -44,6 +44,7 @@ class AgentProcess:
     system_prompt_id: str = ""
     available_tools: list[str] = field(default_factory=list)
     memory_scope: dict = field(default_factory=dict)   # {"private": "...", "shared": "...", "external": [...]}
+    permissions: dict = field(default_factory=dict)     # {"read_memory": [...], "write_memory": [...], "tools": [...], ...}
     context_budget: int = 24000
     parent_agent: Optional[str] = None
     created_at: str = ""

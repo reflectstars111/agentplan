@@ -88,3 +88,26 @@ class OutputFormatter:
             lines.append(body)
             lines.append("")
         return "\n".join(lines)
+
+    @staticmethod
+    def diff(old: str, new: str, filename: str = "") -> str:
+        """Generate a unified diff between old and new text.
+
+        Args:
+            old: Original text.
+            new: Modified text.
+            filename: Optional filename for diff header.
+
+        Returns:
+            Unified diff string, or empty string if inputs are identical.
+        """
+        import difflib
+        fromfile = f"a/{filename}" if filename else "a/original"
+        tofile = f"b/{filename}" if filename else "b/modified"
+        diff_lines = difflib.unified_diff(
+            old.splitlines(keepends=True),
+            new.splitlines(keepends=True),
+            fromfile=fromfile,
+            tofile=tofile,
+        )
+        return "".join(diff_lines)

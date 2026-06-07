@@ -8,7 +8,10 @@ from src.runtime.agent_runtime import AgentRuntime
 from src.api.routes import create_router
 
 
-def create_app(runtime: AgentRuntime) -> FastAPI:
+def create_app(
+    runtime: AgentRuntime,
+    controller=None,
+) -> FastAPI:
     app = FastAPI(
         title="Agent-OS MVP",
         description="Von Neumann-inspired Agent Runtime with multi-level memory, "
@@ -22,6 +25,12 @@ def create_app(runtime: AgentRuntime) -> FastAPI:
 
     router = create_router(runtime)
     app.include_router(router)
+
+    # Wire task execution endpoints if Controller is provided
+    if controller is not None:
+        from src.api.task_routes import create_task_router
+        task_router = create_task_router(controller)
+        app.include_router(task_router)
 
     @app.get("/health")
     async def health():
