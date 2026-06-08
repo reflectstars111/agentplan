@@ -1,6 +1,7 @@
 """Tests for ContextPageFault integration with AgentRuntime."""
 import pytest
 import numpy as np
+from unittest.mock import patch
 from src.db import Database
 from src.storage.file_store import FileStore
 from src.storage.memory_store import MemoryStore
@@ -101,7 +102,22 @@ class TestPageFaultInAgentRuntime:
             return "Based on the retrieved documents, FastAPI is a Python web framework."
 
         runtime_with_page_fault.llm_fn = mock_llm
+        candidates = runtime_with_page_fault.retriever.retrieve_and_rerank(
+            "what is FastAPI?",
+            runtime_with_page_fault.embed_fn,
+            k=5,
+        )
 
-        result = runtime_with_page_fault.process_query_with_page_fault("what is FastAPI?")
+        with patch.object(
+            runtime_with_page_fault.retriever,
+            "retrieve_and_rerank",
+            return_value=candidates,
+        ) as reranked, patch.object(
+            runtime_with_page_fault.retriever,
+            "retrieve",
+            side_effect=AssertionError("page faults must use the reranked path"),
+        ):
+            result = runtime_with_page_fault.process_query_with_page_fault("what is FastAPI?")
         assert call_count[0] >= 2
+        assert reranked.call_count >= 2
         assert "response" in result

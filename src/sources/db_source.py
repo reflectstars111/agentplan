@@ -5,6 +5,7 @@ Maps to agent_os_initial_plan.md §10.1 (Database input).
 
 import sqlite3
 import re
+from src.models.chunk import TrustLevel
 
 
 class DbSource:
@@ -59,7 +60,10 @@ class DbSource:
         text = "\n".join(text_lines)
         name = source_name or f"db:{db_path}"
         source_id = file_store.ingest_text(
-            content=text, source_name=name, source_type="database"
+            content=text,
+            source_name=name,
+            source_type="database",
+            trust_level=TrustLevel.TOOL_OBSERVATION,
         )
         return {
             "source_id": source_id,

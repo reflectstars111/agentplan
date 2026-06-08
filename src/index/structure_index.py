@@ -68,6 +68,14 @@ class StructureIndex:
         ).fetchall()
         return [self._row_to_node(dict(r)) for r in rows]
 
+    def delete_source(self, source_id: str) -> None:
+        """Delete structure nodes owned by a source before re-indexing it."""
+        self.db.execute(
+            "DELETE FROM structure_nodes WHERE source_id = ?",
+            (source_id,),
+        )
+        self.db.commit()
+
     def get_subtree(self, node_id: str) -> list[StructureNode]:
         """Get a node and all its descendants using recursive CTE."""
         rows = self.db.execute("""

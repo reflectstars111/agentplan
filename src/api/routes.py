@@ -1,7 +1,7 @@
 """API routes for Agent-OS MVP."""
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from src.runtime.agent_runtime import AgentRuntime
 
 
@@ -25,12 +25,18 @@ class QueryResponse(BaseModel):
     trace_id: str
     verified: bool
     context_pack_id: str
-    unverified_claims: list[str] = []
+    unverified_claims: list[str] = Field(default_factory=list)
+    conflicting_pairs: list[tuple[str, str]] = Field(default_factory=list)
+    suggestions: list[str] = Field(default_factory=list)
+    writeback: dict = Field(default_factory=dict)
+    writeback_confirmation_required: bool = False
+    security: dict = Field(default_factory=dict)
 
 
 class TraceResponse(BaseModel):
     trace_id: str
     request_id: str
+    parent_trace_id: str | None = None
     steps: list[dict]
 
 
@@ -80,11 +86,17 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
 
         gs = GithubSource()
         result = gs.clone_and_index(
-            repo_url, runtime.file_store, branch,
-            embed_fn=runtime.embed_fn,
-            vector_index=runtime.retriever.vector_index,
-            entity_index=runtime.entity_index,
+            repo_url,
+            runtime.file_store,
+            branch,
         )
+        for source_id in result.get("source_ids", []):
+            runtime.index_source(source_id)
+        if result.get("source_ids"):
+            result["chunks_indexed"] = sum(
+                len(runtime.file_store.get_chunks(source_id))
+                for source_id in result["source_ids"]
+            )
         return result
 
     @router.post("/upload/url")
@@ -95,7 +107,12 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         if not url:
             return {"error": "url is required"}
         ws = WebSource()
-        return ws.fetch_and_index(url, runtime.file_store, req.get("source_name", ""))
+        result = ws.fetch_and_index(
+            url, runtime.file_store, req.get("source_name", "")
+        )
+        if result.get("source_id"):
+            result["chunks_indexed"] = runtime.index_source(result["source_id"])
+        return result
 
     @router.post("/upload/api")
     async def upload_api(req: dict):
@@ -105,7 +122,7 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         if not url:
             return {"error": "url is required"}
         src = ApiSource()
-        return src.fetch_and_index(
+        result = src.fetch_and_index(
             url=url,
             file_store=runtime.file_store,
             method=req.get("method", "GET"),
@@ -114,6 +131,9 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
             json_path=req.get("json_path", ""),
             source_name=req.get("source_name", ""),
         )
+        if result.get("source_id"):
+            result["chunks_indexed"] = runtime.index_source(result["source_id"])
+        return result
 
     @router.post("/upload/db")
     async def upload_db(req: dict):
@@ -124,13 +144,16 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         if not db_path or not query:
             return {"error": "db_path and query are required"}
         src = DbSource()
-        return src.query_and_index(
+        result = src.query_and_index(
             db_path=db_path,
             query=query,
             file_store=runtime.file_store,
             db_type=req.get("db_type", "sqlite"),
             source_name=req.get("source_name", ""),
         )
+        if result.get("source_id"):
+            result["chunks_indexed"] = runtime.index_source(result["source_id"])
+        return result
 
     @router.post("/output/file")
     async def output_file(req: dict):
@@ -165,6 +188,13 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
             verified=result["verified"],
             context_pack_id=result["context_pack_id"],
             unverified_claims=result.get("unverified_claims", []),
+            conflicting_pairs=result.get("conflicting_pairs", []),
+            suggestions=result.get("suggestions", []),
+            writeback=result.get("writeback", {}),
+            writeback_confirmation_required=result.get(
+                "writeback_confirmation_required", False
+            ),
+            security=result.get("security", {}),
         )
 
     @router.get("/trace/{trace_id}", response_model=TraceResponse)
@@ -177,6 +207,7 @@ def create_router(runtime: AgentRuntime) -> APIRouter:
         return TraceResponse(
             trace_id=trace.trace_id,
             request_id=trace.request_id,
+            parent_trace_id=trace.parent_trace_id,
             steps=[
                 {
                     "step_id": s.step_id,

@@ -37,7 +37,19 @@ class Planner:
 
         graph = TaskGraph(intent_id=intent.intent_id)
         template_fn(graph, intent)
+        self._assign_dataflow_refs(graph)
         return graph
+
+    def _assign_dataflow_refs(self, graph: TaskGraph) -> None:
+        """Derive blackboard inputs and outputs from the completed DAG."""
+        for task in graph.nodes.values():
+            if not task.output_ref:
+                task.output_ref = f"task_output.{task.task_id}"
+        for task_id, task in graph.nodes.items():
+            task.input_refs = [
+                graph.get_node(dep_id).output_ref
+                for dep_id in sorted(graph.adj_in.get(task_id, set()))
+            ]
 
     # ── Templates ──────────────────────────────────────────────
 

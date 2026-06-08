@@ -6,6 +6,7 @@ Maps to agent_os_initial_plan.md §10.1 (API input).
 import json
 from urllib.request import Request, urlopen
 from urllib.error import URLError
+from src.models.chunk import TrustLevel
 
 
 class ApiSource:
@@ -85,6 +86,9 @@ class ApiSource:
 
         name = source_name or url.rstrip("/").split("/")[-1] or "api_data"
         source_id = file_store.ingest_text(
-            content=text, source_name=name, source_type="api"
+            content=text,
+            source_name=name,
+            source_type="api",
+            trust_level=TrustLevel.EXTERNAL_UNTRUSTED,
         )
         return {"source_id": source_id, "item_count": item_count}

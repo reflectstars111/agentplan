@@ -83,3 +83,19 @@ class TestPlanner:
         graph = planner.plan(intent)
         task_types = {t.task_type for t in graph.nodes.values()}
         assert "writeback" in task_types
+
+    def test_plan_assigns_dataflow_refs_from_dependencies(self, planner):
+        intent = Intent(
+            intent_id="i8",
+            intent_type=IntentType.DOCUMENT_QA,
+            original_query="Explain the scheduler.",
+        )
+        graph = planner.plan(intent)
+
+        for task in graph.nodes.values():
+            assert task.output_ref
+            expected_inputs = {
+                graph.get_node(dep_id).output_ref
+                for dep_id in graph.adj_in.get(task.task_id, set())
+            }
+            assert set(task.input_refs) == expected_inputs

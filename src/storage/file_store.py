@@ -104,6 +104,13 @@ class FileStore:
         row = self.db.execute("SELECT COUNT(*) as cnt FROM chunks").fetchone()
         return row["cnt"] if row else 0
 
+    def list_chunks(self) -> list[DocumentChunk]:
+        """Return every persisted chunk in stable insertion order."""
+        rows = self.db.execute(
+            "SELECT * FROM chunks ORDER BY created_at, chunk_id"
+        ).fetchall()
+        return [self._row_to_chunk(dict(r)) for r in rows]
+
     def _insert_chunk(self, chunk: DocumentChunk) -> None:
         now = datetime.now(timezone.utc).isoformat()
         self.db.execute(
@@ -126,9 +133,19 @@ class FileStore:
 
     def _ingest_pdf(self, file_path: Path, source_id: str) -> str:
         """Ingest a PDF using OpenDataLoader (auto) or PyMuPDF (fallback)."""
+        return self.ingest_pdf(file_path, parser_mode="auto")
+
+    def ingest_pdf(
+        self,
+        file_path: Path,
+        parser_mode: str = "auto",
+    ) -> str:
+        """Ingest a PDF with an explicit parser mode."""
         from src.parsing.pdf_parser import PDFParser
 
-        parser = PDFParser(mode="auto")
+        source_id = f"file:{file_path.name}"
+        self.delete_source(source_id)
+        parser = PDFParser(mode=parser_mode)
         result = parser.parse(file_path, source_id)
 
         for chunk in result.chunks:

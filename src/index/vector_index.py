@@ -1,7 +1,7 @@
 """VectorIndex — FAISS wrapper for semantic similarity search."""
 
 import numpy as np
-from typing import Optional
+from pathlib import Path
 
 
 class VectorIndex:
@@ -15,6 +15,7 @@ class VectorIndex:
         import faiss
 
         self.dim = dim
+        self.index_path = index_path
         # IndexFlatIP for inner product; normalize vectors for cosine similarity
         self._quantizer = faiss.IndexFlatIP(dim)
         # IndexIDMap allows custom integer IDs and removal
@@ -24,7 +25,11 @@ class VectorIndex:
         self._chunk_to_id: dict[str, int] = {}
         self._next_id: int = 0
 
-        if index_path:
+        if (
+            index_path
+            and Path(index_path).exists()
+            and Path(index_path + ".meta.json").exists()
+        ):
             self.load(index_path)
 
     @property
@@ -109,12 +114,24 @@ class VectorIndex:
         with open(meta_path, "w", encoding="utf-8") as f:
             json.dump(meta, f)
 
+    def persist(self) -> None:
+        """Persist to the configured index path, if one was supplied."""
+        if not self.index_path:
+            return
+        Path(self.index_path).parent.mkdir(parents=True, exist_ok=True)
+        self.save(self.index_path)
+
     def load(self, path: str) -> None:
         """Load index and ID mappings from disk."""
         import json
         import faiss
 
-        self._index = faiss.read_index(path)
+        loaded = faiss.read_index(path)
+        if loaded.d != self.dim:
+            raise ValueError(
+                f"Vector index dimension {loaded.d} does not match {self.dim}"
+            )
+        self._index = loaded
         # Load ID mappings
         meta_path = path + ".meta.json"
         try:

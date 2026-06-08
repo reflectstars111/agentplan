@@ -67,3 +67,19 @@ class TestKeywordIndex:
             # Scores should be between 0.0 and 1.0 after normalization
             for _, score in results:
                 assert 0.0 <= score <= 1.0
+
+    def test_best_fts_match_has_highest_normalized_score(
+        self, file_store, kw_index
+    ):
+        file_store.ingest_text(
+            content="FastAPI FastAPI FastAPI async framework.",
+            source_name="strong.txt",
+        )
+        file_store.ingest_text(
+            content="FastAPI appears once.",
+            source_name="weak.txt",
+        )
+
+        results = kw_index.search_chunks("FastAPI", k=5)
+        assert len(results) == 2
+        assert results[0][1] >= results[1][1]

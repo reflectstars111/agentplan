@@ -91,6 +91,10 @@ class TestTaskEndpoint:
         data = resp.json()
         assert "response" in data
         assert "intent" in data
+        assert data["trace_id"].startswith("trace_")
+        assert "conflicting_pairs" in data
+        assert "suggestions" in data
+        assert "writeback" in data
 
     def test_post_task_includes_task_graph_summary(self, client):
         resp = client.post("/task", json={"query": "Explain the RAPTOR algorithm."})
@@ -115,3 +119,15 @@ class TestTaskEndpoint:
         resp = client.get("/health")
         assert resp.status_code == 200
         assert resp.json()["status"] == "ok"
+
+    def test_task_child_traces_reference_controller_trace(self, client):
+        response = client.post(
+            "/task",
+            json={"query": "What is FastAPI?"},
+        )
+        data = response.json()
+        assert data["trace_ids"]
+
+        child = client.get(f"/trace/{data['trace_ids'][0]}")
+        assert child.status_code == 200
+        assert child.json()["parent_trace_id"] == data["trace_id"]

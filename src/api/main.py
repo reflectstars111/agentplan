@@ -18,6 +18,8 @@ def create_app(
                     "hybrid retrieval, context assembly, and trace observability.",
         version="0.2.0",
     )
+    app.state.runtime = runtime
+    app.state.controller = controller
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],

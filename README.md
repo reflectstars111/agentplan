@@ -45,18 +45,18 @@ A Von Neumann-inspired Multi-Agent Runtime System — built with Python, SQLite,
 | Category | Capability |
 |----------|------------|
 | **Multi-Level Memory** | L0(input) → L1(dialog cache) → L2(working) → L3(long-term) → L4(files) |
-| **Hybrid Retrieval** | FAISS vector search + FTS5 keyword search + 8-component weighted scoring |
+| **Hybrid Retrieval** | Persistent FAISS + FTS5 keyword search + query planning + reranking |
 | **Code Understanding** | tree-sitter AST parsing for Python/JS/TS — function/class/method extraction |
 | **PDF Parsing** | OpenDataLoader (structured Markdown/JSON) with PyMuPDF fallback |
 | **Context MMU** | Dedup → sort → token budget → source annotation → ContextPack |
-| **Task Graph** | DAG-based task decomposition with topological scheduling |
-| **Multi-Agent** | AgentRegistry routing + SharedBlackboard + 6-stage Merger |
+| **Task Graph** | DAG decomposition with dependency outputs injected into downstream tasks |
+| **Multi-Agent** | AgentRegistry routing + worker/verifier runtimes + SharedBlackboard |
 | **Real LLM** | OpenAI / DeepSeek / Anthropic via unified factory (model selector in GUI) |
 | **Local Embedding** | BGE-M3 (1024-dim, 100+ languages, pure CPU) |
 | **Security** | Prompt injection detection, Agent permission model, audit logging |
 | **GitHub Indexing** | Clone + auto-index repos via GitPython |
-| **Observability** | Full execution trace per request, structured audit queries |
-| **Evaluation** | precision@k, recall@k, MRR, nDCG, hit@k against 5 scenarios |
+| **Observability** | Parent/child execution traces, security steps, and structured audit queries |
+| **Evaluation** | Labeled PDF/code/continuity benchmark with RAG baseline and ablations |
 
 ## Quick Start
 
@@ -76,6 +76,12 @@ pip install -r requirements.txt
 # Build GUI
 cd gui && npm install && npm run build && cd ..
 ```
+
+The default PDF path falls back to PyMuPDF. OpenDataLoader additionally
+requires Java 11+, while OCR additionally requires a local Tesseract install.
+
+Existing databases are migrated in place at startup. The FAISS index is loaded
+from disk when available and rebuilt from stored chunks when it is missing.
 
 ### Run
 
@@ -113,10 +119,18 @@ python -m src [options]
 | `POST` | `/upload` | Upload text content for indexing |
 | `POST` | `/upload/file` | Upload file (PDF, code, markdown) |
 | `POST` | `/upload/github` | Clone and index a GitHub repository |
+| `POST` | `/upload/url` | Fetch and index an external web page |
+| `POST` | `/upload/api` | Fetch and index an external JSON API |
+| `POST` | `/upload/db` | Run a read-only database query and index its rows |
 | `POST` | `/query` | Simple Q&A (single-agent pipeline) |
 | `POST` | `/task` | Task graph execution (multi-agent pipeline) |
 | `GET` | `/trace/{id}` | Retrieve execution trace |
 | `GET` | `/health` | Health check |
+
+Query and task responses include verification conflicts, suggestions,
+write-back confirmation state, and security diagnostics. Task responses return
+the controller `trace_id` plus child `trace_ids`; trace records expose
+`parent_trace_id`.
 
 ### Example
 
@@ -163,7 +177,7 @@ agentplan/
 ├── gui/                      # React + Vite + TypeScript frontend
 ├── models/bge-m3/            # BGE-M3 model files (local)
 ├── eval/                     # Evaluation scenarios + metrics
-├── tests/                    # 34 test files, 273 tests
+├── tests/                    # Unit, integration, API, and benchmark tests
 ├── agent_os_initial_plan.md  # Original architectural plan
 └── requirements.txt
 ```
@@ -181,7 +195,7 @@ agentplan/
 | LLM API | OpenAI / DeepSeek / Anthropic (unified factory) |
 | API Server | FastAPI + Uvicorn |
 | Frontend | React 18 + TypeScript + Vite |
-| Testing | pytest (273 tests, 100% pass) |
+| Testing | pytest unit, integration, API, restart, migration, and benchmark coverage |
 | Git Integration | GitPython |
 
 ## Configuration
@@ -224,9 +238,10 @@ python -m pytest tests/ -v
 # Specific module
 python -m pytest tests/test_hybrid_retriever.py -v
 python -m pytest tests/parsing/test_code_parser.py -v
-```
 
-273 tests, 100% pass rate.
+# Labeled PDF/code/continuity benchmark and ablations
+python -m eval.runner --top-k 3
+```
 
 ## License
 

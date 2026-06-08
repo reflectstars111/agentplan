@@ -114,3 +114,55 @@ class TestScheduler:
         result = scheduler.execute(graph)
         assert "task_0" in result["results"]
         assert "response" in result["results"]["task_0"]
+
+    def test_downstream_nodes_receive_dependency_outputs(self):
+        class RecordingRuntime:
+            def __init__(self):
+                self.queries = []
+
+            def process_query(self, query, request_id=None):
+                self.queries.append((request_id, query))
+                return {
+                    "response": {
+                        "retrieve": "retrieved evidence",
+                        "reason": "reasoned answer",
+                        "verify": "verified answer",
+                    }[request_id],
+                    "trace_id": f"trace_{request_id}",
+                    "verified": request_id == "verify",
+                }
+
+        runtime = RecordingRuntime()
+        scheduler = Scheduler(runtime)
+        graph = TaskGraph(intent_id="dataflow")
+        retrieve = Task(
+            task_id="retrieve",
+            task_type="retrieve",
+            input={"query": "original question", "task": "find evidence"},
+            output_ref="retrieval.output",
+        )
+        reason = Task(
+            task_id="reason",
+            task_type="reason",
+            input={"query": "original question", "task": "answer from evidence"},
+            input_refs=["retrieval.output"],
+            output_ref="reason.output",
+        )
+        verify = Task(
+            task_id="verify",
+            task_type="verify",
+            input={"query": "original question", "task": "check the answer"},
+            input_refs=["reason.output"],
+            output_ref="verify.output",
+        )
+        for task in (retrieve, reason, verify):
+            graph.add_node(task)
+        graph.add_edge("retrieve", "reason")
+        graph.add_edge("reason", "verify")
+
+        scheduler.execute(graph)
+        queries = dict(runtime.queries)
+        assert "retrieved evidence" in queries["reason"]
+        assert "reasoned answer" in queries["verify"]
+        assert queries["retrieve"] != queries["reason"]
+        assert queries["reason"] != queries["verify"]

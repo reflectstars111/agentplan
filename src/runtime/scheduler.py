@@ -10,6 +10,7 @@ Maps to agent_os_initial_plan.md §6.2 (Controller execution cycle) and §8.3.
 """
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import inspect
 from typing import Any
 from src.models.task import Task, TaskStatus, TaskGraph
 from src.models.blackboard import BlackboardEntry
@@ -43,6 +44,7 @@ class Scheduler:
     def execute(
         self, task_graph: TaskGraph, request_id: str = "",
         parallel: bool = False,
+        parent_trace_id: str | None = None,
     ) -> dict[str, Any]:
         """Execute all tasks in topological order.
 
@@ -83,6 +85,7 @@ class Scheduler:
                         f = executor.submit(
                             self._execute_one, task, task_graph,
                             completed, failed, results, trace_ids,
+                            parent_trace_id,
                         )
                         futures[f] = task_id
                     for f in as_completed(futures):
@@ -90,7 +93,15 @@ class Scheduler:
             else:
                 for task_id in ready:
                     task = task_graph.get_node(task_id)
-                    self._execute_one(task, task_graph, completed, failed, results, trace_ids)
+                    self._execute_one(
+                        task,
+                        task_graph,
+                        completed,
+                        failed,
+                        results,
+                        trace_ids,
+                        parent_trace_id,
+                    )
 
         status = "completed" if not failed else "partial_failure"
 
@@ -109,6 +120,7 @@ class Scheduler:
         failed: set[str],
         results: dict,
         trace_ids: list[str],
+        parent_trace_id: str | None = None,
     ) -> None:
         """Execute a single task node with retry logic.
 
@@ -123,18 +135,25 @@ class Scheduler:
 
         for attempt in range(task.max_retries + 1):
             try:
-                # Build query: combine the task input with the task type
-                query = task.input.get("query", task.input.get("task", ""))
+                query = self._build_task_query(task, task_graph, results)
                 # Use page-fault-aware execution if configured
                 if self.page_fault and hasattr(runtime, 'process_query_with_page_fault'):
-                    result = runtime.process_query_with_page_fault(
-                        query, request_id=task.task_id,
+                    result = self._call_runtime(
+                        runtime.process_query_with_page_fault,
+                        query,
+                        task.task_id,
+                        parent_trace_id,
                     )
                 else:
-                    result = runtime.process_query(
-                        query, request_id=task.task_id,
+                    result = self._call_runtime(
+                        runtime.process_query,
+                        query,
+                        task.task_id,
+                        parent_trace_id,
                     )
 
+                result["agent_id"] = task.agent_id
+                result["task_type"] = task.task_type
                 task.status = TaskStatus.COMPLETED
                 task.output = result
                 task.trace_id = result.get("trace_id", "")
@@ -184,10 +203,60 @@ class Scheduler:
         Returns the registered runtime or the default fallback.
         """
         if self.agent_registry and self.agent_registry.has_agent(task.agent_type):
-            _, runtime = self.agent_registry.get_agent(task.agent_type)
+            process, runtime = self.agent_registry.get_agent(task.agent_type)
             if runtime is not None:
+                task.agent_id = process.agent_id
                 return runtime
+        task.agent_id = getattr(self.agent_runtime, "agent_id", task.agent_type)
         return self.agent_runtime
+
+    @staticmethod
+    def _call_runtime(method, query, request_id, parent_trace_id):
+        kwargs = {"request_id": request_id}
+        if (
+            parent_trace_id
+            and "parent_trace_id" in inspect.signature(method).parameters
+        ):
+            kwargs["parent_trace_id"] = parent_trace_id
+        return method(query, **kwargs)
+
+    def _build_task_query(
+        self,
+        task: Task,
+        task_graph: TaskGraph,
+        results: dict,
+    ) -> str:
+        """Resolve declared input refs and build the node's execution prompt."""
+        upstream = []
+        for ref in task.input_refs:
+            value = None
+            if self.blackboard:
+                entry = self.blackboard.read(ref)
+                if entry is not None:
+                    value = entry.value
+            if value is None:
+                for dep_id in task_graph.adj_in.get(task.task_id, set()):
+                    dependency = task_graph.get_node(dep_id)
+                    if dependency.output_ref == ref and dep_id in results:
+                        value = results[dep_id].get("response", "")
+                        break
+            if value:
+                upstream.append((ref, value))
+
+        original_query = task.input.get("query", "")
+        instruction = task.input.get("task", task.task_type)
+        parts = [
+            f"Task type: {task.task_type}",
+            f"Task instruction: {instruction}",
+        ]
+        if original_query:
+            parts.append(f"Original request: {original_query}")
+        if upstream:
+            rendered = "\n".join(
+                f"[{ref}]\n{value}" for ref, value in upstream
+            )
+            parts.append(f"Upstream outputs:\n{rendered}")
+        return "\n\n".join(parts)
 
     def _propagate_failure(self, task_graph: TaskGraph, failed_id: str) -> None:
         """Mark all transitive dependents of a failed task as SKIPPED."""

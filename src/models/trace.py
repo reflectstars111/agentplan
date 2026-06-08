@@ -8,6 +8,7 @@ from dataclasses_json import dataclass_json, config
 
 
 class StepType(str, Enum):
+    SECURITY = "security"
     INTENT_DECODE = "intent_decode"
     PLAN = "plan"
     SCHEDULE = "schedule"
@@ -54,6 +55,7 @@ class Trace:
 
     trace_id: str
     request_id: str
+    parent_trace_id: Optional[str] = None
     steps: list[TraceStep] = field(default_factory=list)
 
     def add_step(self, step: TraceStep) -> None:

@@ -22,18 +22,31 @@ class TraceLogger:
     def __init__(self, db: Database):
         self.db = db
 
-    def start_trace(self, request_id: str) -> Trace:
+    def start_trace(
+        self,
+        request_id: str,
+        parent_trace_id: str | None = None,
+    ) -> Trace:
         """Create a new execution trace. Returns the Trace object."""
         trace_id = f"trace_{uuid.uuid4().hex[:12]}"
         now = datetime.now(timezone.utc).isoformat()
 
         self.db.execute(
-            "INSERT INTO traces (trace_id, request_id, steps, created_at) VALUES (?, ?, ?, ?)",
-            (trace_id, request_id, json.dumps([]), now),
+            """
+            INSERT INTO traces
+                (trace_id, request_id, parent_trace_id, steps, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (trace_id, request_id, parent_trace_id, json.dumps([]), now),
         )
         self.db.commit()
 
-        return Trace(trace_id=trace_id, request_id=request_id, steps=[])
+        return Trace(
+            trace_id=trace_id,
+            request_id=request_id,
+            parent_trace_id=parent_trace_id,
+            steps=[],
+        )
 
     def add_step(self, trace_id: str, step: TraceStep) -> None:
         """Append a step to an existing trace."""
@@ -79,6 +92,18 @@ class TraceLogger:
         ).fetchall()
         return [self._row_to_trace(dict(r)) for r in rows]
 
+    def list_children(self, parent_trace_id: str) -> list[Trace]:
+        """List direct child traces in creation order."""
+        rows = self.db.execute(
+            """
+            SELECT * FROM traces
+            WHERE parent_trace_id = ?
+            ORDER BY created_at
+            """,
+            (parent_trace_id,),
+        ).fetchall()
+        return [self._row_to_trace(dict(row)) for row in rows]
+
     def _row_to_trace(self, row: dict) -> Trace:
         steps_data = json.loads(row.get("steps", "[]"))
         steps = []
@@ -101,5 +126,6 @@ class TraceLogger:
         return Trace(
             trace_id=row["trace_id"],
             request_id=row["request_id"],
+            parent_trace_id=row.get("parent_trace_id"),
             steps=steps,
         )

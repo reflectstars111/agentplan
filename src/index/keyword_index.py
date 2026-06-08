@@ -40,7 +40,9 @@ class KeywordIndex:
 
         results = []
         for r in rows:
-            normalized = (r["rank"] - min_rank) / (max_rank - min_rank)
+            normalized = 1.0 - (
+                (r["rank"] - min_rank) / (max_rank - min_rank)
+            )
             results.append((r["chunk_id"], round(normalized, 4)))
         return results
 
@@ -69,7 +71,9 @@ class KeywordIndex:
 
         results = []
         for r in rows:
-            normalized = (r["rank"] - min_rank) / (max_rank - min_rank)
+            normalized = 1.0 - (
+                (r["rank"] - min_rank) / (max_rank - min_rank)
+            )
             results.append((r["memory_id"], round(normalized, 4)))
         return results
 

@@ -7,6 +7,7 @@ Maps to agent_os_initial_plan.md §18.4 (MVP flow).
 """
 
 import uuid
+import hashlib
 from pathlib import Path
 from typing import Callable, Any, Optional
 from src.config import Config
@@ -14,6 +15,7 @@ from src.db import Database
 from src.storage.file_store import FileStore
 from src.storage.memory_store import MemoryStore
 from src.index.hybrid_retriever import HybridRetriever, RetrievalResult
+from src.index.memory_retriever import MemoryRetriever
 from src.context.mmu import ContextMMU
 from src.context.token_budgeter import TokenBudgeter
 from src.runtime.verifier import Verifier, VerifyOutput
@@ -54,6 +56,10 @@ class AgentRuntime:
         dependency_graph=None,
         conversation_cache=None,
         permission_checker=None,
+        memory_retriever=None,
+        input_sanitizer=None,
+        audit_log=None,
+        tool_router=None,
     ):
         self.file_store = file_store
         self.memory_store = memory_store
@@ -73,6 +79,13 @@ class AgentRuntime:
         self.dependency_graph = dependency_graph
         self.conversation_cache = conversation_cache
         self.permission_checker = permission_checker
+        self.memory_retriever = memory_retriever or MemoryRetriever(
+            memory_store,
+            retriever.keyword_index,
+        )
+        self.input_sanitizer = input_sanitizer
+        self.audit_log = audit_log
+        self.tool_router = tool_router
 
         # Build a default AgentProcess for permission checks
         if permission_checker:
@@ -90,18 +103,7 @@ class AgentRuntime:
     def upload_text(self, content: str, source_name: str) -> str:
         """Upload text content and index it. Returns source_id."""
         source_id = self.file_store.ingest_text(content, source_name)
-
-        # Index in vector store
-        chunks = self.file_store.get_chunks(source_id)
-        for chunk in chunks:
-            if self.embed_fn:
-                emb = self.embed_fn([chunk.text])
-                if emb is not None and len(emb) > 0:
-                    self.retriever.vector_index.add(chunk.chunk_id, emb[0])
-
-        # Extract and index entities
-        if self.entity_index:
-            self.entity_index.extract_and_index(chunks)
+        self.index_source(source_id)
 
         # Extract dependency graph for code files
         if self.dependency_graph:
@@ -123,26 +125,74 @@ class AgentRuntime:
     def upload_file(self, file_path: Path) -> str:
         """Upload a file from disk and index it. Returns source_id."""
         source_id = self.file_store.ingest_file(file_path)
+        self.index_source(source_id)
+        return source_id
 
-        # Index in vector store
+    def index_source(self, source_id: str) -> int:
+        """Update all secondary indexes for a persisted source."""
         chunks = self.file_store.get_chunks(source_id)
         for chunk in chunks:
             if self.embed_fn:
                 emb = self.embed_fn([chunk.text])
                 if emb is not None and len(emb) > 0:
                     self.retriever.vector_index.add(chunk.chunk_id, emb[0])
+        self.retriever.vector_index.persist()
 
         # Extract and index entities
         if self.entity_index:
             self.entity_index.extract_and_index(chunks)
+        self._index_structure(source_id, chunks)
+        return len(chunks)
 
-        return source_id
+    def _index_structure(self, source_id: str, chunks: list) -> None:
+        structure_index = getattr(self.retriever, "structure_index", None)
+        if structure_index is None:
+            return
+
+        from src.models.structure_node import StructureNode
+
+        source_hash = hashlib.sha1(source_id.encode("utf-8")).hexdigest()[:12]
+        root_id = f"structure_{source_hash}"
+        nodes = [
+            StructureNode(
+                node_id=root_id,
+                source_id=source_id,
+                node_type="file",
+                name=source_id.split(":", 1)[-1],
+                chunk_ids=[chunk.chunk_id for chunk in chunks],
+            )
+        ]
+        for index, chunk in enumerate(chunks):
+            location = chunk.location
+            label = (
+                location.section
+                or (f"page {location.page}" if location.page is not None else "")
+                or f"chunk {index + 1}"
+            )
+            nodes.append(
+                StructureNode(
+                    node_id=f"{root_id}_{index}",
+                    source_id=source_id,
+                    node_type=chunk.chunk_type.value,
+                    name=label,
+                    parent_id=root_id,
+                    depth=1,
+                    location_page=location.page,
+                    location_section=location.section,
+                    location_line_start=location.line_start,
+                    location_line_end=location.line_end,
+                    chunk_ids=[chunk.chunk_id],
+                )
+            )
+        structure_index.delete_source(source_id)
+        structure_index.index_nodes(nodes)
 
     def process_query(
         self,
         query: str,
         request_id: str | None = None,
         model: str = "",
+        parent_trace_id: str | None = None,
     ) -> dict[str, Any]:
         """Execute the full Agent-OS pipeline for a user query.
 
@@ -163,7 +213,10 @@ class AgentRuntime:
             self._agent_process.transition(AgentStatus.RUNNING)
 
         # 1. Start trace
-        trace = self.trace_logger.start_trace(request_id)
+        trace = self.trace_logger.start_trace(request_id, parent_trace_id)
+        security = self.sanitize_input(query)
+        query = security["sanitized_text"]
+        self._trace_security(trace.trace_id, security)
 
         try:
             # Record user message in conversation cache
@@ -187,7 +240,9 @@ class AgentRuntime:
             verify_result = self._step_verify(response, context_pack, trace)
 
             # 6. Evaluate memory writeback
-            self._step_writeback(query, response, verify_result, trace)
+            writeback = self._step_writeback(
+                query, response, verify_result, trace
+            )
 
             if self._agent_process:
                 self._agent_process.transition(AgentStatus.COMPLETED)
@@ -198,6 +253,13 @@ class AgentRuntime:
                 "verified": verify_result.is_verified,
                 "context_pack_id": context_pack.context_id,
                 "unverified_claims": verify_result.unverified_claims,
+                "conflicting_pairs": verify_result.conflicting_pairs,
+                "suggestions": verify_result.suggestions,
+                "writeback": writeback,
+                "writeback_confirmation_required": (
+                    writeback["action"] == "ask_user"
+                ),
+                "security": security,
             }
         except Exception as e:
             if self._agent_process:
@@ -214,6 +276,11 @@ class AgentRuntime:
                 "verified": False,
                 "context_pack_id": "",
                 "unverified_claims": [],
+                "conflicting_pairs": [],
+                "suggestions": [],
+                "writeback": self._skipped_writeback(str(e)),
+                "writeback_confirmation_required": False,
+                "security": security,
             }
 
     def process_query_with_page_fault(
@@ -221,6 +288,7 @@ class AgentRuntime:
         query: str,
         request_id: str | None = None,
         model: str = "",
+        parent_trace_id: str | None = None,
     ) -> dict[str, Any]:
         """Process query with automatic ContextPageFault retry.
 
@@ -229,12 +297,17 @@ class AgentRuntime:
         process_query() if no page_fault is configured.
         """
         if self.page_fault is None:
-            return self.process_query(query, request_id, model)
+            return self.process_query(
+                query, request_id, model, parent_trace_id
+            )
 
         if request_id is None:
             request_id = f"req_{uuid.uuid4().hex[:12]}"
 
-        trace = self.trace_logger.start_trace(request_id)
+        trace = self.trace_logger.start_trace(request_id, parent_trace_id)
+        security = self.sanitize_input(query)
+        query = security["sanitized_text"]
+        self._trace_security(trace.trace_id, security)
 
         try:
             # First attempt: normal pipeline
@@ -262,7 +335,9 @@ class AgentRuntime:
             verify_result = self._step_verify(response, context_pack, trace)
 
             # Writeback
-            self._step_writeback(query, response, verify_result, trace)
+            writeback = self._step_writeback(
+                query, response, verify_result, trace
+            )
 
             return {
                 "response": response,
@@ -270,6 +345,13 @@ class AgentRuntime:
                 "verified": verify_result.is_verified,
                 "context_pack_id": context_pack.context_id,
                 "unverified_claims": verify_result.unverified_claims,
+                "conflicting_pairs": verify_result.conflicting_pairs,
+                "suggestions": verify_result.suggestions,
+                "writeback": writeback,
+                "writeback_confirmation_required": (
+                    writeback["action"] == "ask_user"
+                ),
+                "security": security,
             }
         except Exception as e:
             self.trace_logger.add_step(trace.trace_id, TraceStep(
@@ -284,11 +366,59 @@ class AgentRuntime:
                 "verified": False,
                 "context_pack_id": "",
                 "unverified_claims": [],
+                "conflicting_pairs": [],
+                "suggestions": [],
+                "writeback": self._skipped_writeback(str(e)),
+                "writeback_confirmation_required": False,
+                "security": security,
             }
+
+    def sanitize_input(self, text: str) -> dict:
+        """Return a normalized security scan for a user-controlled string."""
+        if self.input_sanitizer is None:
+            return {
+                "clean": True,
+                "risk_level": "low",
+                "matched_patterns": [],
+                "sanitized_text": text,
+            }
+        return self.input_sanitizer.scan(text)
+
+    def _trace_security(self, trace_id: str, security: dict) -> None:
+        self.trace_logger.add_step(trace_id, TraceStep(
+            step_id="step_security",
+            type=StepType.SECURITY,
+            input={
+                "risk_level": security["risk_level"],
+                "matched_count": len(security["matched_patterns"]),
+            },
+            output={"clean": security["clean"]},
+            status=(
+                StepStatus.SUCCESS
+                if security["clean"]
+                else StepStatus.FAILED
+            ),
+        ))
+
+    def execute_tool(self, name: str, params: dict, trace_id: str = ""):
+        """Execute a registered tool through the permission-aware router."""
+        if self.tool_router is None or self._agent_process is None:
+            raise RuntimeError("Tool routing is not configured")
+        return self.tool_router.execute(
+            name,
+            params,
+            self._agent_process,
+            trace_id=trace_id,
+        )
 
     def get_trace(self, trace_id: str):
         """Retrieve a trace by ID."""
         return self.trace_logger.get_trace(trace_id)
+
+    def close(self) -> None:
+        """Flush persistent indexes and close the shared database."""
+        self.retriever.vector_index.persist()
+        self.file_store.db.close()
 
     # ── Pipeline Steps ────────────────────────────────────────────
 
@@ -305,14 +435,36 @@ class AgentRuntime:
     def _step_assemble(self, query: str, results, trace):
         # Check memory read permission
         working_mems = []
+        long_term_mems = []
         if self.permission_checker and self._agent_process:
             can_read = self.permission_checker.verify_permissions(
                 self._agent_process, "memory_read", scope="working_memory"
             )
             if can_read.get("allowed", True):
-                working_mems = self.memory_store.list_active()
+                selection = self.memory_retriever.retrieve(
+                    query,
+                    scopes=self.memory_scope.get("read_memory") or None,
+                )
+                working_mems = selection.working
+                long_term_mems = selection.long_term
         else:
-            working_mems = self.memory_store.list_active()
+            selection = self.memory_retriever.retrieve(
+                query,
+                scopes=self.memory_scope.get("read_memory") or None,
+            )
+            working_mems = selection.working
+            long_term_mems = selection.long_term
+
+        selected_memories = [*working_mems, *long_term_mems]
+        self.trace_logger.add_step(trace.trace_id, TraceStep(
+            step_id="step_retrieve_memory",
+            type=StepType.RETRIEVE_MEMORY,
+            input={"query": query},
+            output={
+                "num_results": len(selected_memories),
+                "memory_ids": [item.memory_id for item in selected_memories],
+            },
+        ))
 
         conv_history = (
             self.conversation_cache.get_recent_turns(10)
@@ -322,10 +474,14 @@ class AgentRuntime:
             query=query,
             retrieval_results=results,
             working_memories=working_mems,
+            long_term_memories=long_term_mems,
             conversation_history=conv_history,
             task_id="",
             agent_id=self.agent_id,
         )
+        context_pack.memory_ids = [
+            item.memory_id for item in selected_memories
+        ]
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_assemble",
             type=StepType.CONTEXT_ASSEMBLE,
@@ -354,7 +510,11 @@ class AgentRuntime:
         return response
 
     def _step_verify(self, response: str, context_pack, trace) -> VerifyOutput:
-        working_mems = self.memory_store.list_active()
+        working_mems = [
+            item
+            for memory_id in context_pack.memory_ids
+            if (item := self.memory_store.get(memory_id)) is not None
+        ]
         result = self.verifier.verify(response, context_pack, working_mems)
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_verify",
@@ -370,8 +530,16 @@ class AgentRuntime:
         ))
         return result
 
-    def _step_writeback(self, query: str, response: str, verify_result, trace) -> None:
+    def _step_writeback(
+        self, query: str, response: str, verify_result, trace
+    ) -> dict:
         # Only consider writeback if verification passed or has minor issues
+        decision = WritebackDecision(
+            action="skip",
+            location="none",
+            reason="Verification blocked memory writeback",
+            score=0.0,
+        )
         if verify_result.is_verified or len(verify_result.unverified_claims) <= 2:
             # Evaluate: should we write the query+response context to memory?
             content = f"Q: {query}\nA: {response[:300]}"
@@ -394,21 +562,53 @@ class AgentRuntime:
                 if can_write:
                     item = MemoryItem(
                         memory_id=f"mem_{uuid.uuid4().hex[:12]}",
-                        type=MemoryType.CONVERSATION_SUMMARY,
+                        type=(
+                            MemoryType.DECISION
+                            if decision.location == "long_term_memory"
+                            else MemoryType.CONVERSATION_SUMMARY
+                        ),
                         content=content,
                         summary=response[:100],
                         importance=0.6,
                         confidence=0.8,
+                        scope=(
+                            "project"
+                            if decision.location == "long_term_memory"
+                            else "session"
+                        ),
                     )
                     self.memory_store.insert(item)
 
-            self.trace_logger.add_step(trace.trace_id, TraceStep(
-                step_id="step_writeback",
-                type=StepType.WRITE_MEMORY,
-                input={"write_score": decision.score},
-                output={"action": decision.action, "location": decision.location, "reason": decision.reason},
-                status=StepStatus.SUCCESS if decision.action != "skip" else StepStatus.SKIPPED,
-            ))
+        self.trace_logger.add_step(trace.trace_id, TraceStep(
+            step_id="step_writeback",
+            type=StepType.WRITE_MEMORY,
+            input={"write_score": decision.score},
+            output={
+                "action": decision.action,
+                "location": decision.location,
+                "reason": decision.reason,
+            },
+            status=(
+                StepStatus.SUCCESS
+                if decision.action != "skip"
+                else StepStatus.SKIPPED
+            ),
+        ))
+        return {
+            "action": decision.action,
+            "location": decision.location,
+            "reason": decision.reason,
+            "score": decision.score,
+        }
+
+    @staticmethod
+    def _skipped_writeback(reason: str) -> dict:
+        return {
+            "action": "skip",
+            "location": "none",
+            "reason": reason,
+            "score": 0.0,
+        }
 
     @staticmethod
     def _default_llm(context_pack, query: str) -> str:

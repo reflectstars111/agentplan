@@ -63,9 +63,14 @@ class Controller:
         """
         if not request_id:
             request_id = f"req_{uuid.uuid4().hex[:12]}"
+        if self.blackboard:
+            self.blackboard.clear()
+        security = self.agent_runtime.sanitize_input(query)
+        query = security["sanitized_text"]
 
         # Start a controller-level trace
         trace = self.trace_logger.start_trace(request_id)
+        self.agent_runtime._trace_security(trace.trace_id, security)
 
         # Phase 1: Intent Decode
         intent = self.intent_decoder.decode(query, request_id)
@@ -105,7 +110,11 @@ class Controller:
                         "node_count": task_graph.node_count()}, "results": {}, "trace_ids": []}
 
         # Phase 3: Schedule + Execute
-        exec_result = self.scheduler.execute(task_graph, request_id)
+        exec_result = self.scheduler.execute(
+            task_graph,
+            request_id,
+            parent_trace_id=trace.trace_id,
+        )
 
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_schedule",
@@ -120,6 +129,7 @@ class Controller:
 
         # Phase 4: Assemble response
         final_response = self._assemble_response(task_graph, exec_result, intent)
+        diagnostics = self._collect_diagnostics(exec_result)
 
         self.trace_logger.add_step(trace.trace_id, TraceStep(
             step_id="step_respond",
@@ -144,6 +154,8 @@ class Controller:
             "results": exec_result["results"],
             "status": exec_result["status"],
             "trace_ids": exec_result.get("trace_ids", []),
+            "security": security,
+            **diagnostics,
         }
 
     def process_query(
@@ -156,10 +168,23 @@ class Controller:
         return self.agent_runtime.process_query(query, request_id)
 
     def _assemble_response(self, task_graph, exec_result, intent) -> str:
-        """Assemble a final response from task execution results."""
+        """Assemble a final response from task execution results.
+
+        Uses Merger (when available) to unify multi-agent blackboard entries.
+        Falls back to concatenating task outputs when blackboard is empty.
+        """
         results = exec_result.get("results", {})
 
-        # Collect outputs from all completed nodes in order
+        # Try merger + blackboard path first (multi-agent results)
+        if self.merger and self.blackboard:
+            bb_entries_dict = self.blackboard.read_all()
+            if bb_entries_dict:
+                bb_entries = list(bb_entries_dict.values())
+                merged = self.merger.merge(bb_entries)
+                if merged.unified_statement:
+                    return merged.unified_statement
+
+        # Collect outputs from all completed nodes in topological order
         parts = []
         for tid in task_graph.topological_sort():
             if tid in results:
@@ -179,3 +204,41 @@ class Controller:
 
         # For complex graphs, join with separators
         return "\n\n".join(parts)
+
+    @staticmethod
+    def _collect_diagnostics(exec_result: dict) -> dict:
+        conflicts = []
+        suggestions = []
+        writebacks = []
+        for result in exec_result.get("results", {}).values():
+            for pair in result.get("conflicting_pairs", []):
+                normalized = tuple(pair)
+                if normalized not in conflicts:
+                    conflicts.append(normalized)
+            for suggestion in result.get("suggestions", []):
+                if suggestion not in suggestions:
+                    suggestions.append(suggestion)
+            if result.get("writeback"):
+                writebacks.append(result["writeback"])
+
+        writeback = next(
+            (
+                item
+                for item in writebacks
+                if item.get("action") == "ask_user"
+            ),
+            writebacks[-1] if writebacks else {
+                "action": "skip",
+                "location": "none",
+                "reason": "No writeback decision",
+                "score": 0.0,
+            },
+        )
+        return {
+            "conflicting_pairs": conflicts,
+            "suggestions": suggestions,
+            "writeback": writeback,
+            "writeback_confirmation_required": (
+                writeback.get("action") == "ask_user"
+            ),
+        }

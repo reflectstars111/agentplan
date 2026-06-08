@@ -5,6 +5,7 @@ Maps to agent_os_initial_plan.md §10.1 (Web input source).
 
 from urllib.request import urlopen, Request
 from urllib.error import URLError
+from src.models.chunk import TrustLevel
 
 
 class WebSource:
@@ -27,6 +28,11 @@ class WebSource:
         text = re.sub(r"\s+", " ", text).strip()
 
         name = source_name or url.split("/")[-1] or "web_page"
-        source_id = file_store.ingest_text(content=text, source_name=name, source_type="web")
+        source_id = file_store.ingest_text(
+            content=text,
+            source_name=name,
+            source_type="web",
+            trust_level=TrustLevel.EXTERNAL_UNTRUSTED,
+        )
 
         return {"source_id": source_id, "text_length": len(text)}

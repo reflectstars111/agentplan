@@ -25,6 +25,7 @@ class ContextPack:
     budget: int                  # total token budget
     sections: list[ContextSection] = field(default_factory=list)
     source_refs: list[str] = field(default_factory=list)  # all source references used
+    memory_ids: list[str] = field(default_factory=list)
     used_tokens: int = 0
     created_at: str = ""         # ISO datetime
 

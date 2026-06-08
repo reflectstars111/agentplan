@@ -61,6 +61,19 @@ class TestTraceLogger:
         t2 = logger.start_trace(request_id="req_002")
         assert t1.trace_id != t2.trace_id
 
+    def test_child_trace_round_trips_parent_id(self, logger):
+        parent = logger.start_trace(request_id="req_parent")
+        child = logger.start_trace(
+            request_id="req_child",
+            parent_trace_id=parent.trace_id,
+        )
+
+        retrieved = logger.get_trace(child.trace_id)
+        assert retrieved.parent_trace_id == parent.trace_id
+        assert [
+            trace.trace_id for trace in logger.list_children(parent.trace_id)
+        ] == [child.trace_id]
+
     def test_multiple_steps(self, logger):
         trace = logger.start_trace(request_id="req_001")
         steps = [

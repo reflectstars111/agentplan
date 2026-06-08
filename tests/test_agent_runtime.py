@@ -20,6 +20,9 @@ from src.runtime.verifier import Verifier
 from src.runtime.writeback_gate import WritebackGate
 from src.runtime.trace_logger import TraceLogger
 from src.runtime.agent_runtime import AgentRuntime
+from src.runtime.verifier import VerifyOutput
+from src.runtime.writeback_gate import WritebackDecision
+from src.models.memory import MemoryType
 
 
 def _mock_embed_fn(texts: list[str]) -> np.ndarray:
@@ -87,6 +90,59 @@ def runtime(db):
 
 
 class TestAgentRuntime:
+    def test_result_exposes_conflicts_suggestions_and_ask_user(self, runtime):
+        class StubVerifier:
+            def verify(self, response, context_pack, working_memories):
+                return VerifyOutput(
+                    is_verified=False,
+                    conflicting_pairs=[("stored PostgreSQL", "new MongoDB")],
+                    suggestions=["Resolve the database conflict."],
+                )
+
+        class StubGate:
+            def evaluate(self, **kwargs):
+                return WritebackDecision(
+                    action="ask_user",
+                    location="long_term_memory",
+                    reason="confirmation required",
+                    score=0.8,
+                )
+
+        runtime.verifier = StubVerifier()
+        runtime.writeback_gate = StubGate()
+        result = runtime.process_query("Switch PostgreSQL to MongoDB.")
+
+        assert result["conflicting_pairs"] == [
+            ("stored PostgreSQL", "new MongoDB")
+        ]
+        assert result["suggestions"] == ["Resolve the database conflict."]
+        assert result["writeback"]["action"] == "ask_user"
+        assert result["writeback_confirmation_required"] is True
+
+    def test_long_term_writeback_uses_decision_memory_type(self, runtime):
+        class StubVerifier:
+            def verify(self, response, context_pack, working_memories):
+                return VerifyOutput(is_verified=True)
+
+        class StubGate:
+            def evaluate(self, **kwargs):
+                return WritebackDecision(
+                    action="write",
+                    location="long_term_memory",
+                    reason="persist project decision",
+                    score=0.9,
+                )
+
+        runtime.verifier = StubVerifier()
+        runtime.writeback_gate = StubGate()
+        result = runtime.process_query(
+            "Architecture decision: use FastAPI for the API."
+        )
+
+        decisions = runtime.memory_store.list_by_type(MemoryType.DECISION)
+        assert decisions
+        assert result["writeback"]["location"] == "long_term_memory"
+
     def test_process_query_returns_result(self, runtime):
         # First upload some content
         runtime.upload_text(

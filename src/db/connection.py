@@ -1,8 +1,15 @@
 """SQLite connection management and schema initialization."""
 
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
-from src.db.migrations import ALL_MIGRATIONS, MEMORIES_FTS_TRIGGERS, CHUNKS_FTS_TRIGGERS
+from src.db.migrations import (
+    ALL_MIGRATIONS,
+    CHUNKS_FTS_TRIGGERS,
+    MEMORIES_FTS_TRIGGERS,
+    SCHEMA_MIGRATIONS_TABLE,
+    VERSIONED_MIGRATIONS,
+)
 
 
 class Database:
@@ -25,13 +32,39 @@ class Database:
         return self._conn
 
     def init_schema(self) -> None:
-        """Create all tables if they don't exist."""
+        """Create current tables and apply pending versioned migrations."""
         conn = self.connect()
+        conn.execute(SCHEMA_MIGRATIONS_TABLE)
         for name, ddl in ALL_MIGRATIONS:
             conn.execute(ddl)
+        self._apply_versioned_migrations(conn)
         conn.executescript(MEMORIES_FTS_TRIGGERS)
         conn.executescript(CHUNKS_FTS_TRIGGERS)
         conn.commit()
+
+    def _apply_versioned_migrations(self, conn: sqlite3.Connection) -> None:
+        applied = {
+            row["version"]
+            for row in conn.execute(
+                "SELECT version FROM schema_migrations"
+            ).fetchall()
+        }
+        for version, name, table, column, ddl in VERSIONED_MIGRATIONS:
+            if version in applied:
+                continue
+            columns = {
+                row["name"]
+                for row in conn.execute(f"PRAGMA table_info({table})").fetchall()
+            }
+            if column not in columns:
+                conn.execute(ddl)
+            conn.execute(
+                """
+                INSERT INTO schema_migrations (version, name, applied_at)
+                VALUES (?, ?, ?)
+                """,
+                (version, name, datetime.now(timezone.utc).isoformat()),
+            )
 
     def close(self) -> None:
         if self._conn:

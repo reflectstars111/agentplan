@@ -7,6 +7,7 @@ from src.storage.file_store import FileStore
 from src.index.vector_index import VectorIndex
 from src.index.keyword_index import KeywordIndex
 from src.index.hybrid_retriever import HybridRetriever, RetrievalFilters
+from src.index.query_planner import QueryPlan
 
 
 def _mock_embed_fn(texts: list[str]) -> np.ndarray:
@@ -72,6 +73,38 @@ def retriever(vector_index, keyword_index, db):
 
 
 class TestHybridRetriever:
+    def test_retrieve_uses_query_planner_subqueries(
+        self, populated_store, vector_index, keyword_index, db
+    ):
+        class StubPlanner:
+            def plan(self, query):
+                return QueryPlan(
+                    original_query=query,
+                    vector_query="semantic lane",
+                    keyword_query="FastAPI",
+                )
+
+        embedded_queries = []
+
+        def recording_embed(texts):
+            embedded_queries.extend(texts)
+            return _mock_embed_fn(texts)
+
+        retriever = HybridRetriever(
+            vector_index,
+            keyword_index,
+            db,
+            query_planner=StubPlanner(),
+        )
+        results = retriever.retrieve(
+            "original wording should be decomposed",
+            recording_embed,
+            k=5,
+        )
+
+        assert embedded_queries == ["semantic lane"]
+        assert any(result.source_ref == "file:fastapi.txt" for result in results)
+
     def test_retrieve_finds_results(self, populated_store, retriever):
         results = retriever.retrieve(
             query="Python async API framework",

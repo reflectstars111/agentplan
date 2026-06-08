@@ -63,7 +63,9 @@ class ContextPageFault:
         self._fault_count += 1
 
         # Re-retrieve
-        results = self.retriever.retrieve(missing_query, embed_fn, k=5)
+        results = self.retriever.retrieve_and_rerank(
+            missing_query, embed_fn, k=5
+        )
         if not results:
             return PageFaultResult(triggered=False, query_used=missing_query)
 

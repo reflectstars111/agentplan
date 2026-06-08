@@ -24,8 +24,16 @@ data/
 
 # Test artifacts
 .pytest_cache/
+.pytest_*/
+.tmp_pytest_*/
+review_pytest_tmp_p0/
+*TMPDIR/
 .coverage
 htmlcov/
+
+# Flutter generated artifacts
+agent_os_flutter/.dart_tool/
+agent_os_flutter/build/
 
 # OS
 .DS_Store
@@ -37,3 +45,6 @@ models/bge-m3/
 # Environment
 .env
 .env.local
+
+# Local API credential scratch files
+ard/api/Deepseek.txt

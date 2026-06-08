@@ -107,6 +107,34 @@ class TestUploadEndpoint:
         data = resp.json()
         assert data["chunks_created"] == 0
 
+    def test_upload_api_builds_untrusted_vector_index(self, client, monkeypatch):
+        import io
+
+        monkeypatch.setattr(
+            "src.sources.api_source.urlopen",
+            lambda req, timeout=30: io.BytesIO(
+                b'{"framework": "FastAPI", "purpose": "API"}'
+            ),
+        )
+        before = client.app.state.runtime.retriever.vector_index.count
+        response = client.post(
+            "/upload/api",
+            json={
+                "url": "https://api.example.com/framework",
+                "source_name": "external_api",
+            },
+        )
+
+        assert response.status_code == 200
+        source_id = response.json()["source_id"]
+        chunks = client.app.state.runtime.file_store.get_chunks(source_id)
+        assert chunks
+        assert all(
+            chunk.trust_level.value == "external_untrusted"
+            for chunk in chunks
+        )
+        assert client.app.state.runtime.retriever.vector_index.count > before
+
 
 class TestQueryEndpoint:
     def test_query_returns_response(self, client):
@@ -121,6 +149,10 @@ class TestQueryEndpoint:
         data = resp.json()
         assert "response" in data
         assert "trace_id" in data
+        assert "conflicting_pairs" in data
+        assert "suggestions" in data
+        assert "writeback" in data
+        assert "writeback_confirmation_required" in data
         assert len(data["response"]) > 0
 
     def test_query_with_empty_knowledge_base(self, client):

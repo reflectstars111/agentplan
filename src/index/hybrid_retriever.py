@@ -51,6 +51,7 @@ class HybridRetriever:
         structure_index=None,
         entity_index=None,
         reranker=None,
+        query_planner=None,
     ):
         self.vector_index = vector_index
         self.keyword_index = keyword_index
@@ -59,6 +60,7 @@ class HybridRetriever:
         self.structure_index = structure_index
         self.entity_index = entity_index
         self.reranker = reranker
+        self.query_planner = query_planner
 
     def retrieve(
         self,
@@ -68,21 +70,25 @@ class HybridRetriever:
         filters: RetrievalFilters | None = None,
     ) -> list[RetrievalResult]:
         """Retrieve top-k results combining vector and keyword scores."""
-        if self.vector_index.count == 0:
-            return []
+        plan = self.query_planner.plan(query) if self.query_planner else None
+        vector_query = plan.vector_query if plan and plan.vector_query else query
+        keyword_query = plan.keyword_query if plan and plan.keyword_query else query
 
-        # 1. Get vector search results
-        query_emb = embed_fn([query])[0] if isinstance(embed_fn([query]), np.ndarray) else embed_fn(query)
-        if isinstance(query_emb, np.ndarray) and query_emb.ndim == 2:
-            query_emb = query_emb[0]
-
-        vector_results = self.vector_index.search(
-            query_emb, k=self.config.max_retrieval_candidates
-        )
+        # 1. Get vector results when available. Keyword retrieval remains
+        # usable when the FAISS index is empty or still rebuilding.
+        vector_results = []
+        if self.vector_index.count > 0:
+            embedded = embed_fn([vector_query])
+            query_emb = embedded[0] if isinstance(embedded, np.ndarray) else embedded
+            if isinstance(query_emb, np.ndarray) and query_emb.ndim == 2:
+                query_emb = query_emb[0]
+            vector_results = self.vector_index.search(
+                query_emb, k=self.config.max_retrieval_candidates
+            )
 
         # 2. Get keyword search results
         keyword_results = self.keyword_index.search_chunks(
-            query, k=self.config.max_retrieval_candidates
+            keyword_query, k=self.config.max_retrieval_candidates
         )
 
         # 3. Merge and score

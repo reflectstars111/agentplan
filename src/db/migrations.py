@@ -1,5 +1,13 @@
 """DDL statements for Agent-OS MVP. Maps to agent_os_initial_plan.md §21."""
 
+SCHEMA_MIGRATIONS_TABLE = """
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    applied_at TEXT NOT NULL
+);
+"""
+
 MEMORIES_TABLE = """
 CREATE TABLE IF NOT EXISTS memories (
     memory_id TEXT PRIMARY KEY,
@@ -43,6 +51,7 @@ TRACES_TABLE = """
 CREATE TABLE IF NOT EXISTS traces (
     trace_id TEXT PRIMARY KEY,
     request_id TEXT NOT NULL,
+    parent_trace_id TEXT,
     steps TEXT DEFAULT '[]',           -- JSON array of TraceStep
     created_at TEXT NOT NULL
 );
@@ -172,6 +181,23 @@ ALL_MIGRATIONS = [
     ("code_symbols", CODE_SYMBOLS_TABLE),
     ("entity_graph", ENTITY_GRAPH_TABLE),
     ("dependency_edges", DEPENDENCY_EDGES_TABLE),
+]
+
+VERSIONED_MIGRATIONS = [
+    (
+        1,
+        "add_memories_last_used_at",
+        "memories",
+        "last_used_at",
+        "ALTER TABLE memories ADD COLUMN last_used_at TEXT",
+    ),
+    (
+        2,
+        "add_traces_parent_trace_id",
+        "traces",
+        "parent_trace_id",
+        "ALTER TABLE traces ADD COLUMN parent_trace_id TEXT",
+    ),
 ]
 
 # Triggers to keep FTS in sync with base tables
