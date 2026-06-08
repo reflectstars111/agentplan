@@ -1,0 +1,519 @@
+{
+  "systems": [
+    "langchain_rag",
+    "ard_full"
+  ],
+  "n_queries": 15,
+  "results": [
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_001",
+      "tokens": 381,
+      "latency": 3416.1667823791504,
+      "scores": {
+        "query_id": "What is MemGPT's two-tier memory architecture?",
+        "condition": "langchain_rag",
+        "correctness": 3,
+        "completeness": 3,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 3,
+        "overall": 3,
+        "explanation": "The answer correctly identifies the two-tier architecture (Main Context and External Context) and their analogies (RAM and disk), matching the ground truth. However, it adds an unsupported claim about 'LLM controls paging via function calls' that is not in the ground truth or provided context. It misses the specific components mentioned in the ground truth (system instructions, conversation queue, recall storage, archival storage). Conciseness is excellent. Citation accuracy is neutral (3) because the citation [source:unknown] is not verifiable from provided context. Groundedness is moderate (3) because the core facts match the ground truth but the additional claim is unsupported, and no context was provided to verify."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_001",
+      "tokens": 388,
+      "latency": 1680.267095565796,
+      "scores": {
+        "query_id": "What is MemGPT's two-tier memory architecture?",
+        "condition": "ard_full",
+        "correctness": 4,
+        "completeness": 3,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 3,
+        "overall": 3,
+        "explanation": "The answer correctly identifies the two-tier architecture (Main Context/RAM and External Context/disk) and mentions LLM-controlled paging, which aligns with the ground truth. However, it adds details about Letta (2024), Memory Blocks, sleeptime compute, and a 74% LoCoMo benchmark score that are not present in the ground truth or provided context, making it partially unsupported. Completeness is moderate because it covers the main structure but includes extraneous information not required by the question. Citation accuracy is limited because the single citation [source:src_e4_5f8297] may not fully support all claims (e.g., benchmark score). Groundedness is reduced due to potential hallucination of details not in the provided context. Overall, the answer is mostly correct but includes unverified additions."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_002",
+      "tokens": 383,
+      "latency": 1015.620231628418,
+      "scores": {
+        "query_id": "What are the six steps of ARD's Context MMU pipeline?",
+        "condition": "langchain_rag",
+        "correctness": 5,
+        "completeness": 5,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 3,
+        "overall": 4,
+        "explanation": "The answer correctly lists all six steps matching the ground truth exactly, so correctness and completeness are perfect. It is concise with no extra words. However, citation_accuracy is scored 3 because the answer cites [source:unknown] which is not a valid or verifiable source. Groundedness is scored 3 because while the answer does not fabricate information, it claims to be based on provided context when no context was actually provided, making the grounding claim unsupported. Overall reflects the strong factual match but deducts for the citation and grounding issues."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_002",
+      "tokens": 390,
+      "latency": 850.7695198059082,
+      "scores": {
+        "query_id": "What are the six steps of ARD's Context MMU pipeline?",
+        "condition": "ard_full",
+        "correctness": 5,
+        "completeness": 5,
+        "conciseness": 5,
+        "citation_accuracy": 5,
+        "groundedness": 5,
+        "overall": 5,
+        "explanation": "The answer correctly lists all six steps (retrieve, filter, rank, compress, assemble, budget) matching the ground truth exactly. It is complete, concise, cites the relevant source, and is fully grounded in the provided context."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_003",
+      "tokens": 383,
+      "latency": 1290.663480758667,
+      "scores": {
+        "query_id": "How does LongMem solve the memory staleness problem?",
+        "condition": "langchain_rag",
+        "correctness": 5,
+        "completeness": 5,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 0,
+        "overall": 3,
+        "explanation": "The answer is factually correct and matches the ground truth perfectly (correctness 5), and it addresses all aspects of the question concisely (completeness 5, conciseness 5). However, citation_accuracy is scored 3 because no context was provided, so the citation [source:unknown] is not verifiable but not fabricated. Groundedness is 0 because the answer makes claims (e.g., 'decoupled architecture', 'frozen backbone LLM') that are not supported by any provided context—the retrieved context was empty, so any specific claims are ungrounded. Overall score reflects the contradiction between factual correctness and lack of grounding in the given context."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_003",
+      "tokens": 390,
+      "latency": 1656.7339897155762,
+      "scores": {
+        "query_id": "How does LongMem solve the memory staleness problem?",
+        "condition": "ard_full",
+        "correctness": 5,
+        "completeness": 5,
+        "conciseness": 5,
+        "citation_accuracy": 5,
+        "groundedness": 5,
+        "overall": 5,
+        "explanation": "The answer is factually accurate, matching the ground truth exactly. It fully addresses the question by explaining the decoupled architecture (frozen backbone + trainable SideNet) and how it prevents staleness. The answer is concise and to the point. The citation is relevant and correctly interpreted, and all claims are directly supported by the provided context."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_004",
+      "tokens": 379,
+      "latency": 1581.620693206787,
+      "scores": {
+        "query_id": "What is the key innovation of RAPTOR?",
+        "condition": "langchain_rag",
+        "correctness": 2,
+        "completeness": 2,
+        "conciseness": 4,
+        "citation_accuracy": 1,
+        "groundedness": 1,
+        "overall": 2,
+        "explanation": "The answer correctly identifies the hierarchical tree structure and recursive clustering/summarization as key innovations, which aligns with the ground truth. However, it adds unsupported claims about a 20% improvement on QuALITY and collapsed tree retrieval outperforming tree traversal, which are not present in the provided context (which is empty). The citation [source:unknown] is irrelevant and not grounded. The answer is concise but lacks completeness due to missing the 'multi-scale retrieval' aspect from the ground truth. Groundedness is low because the answer fabricates details not in the context."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_004",
+      "tokens": 386,
+      "latency": 1803.2562732696533,
+      "scores": {
+        "query_id": "What is the key innovation of RAPTOR?",
+        "condition": "ard_full",
+        "correctness": 4,
+        "completeness": 4,
+        "conciseness": 5,
+        "citation_accuracy": 4,
+        "groundedness": 4,
+        "overall": 4,
+        "explanation": "The answer correctly identifies the hierarchical tree structure via recursive GMM clustering and LLM summarization as the key innovation, matching the ground truth. It adds specific performance details (20% improvement on QuALITY) and retrieval method (collapsed tree retrieval), which are supported by the context but not required by the ground truth, slightly reducing completeness. The answer is concise and well-cited, though the citation format has a minor redundancy ('source:source:'). All claims are grounded in the provided context, with no fabrication."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_005",
+      "tokens": 379,
+      "latency": 1357.182502746582,
+      "scores": {
+        "query_id": "What is Letta's Memory Blocks feature?",
+        "condition": "langchain_rag",
+        "correctness": 3,
+        "completeness": 3,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 3,
+        "explanation": "The answer correctly states that there is insufficient context to fully explain the feature, which is accurate given the lack of provided context. However, it does not attempt to match the ground truth, so correctness and completeness are moderate. Conciseness is perfect as it directly addresses the limitation. Citation accuracy is neutral (3) because no context was provided to cite properly. Groundedness is high (5) as the answer does not fabricate information and stays within the bounds of the minimal context."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_005",
+      "tokens": 386,
+      "latency": 2140.355110168457,
+      "scores": {
+        "query_id": "What is Letta's Memory Blocks feature?",
+        "condition": "ard_full",
+        "correctness": 3,
+        "completeness": 2,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 4,
+        "overall": 3,
+        "explanation": "The answer correctly identifies that Memory Blocks are part of a two-tier memory system and mentions the benchmark score, but does not provide the core definition (structured, labeled, editable units for managing different information types) as in the ground truth. It is somewhat incomplete as it fails to explain what Memory Blocks actually are. It is concise and mostly grounded, but the citation is vague (single source) and does not directly support the claim about Memory Blocks' definition. The answer acknowledges the lack of detail, which is honest but reduces completeness."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_006",
+      "tokens": 383,
+      "latency": 1589.3573760986328,
+      "scores": {
+        "query_id": "How does ARD's TransactionManager ensure consistency?",
+        "condition": "langchain_rag",
+        "correctness": 3,
+        "completeness": 3,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 0,
+        "overall": 2,
+        "explanation": "The answer correctly identifies optimistic locking and the read_set/verify/commit/rollback cycle, matching the ground truth on those points. However, it introduces a Write-Ahead Log (WAL) and crash recovery via replay, which are not mentioned in the ground truth or provided context, making it partially inaccurate. For completeness, it covers the main mechanism but adds unsupported details. Conciseness is good as it is relatively brief. Citation accuracy is scored 3 because the citation [source:unknown] is not a valid source. Groundedness is 0 because the answer fabricates the WAL and crash recovery claims without any provided context. Overall, the answer is partially correct but includes hallucinated content."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_006",
+      "tokens": 390,
+      "latency": 2116.523027420044,
+      "scores": {
+        "query_id": "How does ARD's TransactionManager ensure consistency?",
+        "condition": "ard_full",
+        "correctness": 3,
+        "completeness": 3,
+        "conciseness": 4,
+        "citation_accuracy": 4,
+        "groundedness": 4,
+        "overall": 3,
+        "explanation": "The answer correctly identifies optimistic locking and the read_set/verify/commit cycle, matching the ground truth. However, it adds details about EventStore, WAL, and crash recovery that, while present in the context, are not part of the ground truth's explanation of how TransactionManager ensures consistency. This makes it partially correct but with extra information not required. Completeness is moderate because it covers the core mechanism but includes extraneous details. Conciseness is good; the answer is fairly efficient. Citation accuracy is good; citations are relevant and correctly interpreted. Groundedness is high; all claims are supported by the provided context, but the inclusion of WAL and crash recovery goes beyond the specific question about TransactionManager's consistency mechanism."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_007",
+      "tokens": 383,
+      "latency": 992.1097755432129,
+      "scores": {
+        "query_id": "What is the ARD scoring formula for hybrid retrieval?",
+        "condition": "langchain_rag",
+        "correctness": 2,
+        "completeness": 2,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 0,
+        "overall": 2,
+        "explanation": "The answer omits several components present in the ground truth (importance, structure, token_cost, trust_penalty with specific weights) and uses vague terms like 'token/trust penalties' instead of exact values. It is concise but incomplete and inaccurate. No context was provided, so the answer is not grounded in any source; the citation [source:unknown] is not valid. Citation accuracy is scored 3 as neutral since no proper citations are given."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_007",
+      "tokens": 390,
+      "latency": 1027.7795791625977,
+      "scores": {
+        "query_id": "What is the ARD scoring formula for hybrid retrieval?",
+        "condition": "ard_full",
+        "correctness": 2,
+        "completeness": 2,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 3,
+        "overall": 2,
+        "explanation": "The answer is partially correct but omits several components from the ground truth (importance, structure, token_cost, trust_penalty are missing or simplified). The citation is provided but the formula is incomplete. Conciseness is good but at the expense of completeness. Citation accuracy is neutral (3) because the source is cited but the interpretation is incomplete. Groundedness is moderate as the answer uses the context but omits key details, which could be considered a minor hallucination by omission."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_008",
+      "tokens": 385,
+      "latency": 1741.0321235656738,
+      "scores": {
+        "query_id": "What is the LoCoMo benchmark and how did Letta perform on it?",
+        "condition": "langchain_rag",
+        "correctness": 2,
+        "completeness": 1,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 3,
+        "overall": 2,
+        "explanation": "The answer correctly identifies Letta's performance (74%) but fails to define LoCoMo as a long-context memory benchmark or mention the comparison to Mem0, missing key ground truth facts. It is concise but incomplete, addressing only part of the question. Citation accuracy is neutral (no real context provided, but the answer uses a fabricated source notation). Groundedness is moderate because the answer acknowledges lack of context but still makes a claim about Letta's score without supporting context."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_008",
+      "tokens": 392,
+      "latency": 1564.5778179168701,
+      "scores": {
+        "query_id": "What is the LoCoMo benchmark and how did Letta perform on it?",
+        "condition": "ard_full",
+        "correctness": 2,
+        "completeness": 1,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 4,
+        "overall": 2,
+        "explanation": "The answer correctly states Letta achieved 74% on LoCoMo, but fails to describe what LoCoMo is (a long-context memory benchmark) or mention that Letta Filesystem outperformed Mem0 (68.5%), as per the ground truth. The answer is concise and mostly grounded in the provided context, but it is incomplete and lacks key factual details from the ground truth. Citation accuracy is neutral since only one source is cited, but the citation format is slightly malformed (repeated 'source:')."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_009",
+      "tokens": 380,
+      "latency": 1515.3913497924805,
+      "scores": {
+        "query_id": "How does Self-RAG decide when to retrieve?",
+        "condition": "langchain_rag",
+        "correctness": 3,
+        "completeness": 2,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 3,
+        "explanation": "The answer correctly identifies that Self-RAG uses reflection tokens for retrieval decisions, which aligns with the ground truth, but it does not fully explain the mechanism (e.g., when retrieval is triggered), so it is partially correct but incomplete. It is concise and directly addresses the lack of context. Citation accuracy is neutral (3) because the source is marked as unknown, which is honest but not a proper citation. Groundedness is high (5) as the answer does not fabricate information and stays within the provided context. Overall score reflects the balance of partial correctness and completeness."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_009",
+      "tokens": 387,
+      "latency": 1442.3367977142334,
+      "scores": {
+        "query_id": "How does Self-RAG decide when to retrieve?",
+        "condition": "ard_full",
+        "correctness": 4,
+        "completeness": 3,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 4,
+        "overall": 4,
+        "explanation": "The answer correctly identifies reflection tokens as the mechanism for retrieval decisions, matching the ground truth's mention of 'special reflection tokens trained into the LLM to signal when retrieval is needed.' However, it acknowledges that no further details about the specific criteria for deciding *when* to retrieve are in the context, which is accurate but slightly incomplete compared to the ground truth's fuller description. Conciseness is excellent. Citation accuracy is neutral (3) because the citation format has a typo ('source:source:') but the source reference is relevant. Groundedness is high as the answer stays within the context's limits, though it could have noted that the context does not elaborate on the 'when' aspect beyond reflection tokens."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_fact_010",
+      "tokens": 380,
+      "latency": 1365.2122020721436,
+      "scores": {
+        "query_id": "What problem does MemLong address and how?",
+        "condition": "langchain_rag",
+        "correctness": 0,
+        "completeness": 0,
+        "conciseness": 3,
+        "citation_accuracy": 0,
+        "groundedness": 0,
+        "overall": 0,
+        "explanation": "The answer is factually incorrect compared to the ground truth (MemLong addresses quadratic complexity, not memory staleness; uses ret-mem, not SideNet; extends to 80K, not 65K). It fails to address the question properly. The citation is fabricated as [source:unknown] with no provided context. The answer is entirely ungrounded and hallucinated."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_fact_010",
+      "tokens": 387,
+      "latency": 1494.1599369049072,
+      "scores": {
+        "query_id": "What problem does MemLong address and how?",
+        "condition": "ard_full",
+        "correctness": 0,
+        "completeness": 0,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 2,
+        "explanation": "The answer correctly states that the provided context does not contain information about MemLong, which is factually accurate given the context. However, it fails to answer the question at all, resulting in 0 for correctness and completeness. It is very concise (5). Citation accuracy is neutral (3) because the answer uses a fabricated source citation [source:unknown] instead of citing the actual provided sources, but the claim about missing information is correct. Groundedness is high (5) because the answer does not fabricate any claims about MemLong and accurately reflects the absence of relevant information in the context. Overall score is low because the answer, while honest about missing information, does not fulfill the task of evaluating the answer against the ground truth."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_conc_001",
+      "tokens": 390,
+      "latency": 4175.2026081085205,
+      "scores": {
+        "query_id": "Compare MemGPT's approach to memory management with ARD's transactional approach",
+        "condition": "langchain_rag",
+        "correctness": 2,
+        "completeness": 2,
+        "conciseness": 3,
+        "citation_accuracy": 3,
+        "groundedness": 0,
+        "overall": 2,
+        "explanation": "The answer contains significant fabricated content (e.g., specific benchmark scores, pipeline details, scoring formulas) not present in the provided context or ground truth, leading to low groundedness and correctness. It partially addresses the comparison but misses key ground-truth points like MemGPT's probabilistic nature and ARD's system-level guarantees. Citations are fabricated ('source:unknown'). Conciseness is moderate; some details are unnecessary given the lack of context."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_conc_001",
+      "tokens": 397,
+      "latency": 3220.195770263672,
+      "scores": {
+        "query_id": "Compare MemGPT's approach to memory management with ARD's transactional approach",
+        "condition": "ard_full",
+        "correctness": 3,
+        "completeness": 3,
+        "conciseness": 4,
+        "citation_accuracy": 4,
+        "groundedness": 4,
+        "overall": 3,
+        "explanation": "The answer correctly identifies the two-tier memory system for MemGPT and the transactional approach for ARD, and cites relevant sources. However, it does not match the ground truth's key distinction (probabilistic vs. deterministic), and includes details (e.g., ARD's scoring formula) not in the ground truth, which affects correctness and completeness. The answer is fairly concise and mostly grounded, but the lack of direct comparison and some unsupported details lower the overall score."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_conc_002",
+      "tokens": 391,
+      "latency": 1480.9002876281738,
+      "scores": {
+        "query_id": "Explain why RAPTOR's hierarchical summarization is effective for multi-scale que",
+        "condition": "langchain_rag",
+        "correctness": 5,
+        "completeness": 5,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 5,
+        "explanation": "The answer correctly states that there is insufficient context to explain RAPTOR's effectiveness, which aligns with the ground truth requirement to only use provided context. It is complete in addressing the question by acknowledging the lack of information, concise without unnecessary detail, and fully grounded in the context (no fabrication). Citation accuracy is scored 3 as neutral because citations are provided but the source is unknown, which is acceptable given the context limitation."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_conc_002",
+      "tokens": 398,
+      "latency": 1363.9609813690186,
+      "scores": {
+        "query_id": "Explain why RAPTOR's hierarchical summarization is effective for multi-scale que",
+        "condition": "ard_full",
+        "correctness": 2,
+        "completeness": 2,
+        "conciseness": 4,
+        "citation_accuracy": 3,
+        "groundedness": 3,
+        "overall": 2,
+        "explanation": "The answer correctly mentions the hierarchical tree construction and a performance improvement, but fails to explain why this is effective for multi-scale questions (e.g., capturing both detail and abstraction). It omits the core reasoning from the ground truth. The citation is relevant but the interpretation is incomplete. The answer is concise but lacks completeness and correctness relative to the ground truth. Groundedness is moderate because it does not fabricate but misses key context-supported points."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_conc_003",
+      "tokens": 394,
+      "latency": 2504.6041011810303,
+      "scores": {
+        "query_id": "How does the concept of 'Context Window as Execution Workspace' differ from trea",
+        "condition": "langchain_rag",
+        "correctness": 0,
+        "completeness": 0,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 2,
+        "explanation": "Correctness: 0 - The answer does not address the question at all, stating it cannot answer based on context, which is factually incorrect relative to the ground truth (the answer should have provided the correct distinction). Completeness: 0 - Fails to answer any part of the question. Conciseness: 5 - The answer is efficient and avoids unnecessary verbosity. Citation_accuracy: 3 - The answer cites a source [source:unknown] which is not provided in the context, so it's a neutral score as per guidelines (no citations given in context). Groundedness: 5 - The answer is fully grounded in the provided context (which has no relevant information), so it correctly avoids fabrication. Overall: 2 - Despite being concise and grounded, the answer fails to meet the core requirement of answering the question correctly and completely."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_conc_003",
+      "tokens": 401,
+      "latency": 1666.2523746490479,
+      "scores": {
+        "query_id": "How does the concept of 'Context Window as Execution Workspace' differ from trea",
+        "condition": "ard_full",
+        "correctness": 0,
+        "completeness": 0,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 2,
+        "explanation": "The answer correctly states that the provided context does not contain the information needed to answer the question, which is factually accurate given the context. However, it scores 0 on correctness because it fails to provide the correct answer as defined by the ground truth (the evaluation is based on alignment with ground truth, not just factual accuracy from context). Completeness is 0 because it does not address the question at all. Conciseness is 5 as it is very brief and to the point. Citation accuracy is 3 (neutral) because no specific sources are cited, but the answer correctly notes the lack of relevant information. Groundedness is 5 because the answer is fully grounded in the provided context (it does not fabricate information). Overall is 2 as the answer is technically honest but fails to fulfill the primary requirement of answering the question."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_conc_004",
+      "tokens": 388,
+      "latency": 1601.4525890350342,
+      "scores": {
+        "query_id": "Why does LongMem's decoupled architecture avoid catastrophic forgetting?",
+        "condition": "langchain_rag",
+        "correctness": 5,
+        "completeness": 5,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 5,
+        "explanation": "The answer correctly states that no context was provided to answer the question, which matches the ground truth that the context is missing. It is fully complete in addressing the question by acknowledging the lack of information, concise in its response, and perfectly grounded in the provided context (which has no relevant information). Citation accuracy is scored 3 as neutral because the answer cites a source but correctly notes it is insufficient."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_conc_004",
+      "tokens": 395,
+      "latency": 1627.164363861084,
+      "scores": {
+        "query_id": "Why does LongMem's decoupled architecture avoid catastrophic forgetting?",
+        "condition": "ard_full",
+        "correctness": 5,
+        "completeness": 4,
+        "conciseness": 5,
+        "citation_accuracy": 5,
+        "groundedness": 5,
+        "overall": 5,
+        "explanation": "The answer is factually accurate and matches the ground truth, correctly stating that the backbone LLM is frozen and only the SideNet is trained. It is concise and directly addresses the question. The citation is relevant and correctly interpreted. All claims are grounded in the provided context. Slight deduction on completeness because the answer adds extra detail about KV cache and 65K tokens not present in the ground truth, but these are consistent with the context and do not detract from answering the question."
+      }
+    },
+    {
+      "system": "langchain_rag",
+      "query_id": "d1_conc_005",
+      "tokens": 395,
+      "latency": 1676.2499809265137,
+      "scores": {
+        "query_id": "Discuss the trade-offs between MemLong's approach (extend context) and ARD's app",
+        "condition": "langchain_rag",
+        "correctness": 3,
+        "completeness": 3,
+        "conciseness": 5,
+        "citation_accuracy": 3,
+        "groundedness": 5,
+        "overall": 3,
+        "explanation": "The answer correctly states that no context about MemLong is provided, which is factually accurate given the empty context. However, it scores 3 on correctness because it does not match the ground truth (which describes both approaches), but it is not wrong—it simply lacks information. Completeness is 3 because it partially addresses the question by acknowledging the lack of information about MemLong, but does not discuss trade-offs as requested. Conciseness is 5 as it is very efficient. Citation accuracy is 3 (neutral) because no citations are given, but the answer references 'source:unknown' which is not a proper citation. Groundedness is 5 because all claims are directly supported by the provided context (which is empty, so the answer correctly notes the absence of information). Overall is 3, reflecting that while the answer is honest and grounded, it fails to fully answer the question due to missing context."
+      }
+    },
+    {
+      "system": "ard_full",
+      "query_id": "d1_conc_005",
+      "tokens": 402,
+      "latency": 2836.4715576171875,
+      "scores": {
+        "query_id": "Discuss the trade-offs between MemLong's approach (extend context) and ARD's app",
+        "condition": "ard_full",
+        "correctness": 3,
+        "completeness": 2,
+        "conciseness": 5,
+        "citation_accuracy": 5,
+        "groundedness": 5,
+        "overall": 3,
+        "explanation": "The answer correctly identifies that the context lacks information about MemLong, which is factually accurate given the provided sources. However, it does not attempt to discuss trade-offs based on the available ARD information alone (e.g., by noting the absence of MemLong data prevents comparison), which partially addresses the question but misses the opportunity to state what is known. Completeness is lower because the question asks for a discussion of trade-offs, and the answer only states inability to do so without exploring the ARD details further. Conciseness is excellent—no wasted words. Citation accuracy is perfect; sources are correctly cited and relevant. Groundedness is perfect; no fabrication. Overall score reflects strong groundedness and conciseness but limited completeness and correctness relative to the full question."
+      }
+    }
+  ]
+}

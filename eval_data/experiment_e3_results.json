@@ -1,0 +1,647 @@
+{
+  "embedding": "BGE-M3",
+  "elapsed_min": 3.7,
+  "results": {
+    "h3_supported": true,
+    "non_inferiority_p": 0.0063,
+    "interaction_effect": 0.055,
+    "cells": {
+      "state_False_small_8k": {
+        "state": false,
+        "context": "small_8k",
+        "avg_consistency": 0.3425,
+        "avg_tokens": 426.0,
+        "avg_completion": 1.0,
+        "scenarios": [
+          {
+            "scenario_id": "mt_s1",
+            "name": "Project Development",
+            "condition": "no_state",
+            "consistency_score": 0.375,
+            "state_trace_accuracy": 0.0,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "Analyze the core architecture of our system. What are its key components and how do they interact?",
+                "response": "Based on the provided context, I can identify several key components of the system architecture and their interactions, though the context does not provide a single unified system description. Here is the analysis:\n\n**Key Components and Interactions:**\n\n1.  **ARD Context MMU (Memory Management Unit)",
+                "tokens_used": 414,
+                "latency_ms": 5127.1,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 2,
+                "query": "Based on the architecture from before, which component is the most innovative and why? Compare it with traditional approaches.",
+                "response": "Based solely on the provided context, the most innovative component appears to be **MemLong (2024)** , which extends context from 4K to 80K tokens on a single 3090 GPU via an external retriever with fine-grained retrieval attention [source:src_67cf81].\n\n**Comparison with traditional approaches:**\n- ",
+                "tokens_used": 421,
+                "latency_ms": 3734.9,
+                "keyword_recall": 0.6
+              },
+              {
+                "turn": 3,
+                "query": "Now that we identified the key innovation, propose a concrete improvement to its pipeline. What would you change and what impact would it have?",
+                "response": "Based solely on the provided context, the key innovation appears to be the **ARD Context MMU** pipeline, which is described as a 6-step process (retrieve, filter, rank, compress, assemble, budget) with a specific scoring formula [source:source:src_a07d0f].\n\nA concrete improvement would be to **repla",
+                "tokens_used": 425,
+                "latency_ms": 3992.4,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 4,
+                "query": "Given your improvement from the previous step, how would it affect the transaction manager's consistency guarantees? Are there any new edge cases?",
+                "response": "Based solely on the provided context, there is no information about any \"improvement from the previous step\" or how it would affect the transaction manager's consistency guarantees. The context describes the ARD TransactionManager's optimistic locking mechanism [source:src_7d0927], WAL-based crash r",
+                "tokens_used": 426,
+                "latency_ms": 1762.7,
+                "keyword_recall": 0.333
+              },
+              {
+                "turn": 5,
+                "query": "Summarize our entire discussion: the architecture, the innovation, your proposed improvement, and its impact. Trace the full decision chain. What key decisions did we make?",
+                "response": "Based solely on the provided context, I cannot summarize \"our entire discussion\" because the context does not contain a record of a prior conversation or a decision chain. The context consists of isolated technical references (e.g., ARD, RAPTOR, MemGPT, PostgreSQL, etc.) but no dialogue, no sequence",
+                "tokens_used": 433,
+                "latency_ms": 3682.5,
+                "keyword_recall": 0.714
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s2",
+            "name": "Paper Deep Analysis",
+            "condition": "no_state",
+            "consistency_score": 0.277,
+            "state_trace_accuracy": 0.25,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "What is the main research problem addressed by state management for AI systems? Frame it as a formal research question.",
+                "response": "Based solely on the provided context, the main research problem addressed by state management for AI systems is the limitation of fixed context windows and the inability to maintain long-term memory. This is framed as a formal research question: **How can AI systems overcome fixed context windows an",
+                "tokens_used": 419,
+                "latency_ms": 1878.0,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Based on the problem you identified, what are the three core hypotheses (H1, H2, H3) that would prove the solution works? Explain each with its falsification condition.",
+                "response": "Based solely on the provided context, there is no information about a specific problem that was identified, nor any hypotheses (H1, H2, H3) or falsification conditions related to proving a solution works. The context contains technical details about databases, memory systems, and retrieval pipelines",
+                "tokens_used": 432,
+                "latency_ms": 1600.8,
+                "keyword_recall": 0.625
+              },
+              {
+                "turn": 3,
+                "query": "For H2 specifically (Context Window as Execution Workspace), design an experiment that would provide the strongest possible evidence. What metrics, baselines, and sample sizes?",
+                "response": "Based solely on the provided context, I cannot design a specific experiment for \"H2 (Context Window as Execution Workspace)\" because the context does not define what H2 is or what \"Context Window as Execution Workspace\" means in this context.\n\nThe context discusses various memory and retrieval syste",
+                "tokens_used": 434,
+                "latency_ms": 2593.1,
+                "keyword_recall": 0.625
+              },
+              {
+                "turn": 4,
+                "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1? What specific mechanism proves state management matters more than raw reasoning?",
+                "response": "Based solely on the provided context, there is **no information** that directly addresses how a transactional runtime (Transaction + MVCC) provides evidence for \"H1\" or proves that \"state management matters more than raw reasoning.\" \n\nThe context describes the mechanics of transaction managers and M",
+                "tokens_used": 430,
+                "latency_ms": 2277.6,
+                "keyword_recall": 0.714
+              },
+              {
+                "turn": 5,
+                "query": "Design a single comprehensive experiment that would simultaneously validate H1, H2, and H3. Be specific about conditions, metrics, and expected outcomes.",
+                "response": "Based solely on the provided context, I cannot design a single comprehensive experiment to validate H1, H2, and H3 because the context does not define what H1, H2, and H3 are. The query references these hypotheses, but no information about their content or meaning is present in the retrieved evidenc",
+                "tokens_used": 428,
+                "latency_ms": 2582.8,
+                "keyword_recall": 1.0
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s3",
+            "name": "Design Evolution with Reversals",
+            "condition": "no_state",
+            "consistency_score": 0.375,
+            "state_trace_accuracy": 0.0,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "We need to add real-time collaborative editing to our system. Propose an architecture extension that supports multiple concurrent writers.",
+                "response": "Based solely on the provided context, I cannot propose a complete architecture extension for real-time collaborative editing with multiple concurrent writers. The context contains no information about collaborative editing, operational transformation, conflict-free replicated data types (CRDTs), Web",
+                "tokens_used": 424,
+                "latency_ms": 3475.5,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Wait, collaborative editing might cause too many transaction conflicts with optimistic locking. What alternative concurrency control strategy could we use instead?",
+                "response": "Based solely on the provided context, there is no information about alternative concurrency control strategies for collaborative editing. The context mentions optimistic locking and MVCC (Multi-Version Concurrency Control) [source:source:src_7d0927][source:source:src_6ebfa3], but does not discuss an",
+                "tokens_used": 430,
+                "latency_ms": 2209.4,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 3,
+                "query": "Actually, revert to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation instead? How?",
+                "response": "Based solely on the provided context, there is not enough information to answer how to make collaborative editing work with MVCC snapshot isolation. The context mentions that PostgreSQL uses \"xmin/xmax tuple versioning\" and \"VACUUM cleanup\" for MVCC [source:src_6ebfa3], and that CockroachDB uses \"di",
+                "tokens_used": 421,
+                "latency_ms": 2218.7,
+                "keyword_recall": 0.667
+              },
+              {
+                "turn": 4,
+                "query": "New constraint: we now need to support mobile clients with intermittent connectivity and local-first editing. How does this change the architecture?",
+                "response": "Based solely on the provided context, I cannot fully answer how supporting mobile clients with intermittent connectivity and local-first editing changes the architecture. The context contains relevant technical primitives (such as MVCC, WAL, optimistic locking, and actor models) but does not describ",
+                "tokens_used": 427,
+                "latency_ms": 4795.1,
+                "keyword_recall": 0.857
+              },
+              {
+                "turn": 5,
+                "query": "Given all the decisions, reversals, and constraints we discussed, what is the final recommended architecture? Trace the full evolution of our thinking.",
+                "response": "Based solely on the provided context, there is no information about any prior decisions, reversals, constraints, or an evolution of thinking that led to a final recommended architecture. The context contains only isolated technical descriptions of various systems (ARD, RAPTOR, HyDE, MemGPT, etc.) an",
+                "tokens_used": 427,
+                "latency_ms": 2209.2,
+                "keyword_recall": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "state_False_large_32k": {
+        "state": false,
+        "context": "large_32k",
+        "avg_consistency": 0.3275,
+        "avg_tokens": 426.0,
+        "avg_completion": 1.0,
+        "scenarios": [
+          {
+            "scenario_id": "mt_s1",
+            "name": "Project Development",
+            "condition": "no_state",
+            "consistency_score": 0.4,
+            "state_trace_accuracy": 0.0,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "Analyze the core architecture of our system. What are its key components and how do they interact?",
+                "response": "Based solely on the provided context, the core architecture of the system appears to be the **ARD (Adaptive Retrieval and Delivery) framework**, which consists of the following key components and interactions:\n\n1.  **ARD Context MMU (Memory Management Unit):** This component processes context throug",
+                "tokens_used": 414,
+                "latency_ms": 4916.6,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 2,
+                "query": "Based on the architecture from before, which component is the most innovative and why? Compare it with traditional approaches.",
+                "response": "Based solely on the provided context, I cannot determine which component is the \"most innovative\" because the context does not specify what \"the architecture from before\" refers to. The query references a prior architecture, but no prior architecture is defined in the given context.\n\nHowever, if I c",
+                "tokens_used": 421,
+                "latency_ms": 4761.7,
+                "keyword_recall": 0.8
+              },
+              {
+                "turn": 3,
+                "query": "Now that we identified the key innovation, propose a concrete improvement to its pipeline. What would you change and what impact would it have?",
+                "response": "Based solely on the provided context, the \"key innovation\" is not explicitly identified in the query or the evidence. However, the context describes several distinct systems and pipelines. If we assume the key innovation refers to the **ARD Context MMU** (which has a detailed 6-step pipeline), a con",
+                "tokens_used": 425,
+                "latency_ms": 3778.0,
+                "keyword_recall": 0.714
+              },
+              {
+                "turn": 4,
+                "query": "Given your improvement from the previous step, how would it affect the transaction manager's consistency guarantees? Are there any new edge cases?",
+                "response": "Based solely on the provided context, there is no information about any \"improvement from the previous step\" or how it would affect the transaction manager's consistency guarantees. The context describes the ARD TransactionManager's optimistic locking mechanism [source:src_7d0927], WAL-based crash r",
+                "tokens_used": 426,
+                "latency_ms": 2343.9,
+                "keyword_recall": 0.667
+              },
+              {
+                "turn": 5,
+                "query": "Summarize our entire discussion: the architecture, the innovation, your proposed improvement, and its impact. Trace the full decision chain. What key decisions did we make?",
+                "response": "Based solely on the provided context, I cannot summarize \"our entire discussion\" or trace a \"full decision chain\" because the context does not contain a record of a prior conversation, a proposed improvement, or a sequence of decisions made by you and me. The context consists of isolated technical d",
+                "tokens_used": 433,
+                "latency_ms": 4554.1,
+                "keyword_recall": 1.0
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s2",
+            "name": "Paper Deep Analysis",
+            "condition": "no_state",
+            "consistency_score": 0.255,
+            "state_trace_accuracy": 0.25,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "What is the main research problem addressed by state management for AI systems? Frame it as a formal research question.",
+                "response": "Based solely on the provided context, the main research problem addressed by state management for AI systems is the limitation of fixed context windows and the need for persistent, scalable memory. This can be framed as the following formal research question:\n\n**How can AI systems maintain and manag",
+                "tokens_used": 419,
+                "latency_ms": 3005.0,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Based on the problem you identified, what are the three core hypotheses (H1, H2, H3) that would prove the solution works? Explain each with its falsification condition.",
+                "response": "Based solely on the provided context, there is no information about a specific problem or solution that was identified. Therefore, I cannot determine what the three core hypotheses (H1, H2, H3) would be or explain their falsification conditions. The context contains technical details about various s",
+                "tokens_used": 432,
+                "latency_ms": 2368.2,
+                "keyword_recall": 0.5
+              },
+              {
+                "turn": 3,
+                "query": "For H2 specifically (Context Window as Execution Workspace), design an experiment that would provide the strongest possible evidence. What metrics, baselines, and sample sizes?",
+                "response": "Based solely on the provided context, there is **no information** about an \"H2\" hypothesis or a \"Context Window as Execution Workspace\" experiment. The context discusses various memory and retrieval systems (e.g., MemGPT, RAPTOR, MemLong, LongMem), database concepts (MVCC, WAL, ACID), and scoring fo",
+                "tokens_used": 434,
+                "latency_ms": 3453.1,
+                "keyword_recall": 0.625
+              },
+              {
+                "turn": 4,
+                "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1? What specific mechanism proves state management matters more than raw reasoning?",
+                "response": "Based solely on the provided context, I cannot answer how the transactional runtime provides evidence for \"H1\" or what specific mechanism proves state management matters more than raw reasoning. The context does not define what \"H1\" refers to, nor does it contain any comparison between state managem",
+                "tokens_used": 430,
+                "latency_ms": 2759.6,
+                "keyword_recall": 0.857
+              },
+              {
+                "turn": 5,
+                "query": "Design a single comprehensive experiment that would simultaneously validate H1, H2, and H3. Be specific about conditions, metrics, and expected outcomes.",
+                "response": "Based solely on the provided context, I cannot design an experiment that validates H1, H2, and H3 because the context does not define what H1, H2, and H3 are. The query mentions these hypotheses, but the retrieved evidence contains no information about their content or meaning.\n\nWithout knowing the ",
+                "tokens_used": 428,
+                "latency_ms": 2167.1,
+                "keyword_recall": 0.875
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s3",
+            "name": "Design Evolution with Reversals",
+            "condition": "no_state",
+            "consistency_score": 0.328,
+            "state_trace_accuracy": 0.0,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "We need to add real-time collaborative editing to our system. Propose an architecture extension that supports multiple concurrent writers.",
+                "response": "Based solely on the provided context, I cannot propose a complete architecture extension for real-time collaborative editing with multiple concurrent writers. The context contains information about memory management, retrieval systems, transaction management, and concurrency models, but it does not ",
+                "tokens_used": 424,
+                "latency_ms": 4176.2,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Wait, collaborative editing might cause too many transaction conflicts with optimistic locking. What alternative concurrency control strategy could we use instead?",
+                "response": "Based on the provided context, there is no specific information about alternative concurrency control strategies for collaborative editing. The context mentions optimistic locking and MVCC (Multiversion Concurrency Control) in databases like PostgreSQL and CockroachDB [source:src_6ebfa3], as well as",
+                "tokens_used": 430,
+                "latency_ms": 1946.6,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 3,
+                "query": "Actually, revert to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation instead? How?",
+                "response": "Based solely on the provided context, there is not enough information to answer the question about making collaborative editing work with MVCC snapshot isolation.\n\nThe context mentions that \"PostgreSQL MVCC: xmin/xmax tuple versioning, VACUUM cleanup\" and \"CockroachDB: distributed SQL with Raft cons",
+                "tokens_used": 421,
+                "latency_ms": 2153.0,
+                "keyword_recall": 0.667
+              },
+              {
+                "turn": 4,
+                "query": "New constraint: we now need to support mobile clients with intermittent connectivity and local-first editing. How does this change the architecture?",
+                "response": "Based solely on the provided context, there is no information about mobile clients, intermittent connectivity, or local-first editing. The context discusses memory management, database transactions, and retrieval-augmented generation (RAG) systems, but none of these sources address the specific arch",
+                "tokens_used": 427,
+                "latency_ms": 1978.0,
+                "keyword_recall": 0.429
+              },
+              {
+                "turn": 5,
+                "query": "Given all the decisions, reversals, and constraints we discussed, what is the final recommended architecture? Trace the full evolution of our thinking.",
+                "response": "Based solely on the provided context, there is no information about any prior \"decisions, reversals, and constraints\" that were discussed, nor is there a final recommended architecture or an evolution of thinking to trace. The context only contains isolated technical descriptions of various systems ",
+                "tokens_used": 427,
+                "latency_ms": 2243.4,
+                "keyword_recall": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "state_True_small_8k": {
+        "state": true,
+        "context": "small_8k",
+        "avg_consistency": 0.3767,
+        "avg_tokens": 594.0,
+        "avg_completion": 1.0,
+        "scenarios": [
+          {
+            "scenario_id": "mt_s1",
+            "name": "Project Development",
+            "condition": "with_state",
+            "consistency_score": 0.375,
+            "state_trace_accuracy": 0.0,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "Analyze the core architecture of our system. What are its key components and how do they interact?",
+                "response": "Based solely on the provided context, I can identify the following key components and interactions of the system:\n\n**Key Components:**\n\n1.  **ARD Context MMU (Memory Management Unit):** A 6-step pipeline consisting of retrieve, filter, rank, compress, assemble, and budget. It scores information usin",
+                "tokens_used": 414,
+                "latency_ms": 4768.7,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Based on the architecture from before, which component is the most innovative and why? Compare it with traditional approaches.",
+                "response": "Based solely on the provided context, the **ARD Context MMU (Memory Management Unit)** is the most innovative component.\n\n**Why it is innovative:**\nIt implements a **6-step pipeline** (retrieve, filter, rank, compress, assemble, budget) that uses a sophisticated **multi-factor scoring system** to ma",
+                "tokens_used": 512,
+                "latency_ms": 4730.6,
+                "keyword_recall": 0.6
+              },
+              {
+                "turn": 3,
+                "query": "Now that we identified the key innovation, propose a concrete improvement to its pipeline. What would you change and what impact would it have?",
+                "response": "Based solely on the provided context, I can propose a concrete improvement to the ARD Context MMU pipeline.\n\n**Proposed Improvement:**\nAdd a **hierarchical retrieval step** (inspired by RAPTOR) before the existing \"retrieve\" step in the 6-step pipeline. This would involve building a hierarchical tre",
+                "tokens_used": 598,
+                "latency_ms": 5115.7,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 4,
+                "query": "Given your improvement from the previous step, how would it affect the transaction manager's consistency guarantees? Are there any new edge cases?",
+                "response": "Based solely on the provided context, I cannot determine how adding a hierarchical retrieval step (inspired by RAPTOR) to the ARD Context MMU pipeline would affect the transaction manager's consistency guarantees or identify any new edge cases.\n\nThe context describes the **ARD TransactionManager** a",
+                "tokens_used": 680,
+                "latency_ms": 3686.1,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 5,
+                "query": "Summarize our entire discussion: the architecture, the innovation, your proposed improvement, and its impact. Trace the full decision chain. What key decisions did we make?",
+                "response": "Based solely on the provided context, I can summarize the discussion as follows:\n\n**Architecture:** The system includes an **ARD Context MMU** which is a 6-step pipeline (retrieve, filter, rank, compress, assemble, budget) that scores information using a multi-factor formula: 0.35*semantic + 0.20*ke",
+                "tokens_used": 766,
+                "latency_ms": 6224.6,
+                "keyword_recall": 0.571
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s2",
+            "name": "Paper Deep Analysis",
+            "condition": "with_state",
+            "consistency_score": 0.427,
+            "state_trace_accuracy": 0.25,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "What is the main research problem addressed by state management for AI systems? Frame it as a formal research question.",
+                "response": "Based solely on the provided context, the main research problem addressed by state management for AI systems is the limitation of fixed context windows and the need for persistent, scalable memory. This can be framed as the following formal research question:\n\n**\"How can AI systems overcome the cons",
+                "tokens_used": 419,
+                "latency_ms": 3343.6,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Based on the problem you identified, what are the three core hypotheses (H1, H2, H3) that would prove the solution works? Explain each with its falsification condition.",
+                "response": "Based solely on the provided context, I can identify three core hypotheses that would prove the solution works for the research problem of overcoming fixed context windows and enabling persistent, scalable memory.\n\n**H1: External memory with retrieval augmentation can extend effective context length",
+                "tokens_used": 522,
+                "latency_ms": 8644.4,
+                "keyword_recall": 0.75
+              },
+              {
+                "turn": 3,
+                "query": "For H2 specifically (Context Window as Execution Workspace), design an experiment that would provide the strongest possible evidence. What metrics, baselines, and sample sizes?",
+                "response": "Based solely on the provided context, I cannot design an experiment for H2 (Context Window as Execution Workspace) because the context does not contain a definition or description of this hypothesis. The context only provides a partial statement for H1: \"External memory with retrieval augmentation c",
+                "tokens_used": 602,
+                "latency_ms": 4018.7,
+                "keyword_recall": 0.625
+              },
+              {
+                "turn": 4,
+                "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1? What specific mechanism proves state management matters more than raw reasoning?",
+                "response": "Based solely on the provided context, the transactional runtime (Transaction + MVCC) provides evidence for H1 by demonstrating a mechanism for managing persistent, versioned state that enables reliable retrieval and modification of external memory. The specific mechanism that proves state management",
+                "tokens_used": 680,
+                "latency_ms": 5067.2,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 5,
+                "query": "Design a single comprehensive experiment that would simultaneously validate H1, H2, and H3. Be specific about conditions, metrics, and expected outcomes.",
+                "response": "Based solely on the provided context, I cannot design a comprehensive experiment that simultaneously validates H1, H2, and H3 because the context does not contain definitions or descriptions for H2 or H3. The context only provides a partial statement for H1: \"External memory with retrieval augmentat",
+                "tokens_used": 757,
+                "latency_ms": 2612.5,
+                "keyword_recall": 0.75
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s3",
+            "name": "Design Evolution with Reversals",
+            "condition": "with_state",
+            "consistency_score": 0.328,
+            "state_trace_accuracy": 0.25,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "We need to add real-time collaborative editing to our system. Propose an architecture extension that supports multiple concurrent writers.",
+                "response": "Based solely on the provided context, I cannot propose a complete architecture extension for real-time collaborative editing with multiple concurrent writers. The context contains information about database transaction management (WAL, MVCC, optimistic locking) [source:src_38d064][source:src_7d0927]",
+                "tokens_used": 424,
+                "latency_ms": 4727.8,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Wait, collaborative editing might cause too many transaction conflicts with optimistic locking. What alternative concurrency control strategy could we use instead?",
+                "response": "Based solely on the provided context, I cannot propose a specific alternative concurrency control strategy for real-time collaborative editing. The context mentions several concurrency-related mechanisms—such as optimistic locking, WAL, MVCC, and Raft consensus [source:src_7d0927][source:src_38d064]",
+                "tokens_used": 520,
+                "latency_ms": 2617.1,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 3,
+                "query": "Actually, revert to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation instead? How?",
+                "response": "Based solely on the provided context, I cannot fully determine how to make collaborative editing work with MVCC snapshot isolation. The context confirms that MVCC is used in systems like PostgreSQL (via xmin/xmax tuple versioning) and that the ARD TransactionManager uses a sequence number (seq_num) ",
+                "tokens_used": 590,
+                "latency_ms": 2705.5,
+                "keyword_recall": 0.667
+              },
+              {
+                "turn": 4,
+                "query": "New constraint: we now need to support mobile clients with intermittent connectivity and local-first editing. How does this change the architecture?",
+                "response": "Based solely on the provided context, I cannot determine how the architecture changes to support mobile clients with intermittent connectivity and local-first editing. The context discusses database transaction management (WAL, MVCC, optimistic locking) [source:src_38d064][source:src_7d0927], distri",
+                "tokens_used": 676,
+                "latency_ms": 3243.4,
+                "keyword_recall": 0.429
+              },
+              {
+                "turn": 5,
+                "query": "Given all the decisions, reversals, and constraints we discussed, what is the final recommended architecture? Trace the full evolution of our thinking.",
+                "response": "Based solely on the provided context, I cannot determine a final recommended architecture or trace the full evolution of your thinking. The context only contains fragments of previous session states where each proposal, alternative, and constraint explicitly states that a complete architecture canno",
+                "tokens_used": 757,
+                "latency_ms": 3595.6,
+                "keyword_recall": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "state_True_large_32k": {
+        "state": true,
+        "context": "large_32k",
+        "avg_consistency": 0.4167,
+        "avg_tokens": 594.0,
+        "avg_completion": 1.0,
+        "scenarios": [
+          {
+            "scenario_id": "mt_s1",
+            "name": "Project Development",
+            "condition": "with_state",
+            "consistency_score": 0.45,
+            "state_trace_accuracy": 0.75,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "Analyze the core architecture of our system. What are its key components and how do they interact?",
+                "response": "Based solely on the provided context, the system appears to be an **ARD (Adaptive Retrieval and Database) system** with the following key components and interactions:\n\n1.  **ARD Context MMU (Memory Management Unit):** This component uses a **6-step pipeline** (retrieve, filter, rank, compress, assem",
+                "tokens_used": 414,
+                "latency_ms": 5303.8,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Based on the architecture from before, which component is the most innovative and why? Compare it with traditional approaches.",
+                "response": "Based on the provided context, the **ARD Context MMU (Memory Management Unit)** is the most innovative component. Its innovation lies in its **6-step pipeline** (retrieve, filter, rank, compress, assemble, budget) and its use of a **multi-factor scoring function** [source:src_a07d0f].\n\nThis is a sig",
+                "tokens_used": 512,
+                "latency_ms": 4765.2,
+                "keyword_recall": 0.6
+              },
+              {
+                "turn": 3,
+                "query": "Now that we identified the key innovation, propose a concrete improvement to its pipeline. What would you change and what impact would it have?",
+                "response": "Based on the provided context, I can propose a concrete improvement to the ARD Context MMU's 6-step pipeline.\n\n**Proposed Improvement:** Add a **\"Deduplicate\" step** between the \"Rank\" and \"Compress\" steps in the pipeline.\n\n**Reasoning:** The current pipeline is: retrieve, filter, rank, compress, as",
+                "tokens_used": 598,
+                "latency_ms": 5208.3,
+                "keyword_recall": 0.857
+              },
+              {
+                "turn": 4,
+                "query": "Given your improvement from the previous step, how would it affect the transaction manager's consistency guarantees? Are there any new edge cases?",
+                "response": "Based solely on the provided context, there is not enough information to determine how adding a \"Deduplicate\" step to the ARD Context MMU pipeline would affect the transaction manager's consistency guarantees or introduce new edge cases.\n\nThe context describes the **ARD TransactionManager** as using",
+                "tokens_used": 680,
+                "latency_ms": 3904.2,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 5,
+                "query": "Summarize our entire discussion: the architecture, the innovation, your proposed improvement, and its impact. Trace the full decision chain. What key decisions did we make?",
+                "response": "Based on the provided context, here is a summary of our discussion, tracing the full decision chain and key decisions made.\n\n**1. Architecture Analysis**\nThe system is an **ARD (Adaptive Retrieval and Database) system**. Its key components include the **ARD Context MMU (Memory Management Unit)**, wh",
+                "tokens_used": 766,
+                "latency_ms": 7172.6,
+                "keyword_recall": 0.857
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s2",
+            "name": "Paper Deep Analysis",
+            "condition": "with_state",
+            "consistency_score": 0.325,
+            "state_trace_accuracy": 0.25,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "What is the main research problem addressed by state management for AI systems? Frame it as a formal research question.",
+                "response": "Based solely on the provided context, the main research problem addressed by state management for AI systems is the limitation of fixed context windows and the need for persistent, scalable memory. This can be framed as the following formal research question:\n\n**How can AI systems overcome the limit",
+                "tokens_used": 419,
+                "latency_ms": 2367.2,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Based on the problem you identified, what are the three core hypotheses (H1, H2, H3) that would prove the solution works? Explain each with its falsification condition.",
+                "response": "Based solely on the provided context, I can identify the following three core hypotheses (H1, H2, H3) that would prove the solution works, along with their falsification conditions:\n\n**H1: External memory architectures (e.g., two-tier memory, hierarchical retrieval) can extend effective context leng",
+                "tokens_used": 522,
+                "latency_ms": 5934.7,
+                "keyword_recall": 0.625
+              },
+              {
+                "turn": 3,
+                "query": "For H2 specifically (Context Window as Execution Workspace), design an experiment that would provide the strongest possible evidence. What metrics, baselines, and sample sizes?",
+                "response": "Based solely on the provided context, I cannot design an experiment for H2 (Context Window as Execution Workspace) because the context does not contain a definition or description of what H2 is. The context only provides the beginning of H1 (\"External memory architectures... can extend effective con",
+                "tokens_used": 602,
+                "latency_ms": 2403.6,
+                "keyword_recall": 0.625
+              },
+              {
+                "turn": 4,
+                "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1? What specific mechanism proves state management matters more than raw reasoning?",
+                "response": "Based solely on the provided context, the transactional runtime (Transaction + MVCC) provides evidence for H1 by demonstrating a mechanism for managing state persistence and consistency in external memory, which is a core component of extending effective context length.\n\nThe specific mechanism that ",
+                "tokens_used": 680,
+                "latency_ms": 4675.0,
+                "keyword_recall": 1.0
+              },
+              {
+                "turn": 5,
+                "query": "Design a single comprehensive experiment that would simultaneously validate H1, H2, and H3. Be specific about conditions, metrics, and expected outcomes.",
+                "response": "Based solely on the provided context, I cannot design a single comprehensive experiment that would simultaneously validate H1, H2, and H3 because the context does not contain a definition or description of what H2 or H3 are. The context only provides the beginning of H1 (\"External memory architectur",
+                "tokens_used": 757,
+                "latency_ms": 4107.0,
+                "keyword_recall": 0.75
+              }
+            ]
+          },
+          {
+            "scenario_id": "mt_s3",
+            "name": "Design Evolution with Reversals",
+            "condition": "with_state",
+            "consistency_score": 0.475,
+            "state_trace_accuracy": 1.0,
+            "completion_rate": 1.0,
+            "turns": [
+              {
+                "turn": 1,
+                "query": "We need to add real-time collaborative editing to our system. Propose an architecture extension that supports multiple concurrent writers.",
+                "response": "Based solely on the provided context, I can propose a partial architecture extension for real-time collaborative editing with multiple concurrent writers. The relevant evidence points to concurrency control and state management patterns:\n\n1. **Conflict Resolution via MVCC/Optimistic Locking**: Use a",
+                "tokens_used": 424,
+                "latency_ms": 4982.2,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 2,
+                "query": "Wait, collaborative editing might cause too many transaction conflicts with optimistic locking. What alternative concurrency control strategy could we use instead?",
+                "response": "Based solely on the provided context, an alternative concurrency control strategy to optimistic locking is the **Actor model**. The context describes the Actor model as having \"private state, async message passing, sequential processing, supervision trees\" with examples like Erlang/OTP, Akka, and ac",
+                "tokens_used": 520,
+                "latency_ms": 2237.9,
+                "keyword_recall": 0.833
+              },
+              {
+                "turn": 3,
+                "query": "Actually, revert to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation instead? How?",
+                "response": "Based solely on the provided context, I can partially answer how MVCC snapshot isolation could work for collaborative editing. The context provides evidence of MVCC patterns:\n\n- **PostgreSQL MVCC** uses \"xmin/xmax tuple versioning, VACUUM cleanup\" [source:source:src_6ebfa3]\n- **ARD TransactionManage",
+                "tokens_used": 590,
+                "latency_ms": 5473.1,
+                "keyword_recall": 0.667
+              },
+              {
+                "turn": 4,
+                "query": "New constraint: we now need to support mobile clients with intermittent connectivity and local-first editing. How does this change the architecture?",
+                "response": "Based solely on the provided context, I cannot fully answer how the architecture changes to support mobile clients with intermittent connectivity and local-first editing. The context does not contain any information about mobile clients, intermittent connectivity, local-first editing, offline capabi",
+                "tokens_used": 676,
+                "latency_ms": 4480.3,
+                "keyword_recall": 0.571
+              },
+              {
+                "turn": 5,
+                "query": "Given all the decisions, reversals, and constraints we discussed, what is the final recommended architecture? Trace the full evolution of our thinking.",
+                "response": "Based solely on the provided context, I can trace the evolution of the thinking as follows:\n\n1.  **Initial Proposal (Feature Proposal):** The first proposal suggested using **MVCC/Optimistic Locking** for conflict resolution in a real-time collaborative editing architecture. This was based on patter",
+                "tokens_used": 757,
+                "latency_ms": 5238.8,
+                "keyword_recall": 0.714
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+Done in 4.1 min
+Saved to eval_data/experiment_e3_results.json
+
+======================================================================
+2x2 STATE x CONTEXT EXPERIMENT (E3 — H3)
+======================================================================
+
+CONSISTENCY SCORE MATRIX:
+                          | Small Context (8K)   | Large Context (32K) 
+----------------------------------------------------------------------
+No State                  | 0.335                | 0.359               
+With State                | 0.427                | 0.384               
+
+H3 NON-INFERIORITY TEST: 8K+State vs 32K+NoState
+  Non-inferiority p-value: 0.0045
+  Interaction effect: -0.067
+  *** H3 SUPPORTED: 8K+State is non-inferior to 32K+NoState ***
+  State management can compensate for 4x context reduction.
+
+NoState_8K: consistency=0.335, tokens=426, completion=1.00
+
+NoState_32K: consistency=0.359, tokens=426, completion=1.00
+
+State_8K: consistency=0.427, tokens=594, completion=1.00
+
+State_32K: consistency=0.384, tokens=594, completion=1.00

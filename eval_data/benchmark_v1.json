@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "name": "ARD Benchmark v1",
+    "description": "Benchmark for evaluating Context MMU and state management for long-horizon AI systems.",
+    "version": "1.0",
+    "created": "2026-06-08",
+    "num_single_turn_queries": 30,
+    "num_multi_turn_scenarios": 3
+  },
+  "single_turn_queries": [
+    {
+      "query_id": "q_fact_001",
+      "query": "What is the ARD system's retrieval approach?",
+      "category": "factoid",
+      "expected_keywords": ["hybrid", "retrieval", "vector", "keyword", "search"],
+      "difficulty": "easy"
+    },
+    {
+      "query_id": "q_fact_002",
+      "query": "What are the six steps of the Context MMU pipeline?",
+      "category": "factoid",
+      "expected_keywords": ["retrieve", "filter", "rank", "compress", "assemble", "budget"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_fact_003",
+      "query": "What are the weights in the ARD scoring formula?",
+      "category": "factoid",
+      "expected_keywords": ["semantic", "0.35", "keyword", "0.20", "entity", "0.15", "recency", "importance", "structural"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_fact_004",
+      "query": "What is the difference between L3 and L4 storage?",
+      "category": "factoid",
+      "expected_keywords": ["long-term", "knowledge", "external", "memory", "document", "L3", "L4"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_fact_005",
+      "query": "What is MVCC and why is it used in ARD?",
+      "category": "factoid",
+      "expected_keywords": ["multi-version", "concurrency", "version", "history", "audit", "rollback"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_fact_006",
+      "query": "How does the TransactionManager ensure consistency?",
+      "category": "factoid",
+      "expected_keywords": ["optimistic", "locking", "read_set", "verify", "commit", "rollback"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_fact_007",
+      "query": "What are the five levels of the hierarchical storage architecture?",
+      "category": "factoid",
+      "expected_keywords": ["L0", "L1", "L2", "L3", "L4", "L5", "context", "session", "working", "archive"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_fact_008",
+      "query": "What is Context Page Fault?",
+      "category": "factoid",
+      "expected_keywords": ["page", "fault", "missing", "retrieve", "context", "information"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_fact_009",
+      "query": "How does the optimistic locking mechanism detect conflicts?",
+      "category": "factoid",
+      "expected_keywords": ["read_set", "seq_num", "version", "compare", "concurrent", "conflict"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_fact_010",
+      "query": "What are the three core problems ARD addresses?",
+      "category": "factoid",
+      "expected_keywords": ["state", "explosion", "knowledge", "trace", "management"],
+      "difficulty": "easy"
+    },
+    {
+      "query_id": "q_conc_001",
+      "query": "Explain how ARD's approach to context management differs from traditional RAG.",
+      "category": "conceptual",
+      "expected_keywords": ["context", "mmu", "budget", "filter", "compress", "assembly", "pipeline", "traditional", "vector"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_conc_002",
+      "query": "Why does ARD use database transactions for state management instead of simple file storage?",
+      "category": "conceptual",
+      "expected_keywords": ["ACID", "consistency", "rollback", "MVCC", "audit", "trace", "concurrent"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_conc_003",
+      "query": "Compare the Von Neumann architecture analogy with the database-centric approach of ARD.",
+      "category": "conceptual",
+      "expected_keywords": ["von", "neumann", "database", "state", "transaction", "analogy", "limitation"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_conc_004",
+      "query": "How does Context MMU improve token efficiency compared to dumping all retrieval results?",
+      "category": "conceptual",
+      "expected_keywords": ["budget", "filter", "compress", "rank", "priority", "token", "allocation"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_conc_005",
+      "query": "What is the relationship between State Explosion and the need for hierarchical storage?",
+      "category": "conceptual",
+      "expected_keywords": ["state", "explosion", "hierarchical", "L0", "L5", "cache", "archive"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_conc_006",
+      "query": "How does the Event Store enable both MVCC and audit trails?",
+      "category": "conceptual",
+      "expected_keywords": ["event", "store", "immutable", "seq_num", "version", "audit", "replay"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_conc_007",
+      "query": "What are the advantages of using State as a unified abstraction instead of Memory?",
+      "category": "conceptual",
+      "expected_keywords": ["state", "memory", "unified", "transaction", "version", "runtime"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_conc_008",
+      "query": "How does the QueryPlanner select retrieval strategies for different query types?",
+      "category": "conceptual",
+      "expected_keywords": ["query", "planner", "strategy", "vector", "keyword", "structure", "weight"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_conc_009",
+      "query": "Discuss the trade-offs between optimistic and pessimistic locking for agent state management.",
+      "category": "conceptual",
+      "expected_keywords": ["optimistic", "pessimistic", "locking", "concurrent", "conflict", "rollback"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_conc_010",
+      "query": "Explain why Context Window should be treated as Execution Workspace rather than Memory.",
+      "category": "conceptual",
+      "expected_keywords": ["context", "window", "execution", "workspace", "memory", "budget", "attention"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_001",
+      "query": "How do the retrieval scoring formula and the Context MMU budget allocation work together?",
+      "category": "cross_document",
+      "expected_keywords": ["scoring", "formula", "budget", "allocation", "mmu", "retrieve", "section", "priority"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_002",
+      "query": "What is the complete data flow from user query to LLM response in ARD?",
+      "category": "cross_document",
+      "expected_keywords": ["query", "planner", "retrieve", "mmu", "assemble", "executor", "writeback"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_cross_003",
+      "query": "How do MVCC and Trace Store complement each other for auditability?",
+      "category": "cross_document",
+      "expected_keywords": ["MVCC", "trace", "version", "audit", "history", "replay", "event"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_004",
+      "query": "Explain how the hierarchical storage levels interact with the retrieval strategies.",
+      "category": "cross_document",
+      "expected_keywords": ["L1", "L2", "L3", "L4", "retrieve", "cache", "external", "index"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_005",
+      "query": "What is the full Controller execution cycle and how does each step contribute to state consistency?",
+      "category": "cross_document",
+      "expected_keywords": ["controller", "fetch", "plan", "load", "reason", "verify", "write", "output"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_cross_006",
+      "query": "How does the Transaction Manager's optimistic locking work with the Controller's writeback step?",
+      "category": "cross_document",
+      "expected_keywords": ["transaction", "optimistic", "controller", "writeback", "verify", "commit"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_007",
+      "query": "Compare the roles of StateStore, KnowledgeStore, and TraceStore in the ARD architecture.",
+      "category": "cross_document",
+      "expected_keywords": ["state", "knowledge", "trace", "store", "event", "database", "projection"],
+      "difficulty": "medium"
+    },
+    {
+      "query_id": "q_cross_008",
+      "query": "How does the ContextMMU pipeline interact with the TransactionManager during a multi-turn conversation?",
+      "category": "cross_document",
+      "expected_keywords": ["mmu", "transaction", "multi-turn", "state", "context", "writeback", "conversation"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_009",
+      "query": "What design patterns from database systems are applied in ARD and what problems do they solve?",
+      "category": "cross_document",
+      "expected_keywords": ["database", "WAL", "MVCC", "ACID", "transaction", "event", "source"],
+      "difficulty": "hard"
+    },
+    {
+      "query_id": "q_cross_010",
+      "query": "Explain how ARD addresses all three core problems (State/Knoknowledge/Trace Explosion) through its architecture.",
+      "category": "cross_document",
+      "expected_keywords": ["state", "knowledge", "trace", "explosion", "hierarchical", "transaction", "store"],
+      "difficulty": "hard"
+    }
+  ],
+  "multi_turn_scenarios": [
+    {
+      "scenario_id": "mt_001",
+      "name": "Project Development Continuity",
+      "description": "5-turn conversation simulating continuous project development",
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Analyze the core architecture of the ARD system. What are its key components?",
+          "expected_keywords": ["architecture", "store", "event", "retrieve", "mmu", "controller"],
+          "state_to_carry": ["architecture_overview", "key_components"]
+        },
+        {
+          "turn": 2,
+          "query": "Based on the architecture from before, which component do you think is the most innovative and why?",
+          "expected_keywords": ["innovative", "context", "mmu", "transaction", "reason"],
+          "state_to_carry": ["innovation_analysis"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 3,
+          "query": "Now that we identified Context MMU as key, propose an improvement to its pipeline. What would you change?",
+          "expected_keywords": ["improvement", "pipeline", "step", "filter", "compress", "budget"],
+          "state_to_carry": ["improvement_proposal"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 4,
+          "query": "Given the improvement you proposed, how would it affect the Transaction Manager's writeback strategy?",
+          "expected_keywords": ["transaction", "writeback", "affect", "consistency", "verify"],
+          "state_to_carry": ["impact_analysis"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 5,
+          "query": "Summarize our entire discussion: the architecture, the innovation, the improvement, and the impact. What are the key decisions we made?",
+          "expected_keywords": ["summary", "architecture", "innovation", "improvement", "decision", "impact"],
+          "state_to_carry": ["final_summary"],
+          "requires_previous_turn": true
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_002",
+      "name": "Research Paper Analysis Pipeline",
+      "description": "5-turn deep analysis of a research direction",
+      "turns": [
+        {
+          "turn": 1,
+          "query": "What is the main research problem that ARD addresses? Frame it as a research question.",
+          "expected_keywords": ["state", "management", "long-horizon", "context", "window", "problem"],
+          "state_to_carry": ["research_problem"]
+        },
+        {
+          "turn": 2,
+          "query": "What are the three core hypotheses (H1, H2, H3) that ARD proposes? Explain each.",
+          "expected_keywords": ["hypothesis", "H1", "H2", "H3", "state", "context", "workspace"],
+          "state_to_carry": ["hypotheses"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 3,
+          "query": "For H2 (Context Window as Execution Workspace), what experimental evidence would convince you it's true?",
+          "expected_keywords": ["experiment", "evidence", "token", "efficiency", "baseline", "compare"],
+          "state_to_carry": ["experimental_design"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 4,
+          "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1?",
+          "expected_keywords": ["transaction", "MVCC", "H1", "state", "consistency", "rollback"],
+          "state_to_carry": ["h1_evidence"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 5,
+          "query": "Design a complete experiment that would validate all three hypotheses simultaneously.",
+          "expected_keywords": ["experiment", "design", "H1", "H2", "H3", "validate", "methodology"],
+          "state_to_carry": ["experiment_design"],
+          "requires_previous_turn": true
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_003",
+      "name": "System Evolution Decision Chain",
+      "description": "5-turn evolving system design with conflicting requirements",
+      "turns": [
+        {
+          "turn": 1,
+          "query": "We need to add a new feature: real-time collaborative editing. How would you extend the ARD architecture?",
+          "expected_keywords": ["collaborative", "extend", "architecture", "concurrent", "real-time"],
+          "state_to_carry": ["feature_proposal", "architecture_extension"]
+        },
+        {
+          "turn": 2,
+          "query": "Wait, collaborative editing might cause too many transaction conflicts. What alternative approach could we use?",
+          "expected_keywords": ["conflict", "alternative", "concurrent", "optimistic", "lock"],
+          "state_to_carry": ["alternative_approach"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 3,
+          "query": "Actually, let's go back to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation?",
+          "expected_keywords": ["MVCC", "snapshot", "isolation", "collaborative", "original", "proposal"],
+          "state_to_carry": ["revisited_proposal"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 4,
+          "query": "New constraint: we need to support mobile clients with intermittent connectivity. How does this change things?",
+          "expected_keywords": ["mobile", "offline", "sync", "conflict", "resolution", "merge"],
+          "state_to_carry": ["new_constraint"],
+          "requires_previous_turn": true
+        },
+        {
+          "turn": 5,
+          "query": "Given all the decisions and reversals we've made, what is the final architecture? Trace the full decision chain.",
+          "expected_keywords": ["final", "architecture", "decision", "chain", "trace", "version"],
+          "state_to_carry": ["final_architecture", "decision_chain"],
+          "requires_previous_turn": true
+        }
+      ]
+    }
+  ]
+}

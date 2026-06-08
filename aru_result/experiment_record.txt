@@ -1,0 +1,50 @@
+Completed in 23.6 min, 300 runs
+
+Condition            | Tokens In | Judge | Correct | Halluc | Citation
+----------------------------------------------------------------------
+random               |       306 |  2.20 |    1.03 |   4.20 |     2.43
+bm25                 |         0 |  2.33 |    0.97 |   4.83 |     2.90
+vector               |       939 |  2.81 |    3.33 |   3.10 |     1.23
+hybrid               |       946 |  2.82 |    3.20 |   3.17 |     1.27
+hyde                 |       986 |  3.13 |    3.30 |   3.63 |     2.13
+raptor               |       628 |  3.09 |    3.47 |   3.33 |     1.70
+ard_no_mmu           |       964 |  3.98 |    3.93 |   4.53 |     4.30
+ard_full             |       964 |  3.94 |    3.87 |   4.60 |     4.40
+ard_no_filter        |       964 |  3.96 |    3.93 |   4.57 |     4.40
+ard_no_budget        |       964 |  4.03 |    3.93 |   4.67 |     4.57
+
+Results: eval_data/experiment_bge_results.json
+
+======================================================================
+STATISTICAL REPORT: Judge Overall Score
+======================================================================
+
+DESCRIPTIVE STATISTICS
+----------------------------------------
+  random              : n= 30, M=2.200, SD=1.137, 95%CI=[0.000, 5.000]
+  bm25                : n= 30, M=2.333, SD=1.106, 95%CI=[1.450, 5.000]
+  vector              : n= 30, M=2.807, SD=1.049, 95%CI=[0.725, 4.600]
+  hybrid              : n= 30, M=2.820, SD=1.134, 95%CI=[0.725, 4.710]
+  hyde                : n= 30, M=3.127, SD=1.003, 95%CI=[1.725, 4.600]
+  raptor              : n= 30, M=3.087, SD=0.989, 95%CI=[1.725, 4.710]
+  ard_no_mmu          : n= 30, M=3.980, SD=1.122, 95%CI=[2.175, 5.000]
+  ard_full            : n= 30, M=3.943, SD=0.891, 95%CI
+
+F:\agentplan>
+F:\agentplan># 多轮一致性实验（H1）
+'#' 不是内部或外部命令，也不是可运行的程序
+或批处理文件。
+
+F:\agentplan>python -c "from run_all_experiments import run_e2; run_e2()"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from run_all_experiments import run_e2; run_e2()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'run_all_experiments'
+
+F:\agentplan>
+F:\agentplan># 分析结果生成论文表格
+'#' 不是内部或外部命令，也不是可运行的程序
+或批处理文件。
+
+F:\agentplan>python -c "from ard.eval.results_viz import quick_analyze; print(quick_analyze('eval_data/experiment_bge_results.json'))"

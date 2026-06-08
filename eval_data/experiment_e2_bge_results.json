@@ -1,0 +1,1008 @@
+{
+  "embedding": "BGE-M3",
+  "elapsed_min": 6.7,
+  "no_state": [
+    {
+      "scenario_id": "mt_s1",
+      "name": "Project Development",
+      "condition": "no_state",
+      "consistency_score": 0.45,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Analyze the core architecture of our system. What are its key components and how do they interact?",
+          "response": "Based solely on the provided context, I can identify several key components and interactions that appear to be part of your system's architecture:\n\n**1. ARD Context MMU (Memory Management Unit)**\n- A 6-step pipeline: retrieve, filter, rank, compress, assemble, budget [source:src_a07d0f]\n- Uses a mul",
+          "tokens_used": 414,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "Based on the architecture from before, which component is the most innovative and why? Compare it with traditional approaches.",
+          "response": "Based solely on the provided context, I cannot determine which component is the most innovative because the context does not specify the \"architecture from before\" that the query refers to. The retrieved evidence describes various systems and components (e.g., MemLong, RAPTOR, ARD Context MMU, MemGP",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 0.4
+        },
+        {
+          "turn": 3,
+          "query": "Now that we identified the key innovation, propose a concrete improvement to its pipeline. What would you change and what impact would it have?",
+          "response": "Based solely on the provided context, I cannot identify a single \"key innovation\" because the context does not specify which system or pipeline the user is referring to. The context describes multiple separate systems (ARD, RAPTOR, LongMem, MemGPT, etc.) without indicating which one was previously i",
+          "tokens_used": 425,
+          "latency_ms": 0,
+          "keyword_recall": 0.571
+        },
+        {
+          "turn": 4,
+          "query": "Given your improvement from the previous step, how would it affect the transaction manager's consistency guarantees? Are there any new edge cases?",
+          "response": "Based solely on the provided context, there is no information about any \"improvement from the previous step\" or how it would affect the transaction manager's consistency guarantees. The context describes the ARD TransactionManager's optimistic locking mechanism [source:src_7d0927], WAL-based crash r",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 5,
+          "query": "Summarize our entire discussion: the architecture, the innovation, your proposed improvement, and its impact. Trace the full decision chain. What key decisions did we make?",
+          "response": "Based solely on the provided context, I cannot summarize \"our entire discussion\" because the context does not contain a record of a prior conversation or a sequence of decisions made by you and me. The context consists of isolated technical descriptions of various systems (ARD, RAPTOR, WAL, HyDE, Me",
+          "tokens_used": 433,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s2",
+      "name": "Paper Deep Analysis",
+      "condition": "no_state",
+      "consistency_score": 0.277,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "What is the main research problem addressed by state management for AI systems? Frame it as a formal research question.",
+          "response": "Based solely on the provided context, the main research problem addressed by state management for AI systems is the limitation of fixed context windows and the need for persistent, scalable memory. This can be framed as the following formal research question:\n\n**\"How can AI systems overcome the cons",
+          "tokens_used": 419,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 2,
+          "query": "Based on the problem you identified, what are the three core hypotheses (H1, H2, H3) that would prove the solution works? Explain each with its falsification condition.",
+          "response": "Based solely on the provided context, there is no information about a specific problem that was identified, nor are there any hypotheses (H1, H2, H3) or falsification conditions defined. The context contains technical descriptions of various systems (e.g., ARD, MemLong, PostgreSQL, HyDE, etc.) but d",
+          "tokens_used": 432,
+          "latency_ms": 0,
+          "keyword_recall": 0.625
+        },
+        {
+          "turn": 3,
+          "query": "For H2 specifically (Context Window as Execution Workspace), design an experiment that would provide the strongest possible evidence. What metrics, baselines, and sample sizes?",
+          "response": "Based solely on the provided context, there is **no information** about an \"H2\" hypothesis or a \"Context Window as Execution Workspace\" experiment. The context discusses various memory and retrieval systems (e.g., MemGPT, RAPTOR, MemLong, LongMem), database concepts (WAL, MVCC), and scoring formulas",
+          "tokens_used": 434,
+          "latency_ms": 0,
+          "keyword_recall": 0.625
+        },
+        {
+          "turn": 4,
+          "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1? What specific mechanism proves state management matters more than raw reasoning?",
+          "response": "Based solely on the provided context, there is **no information** that directly links a \"transactional runtime (Transaction + MVCC)\" to an \"H1\" hypothesis or provides evidence for it. The context describes MVCC and transaction mechanisms (e.g., PostgreSQL MVCC with xmin/xmax, CockroachDB with serial",
+          "tokens_used": 430,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        },
+        {
+          "turn": 5,
+          "query": "Design a single comprehensive experiment that would simultaneously validate H1, H2, and H3. Be specific about conditions, metrics, and expected outcomes.",
+          "response": "Based solely on the provided context, I cannot design a single comprehensive experiment to validate H1, H2, and H3 because the context does not define what H1, H2, or H3 are. The query references these hypotheses, but the retrieved evidence contains no information about their content or meaning.\n\nWi",
+          "tokens_used": 428,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s3",
+      "name": "Design Evolution with Reversals",
+      "condition": "no_state",
+      "consistency_score": 0.375,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "We need to add real-time collaborative editing to our system. Propose an architecture extension that supports multiple concurrent writers.",
+          "response": "Based solely on the provided context, I can propose an architecture extension for real-time collaborative editing by combining the **Actor model** for concurrency management and **Write-Ahead Logging (WAL)** with **MVCC** for conflict resolution and data consistency.\n\n**Proposed Architecture Extensi",
+          "tokens_used": 424,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 2,
+          "query": "Wait, collaborative editing might cause too many transaction conflicts with optimistic locking. What alternative concurrency control strategy could we use instead?",
+          "response": "Based solely on the provided context, there is no specific alternative concurrency control strategy mentioned for collaborative editing. The context discusses optimistic locking in the ARD TransactionManager [source:source:src_7d0927] and mentions PostgreSQL MVCC and CockroachDB's serializable isola",
+          "tokens_used": 430,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 3,
+          "query": "Actually, revert to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation instead? How?",
+          "response": "Based solely on the provided context, I cannot answer your question about making collaborative editing work with MVCC snapshot isolation. The context mentions that \"PostgreSQL MVCC: xmin/xmax tuple versioning, VACUUM cleanup\" and that \"CockroachDB: distributed SQL with Raft consensus, serializable i",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 4,
+          "query": "New constraint: we now need to support mobile clients with intermittent connectivity and local-first editing. How does this change the architecture?",
+          "response": "Based solely on the provided context, there is not enough information to fully answer how supporting mobile clients with intermittent connectivity and local-first editing changes the architecture.\n\nThe context does contain some relevant architectural patterns that could be applied to such a scenario",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 0.714
+        },
+        {
+          "turn": 5,
+          "query": "Given all the decisions, reversals, and constraints we discussed, what is the final recommended architecture? Trace the full evolution of our thinking.",
+          "response": "Based solely on the provided context, I cannot trace the \"full evolution of our thinking\" because the context does not contain any record of prior decisions, reversals, or constraints that were discussed. The context only provides isolated technical descriptions of various systems (ARD, RAPTOR, HyDE",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s4",
+      "name": "Debug Session",
+      "condition": "no_state",
+      "consistency_score": 0.28,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Users report that the system occasionally loses state after long conversations. What are the most likely causes? List at least three hypotheses.",
+          "response": "Based solely on the provided context, here are three hypotheses for why the system occasionally loses state after long conversations:\n\n1.  **Memory Staleness or Budget Exhaustion:** The system may be using a memory management approach similar to LongMem, where a frozen backbone LLM and trainable Sid",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 2,
+          "query": "For your top hypothesis from the list, design a diagnostic test that would confirm or rule it out. What would you instrument?",
+          "response": "Based on the provided context, there is no list of hypotheses given. The context contains various technical descriptions (e.g., ARD pipeline scoring, HyDE, MemLong, PostgreSQL MVCC, actor model, MemGPT, RAPTOR, asyncio), but it does not include any explicit hypothesis list or a \"top hypothesis\" to t",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 3,
+          "query": "The diagnostic reveals the issue is in the writeback step — TransactionManager.commit() sometimes fails silently. Propose a fix with proper error handling.",
+          "response": "Based on the provided context, I can identify that the TransactionManager uses optimistic locking with a begin/read_set/verify/commit/rollback pattern [source:src_7d0927], and that WAL (Write-Ahead Logging) records changes sequentially before applying to data files, with crash recovery via replay [s",
+          "tokens_used": 428,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 4,
+          "query": "Implementing your fix introduces a new issue: duplicate events in the EventStore. How do we prevent this while keeping the fix?",
+          "response": "Based on the provided context, there is no specific information about how to prevent duplicate events in an EventStore while keeping a fix. The context mentions that the EventStore is an \"immutable WAL with seq_num as MVCC version\" [source:src_7d0927], but it does not describe any mechanism for dedu",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 5,
+          "query": "Summarize: the original bug, your diagnostic findings, the fix you proposed, the new issue it introduced, and the final resolution. What did we learn?",
+          "response": "Based solely on the provided context, I cannot answer your question. The context contains general technical information about memory systems, databases, and programming models, but it does **not** contain any narrative about a specific bug, diagnostic findings, a proposed fix, a new issue introduced",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 0.625
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s5",
+      "name": "Cross-Domain Knowledge Synthesis",
+      "condition": "no_state",
+      "consistency_score": 0.425,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "What design patterns from database systems (MVCC, WAL, ACID) are most applicable to AI state management? Explain each with mapping.",
+          "response": "Based solely on the provided context, here is the mapping of database design patterns (MVCC, WAL, ACID) to AI state management:\n\n**1. MVCC (Multi-Version Concurrency Control)**\n- **Mapping:** In AI state management, MVCC maps to using an **immutable event store** where each event has a sequence numb",
+          "tokens_used": 422,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "How do Rust's ownership model and Python's asyncio inform the design of concurrent state management for AI agents? Draw specific parallels.",
+          "response": "Based solely on the provided context, there is not enough information to answer the user's question about how Rust's ownership model and Python's asyncio inform the design of concurrent state management for AI agents, or to draw specific parallels between them.\n\nThe context only contains a single, h",
+          "tokens_used": 424,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "Synthesize the database patterns from earlier and the programming language insights into a unified set of design principles for AI state management.",
+          "response": "Based solely on the provided context, here is a synthesis of database patterns and programming language insights into unified design principles for AI state management:\n\n**1. Immutable Logging and Crash Recovery (from Database WAL & EventStore)**\n- **Principle:** Use a Write-Ahead Log (WAL) to recor",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 4,
+          "query": "Apply your unified design principles to critique the current ARD architecture. What would you change and why?",
+          "response": "Based solely on the provided context, I can critique the current ARD architecture using the unified design principles implied by the cited research, and suggest changes.\n\n**Critique:**\nThe ARD architecture uses a rigid, linear 6-step pipeline (retrieve, filter, rank, compress, assemble, budget) with",
+          "tokens_used": 417,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 5,
+          "query": "Write a comprehensive design manifesto for state management in AI systems, drawing on all three domains we discussed: databases, programming languages, and AI systems.",
+          "response": "Based solely on the provided context, I can outline a design manifesto for state management in AI systems by synthesizing principles from databases, programming languages, and AI systems. However, the context does not provide a complete or explicit \"manifesto\" text, so I will derive key principles f",
+          "tokens_used": 431,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s6",
+      "name": "Code Review with Iterations",
+      "condition": "no_state",
+      "consistency_score": 0.525,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Review this system design: 'The system uses a single-threaded event loop with async I/O for handling concurrent requests'. What are potential issues?",
+          "response": "Based solely on the provided context, there is not enough information to fully review the system design or list its potential issues. The context mentions that \"Python asyncio\" uses a \"single-threaded cooperative scheduler\" and that \"Rust async\" uses \"zero-cost state machines with tokio work-stealin",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 0.714
+        },
+        {
+          "turn": 2,
+          "query": "Based on your review findings, propose a new architecture that addresses the concurrency bottleneck. Be specific about the threading model.",
+          "response": "Based on the provided context, I can propose a new architecture that combines the **Actor model** for concurrency with an **optimistic locking** transaction manager and a **Write-Ahead Log (WAL)** for durability. This addresses the concurrency bottleneck by avoiding shared mutable state and using as",
+          "tokens_used": 424,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 3,
+          "query": "The team rejects your proposal because it adds too much complexity. Can you find a middle ground — something simpler that still addresses the main bottleneck?",
+          "response": "Based on the provided context, I cannot determine what your original proposal was, what the \"main bottleneck\" is, or what specific problem the team is trying to solve. The context contains technical descriptions of various memory and database systems (ARD, MemGPT, LongMem, RAPTOR, HyDE, PostgreSQL, ",
+          "tokens_used": 429,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 4,
+          "query": "Now the team asks: how would your revised proposal handle error recovery when a worker crashes mid-request?",
+          "response": "Based solely on the provided context, there is no information about a \"revised proposal\" or how it would handle error recovery when a worker crashes mid-request. The context discusses topics such as ARD Context MMU, WAL crash recovery, LongMem, RAPTOR, HyDE, MemGPT, PostgreSQL MVCC, the Actor model,",
+          "tokens_used": 416,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 5,
+          "query": "Summarize the entire design evolution: the original issue, your first proposal, the simplification, and the error handling addition. Trace the decision chain.",
+          "response": "Based on the provided context, I cannot summarize the entire design evolution (original issue, first proposal, simplification, and error handling addition) because the context does not contain any information about a specific design evolution, a first proposal, a simplification step, or an error han",
+          "tokens_used": 429,
+          "latency_ms": 0,
+          "keyword_recall": 0.714
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s7",
+      "name": "Database Schema Migration Planning",
+      "condition": "no_state",
+      "consistency_score": 0.525,
+      "state_trace_accuracy": 0.5,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "We need to migrate a PostgreSQL database from single-node to CockroachDB distributed. What are the key differences in transaction isolation we need to consider?",
+          "response": "Based on the provided context, the key difference in transaction isolation between PostgreSQL and CockroachDB is that **CockroachDB uses serializable isolation**, while PostgreSQL uses MVCC (Multi-Version Concurrency Control) with xmin/xmax tuple versioning and VACUUM cleanup [source:src_6ebfa3].\n\nT",
+          "tokens_used": 430,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 2,
+          "query": "Given those isolation differences, design a migration strategy that ensures zero data loss. Include the sequence of steps.",
+          "response": "Based solely on the provided context, I cannot design a complete migration strategy that ensures zero data loss. The context mentions isolation differences (e.g., PostgreSQL MVCC vs. CockroachDB distributed SQL with Raft consensus [source:src_6ebfa3]) and WAL-based crash recovery [source:src_38d064]",
+          "tokens_used": 420,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "What if the migration fails halfway through? Design a rollback plan that can restore the original PostgreSQL state.",
+          "response": "Based solely on the provided context, there is not enough information to design a specific rollback plan for restoring an original PostgreSQL state after a migration failure.\n\nThe context mentions that PostgreSQL uses \"MVCC: xmin/xmax tuple versioning, VACUUM cleanup\" [source:src_6ebfa3] and that \"W",
+          "tokens_used": 418,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 4,
+          "query": "The business requires < 5 minutes of downtime. Can your migration + rollback plan meet this? What would you change?",
+          "response": "Based solely on the provided context, there is **no information** about any specific migration or rollback plan, nor any details about the system being migrated. Therefore, I cannot determine whether the plan meets the < 5 minutes downtime requirement or suggest what to change.\n\nThe context discusse",
+          "tokens_used": 418,
+          "latency_ms": 0,
+          "keyword_recall": 0.429
+        },
+        {
+          "turn": 5,
+          "query": "Present the final migration plan: isolation considerations, step-by-step migration, rollback strategy, and downtime optimization. What risks remain?",
+          "response": "Based solely on the provided context, I cannot present a complete final migration plan. The context contains technical details about database transaction isolation (e.g., PostgreSQL MVCC, CockroachDB serializable isolation, WAL logging, optimistic locking) [source:src_38d064][source:src_7d0927][sour",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s8",
+      "name": "Research Paper Replication Analysis",
+      "condition": "no_state",
+      "consistency_score": 0.427,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "A paper claims that 'optimistic locking outperforms pessimistic locking by 3x under low contention'. What factors could confound this result?",
+          "response": "Based solely on the provided context, there is not enough information to identify specific confounding factors for the claim that \"optimistic locking outperforms pessimistic locking by 3x under low contention.\" The context discusses various database and memory management concepts (e.g., MVCC, WAL, A",
+          "tokens_used": 425,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "Design a replication experiment that controls for the confounding factors you identified. What hardware, workload, and metrics?",
+          "response": "Based solely on the provided context, I cannot design a replication experiment that controls for confounding factors because the context does not specify what confounding factors were previously identified. The query references \"the confounding factors you identified,\" but no such identification app",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "The replication results show only 1.5x improvement, not 3x. What could explain the discrepancy? List possible causes.",
+          "response": "Based solely on the provided context, there is no information that directly explains why a replication result shows only a 1.5x improvement instead of the expected 3x. The context discusses various technical systems (e.g., ARD, RAPTOR, MemLong, PostgreSQL, etc.) but does not mention any specific rep",
+          "tokens_used": 419,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 4,
+          "query": "Given the discrepancy, should we still recommend optimistic locking for production systems? What caveats would you add to the recommendation?",
+          "response": "Based solely on the provided context, there is not enough information to determine what \"the discrepancy\" refers to, nor to make a definitive recommendation about optimistic locking for production systems.\n\nThe context mentions optimistic locking in one source: \"ARD TransactionManager: optimistic lo",
+          "tokens_used": 425,
+          "latency_ms": 0,
+          "keyword_recall": 0.6
+        },
+        {
+          "turn": 5,
+          "query": "Write a one-paragraph summary for an engineering blog: the original claim, the replication attempt, the findings, and the practical recommendation.",
+          "response": "Based solely on the provided context, I cannot write a complete one-paragraph summary for an engineering blog because the context does not contain any information about an original claim, a replication attempt, or specific findings from a replication study. The context discusses various technical co",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s9",
+      "name": "API Design with Evolving Requirements",
+      "condition": "no_state",
+      "consistency_score": 0.48,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Design a REST API for a task management system. Define the endpoints, request/response formats, and error codes.",
+          "response": "Based on the provided context, there is no information about REST API design, task management systems, endpoint definitions, request/response formats, or error codes. The context primarily discusses memory management systems (ARD, MemGPT, Letta, RAPTOR, LongMem, MemLong), database concepts (PostgreS",
+          "tokens_used": 418,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "New requirement: the API must support bulk operations (create/update/delete multiple tasks atomically). How does this change your design?",
+          "response": "Based solely on the provided context, the information about supporting bulk operations (create/update/delete multiple tasks atomically) is not directly addressed. However, the context does contain relevant principles that could inform such a design:\n\n- **Write-Ahead Logging (WAL)** is described as r",
+          "tokens_used": 424,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 3,
+          "query": "Another requirement: add real-time notifications via WebSocket when tasks change. How do you integrate this with the REST API?",
+          "response": "Based solely on the provided context, there is no information about WebSocket integration with a REST API for real-time notifications when tasks change. The context discusses topics such as memory management, retrieval-augmented generation, database transaction handling, and concurrency models, but ",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        },
+        {
+          "turn": 4,
+          "query": "The team wants to version the API (v1 and v2) with backward compatibility. How do you structure this across REST and WebSocket?",
+          "response": "Based solely on the provided context, there is no information about API versioning (v1/v2), backward compatibility, REST, or WebSocket structuring. The context discusses topics such as retrieval-augmented generation pipelines, transaction management, memory extension techniques, database MVCC, and a",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 5,
+          "query": "Write the complete API specification covering: REST endpoints (v1+v2), bulk operations, WebSocket events, versioning strategy, and error handling.",
+          "response": "Based on the provided context, I do not have sufficient information to write a complete API specification covering REST endpoints (v1+v2), bulk operations, WebSocket events, versioning strategy, and error handling.\n\nThe context contains information about various technical topics such as:\n- ARD's 6-s",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s10",
+      "name": "Performance Optimization Chain",
+      "condition": "no_state",
+      "consistency_score": 0.453,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "A system processes 100 requests/second but needs to handle 1000/sec. Profile the likely bottlenecks in a Python async web service with PostgreSQL.",
+          "response": "Based solely on the provided context, there is not enough specific information to fully profile the bottlenecks in a Python async web service with PostgreSQL when scaling from 100 to 1000 requests/second. The context mentions that \"Python asyncio\" is a \"single-threaded cooperative scheduler\" [source",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "Based on the bottleneck analysis, implement optimization #1: connection pooling. How much improvement do you expect and why?",
+          "response": "Based solely on the provided context, there is no information about a \"bottleneck analysis,\" \"connection pooling,\" or any expected improvement from such an optimization. The context discusses various topics such as RAPTOR, ARD Context MMU, MemGPT, PostgreSQL MVCC, and actor models, but none of these",
+          "tokens_used": 421,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "Optimization #1 only got us to 250/sec. What's the next bottleneck? Propose optimization #2 with expected gains.",
+          "response": "Based solely on the provided context, I cannot determine what \"Optimization #1\" was, what system you are running, or what the current bottleneck is at 250/sec. The context contains information about various memory and retrieval systems (MemLong, LongMem, MemGPT, RAPTOR, HyDE, Self-RAG), database tra",
+          "tokens_used": 418,
+          "latency_ms": 0,
+          "keyword_recall": 0.429
+        },
+        {
+          "turn": 4,
+          "query": "Optimization #2 got us to 600/sec. We still need 1000/sec. What architectural change (not just tuning) could get us there?",
+          "response": "Based solely on the provided context, there is no specific information about what \"Optimization #2\" is, what system is being optimized, or what specific architectural change would increase throughput from 600/sec to 1000/sec. The context discusses various memory architectures (LongMem, MemLong, RAPT",
+          "tokens_used": 420,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        },
+        {
+          "turn": 5,
+          "query": "Summarize the optimization journey: original state (100/sec), each optimization, its impact, and the final architecture. What was the most impactful change and why?",
+          "response": "Based solely on the provided context, I cannot summarize the optimization journey from an original state of 100/sec through individual optimizations to a final architecture. The context contains no information about:\n\n- An original state of \"100/sec\" (likely 100 queries or tokens per second)\n- Any s",
+          "tokens_used": 431,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        }
+      ]
+    }
+  ],
+  "with_state": [
+    {
+      "scenario_id": "mt_s1",
+      "name": "Project Development",
+      "condition": "with_state",
+      "consistency_score": 0.5,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Analyze the core architecture of our system. What are its key components and how do they interact?",
+          "response": "Based solely on the provided context, the system appears to have two key architectural components: the **ARD Context MMU** and the **ARD TransactionManager**.\n\n1.  **ARD Context MMU (Memory Management Unit):** This component is responsible for managing context and retrieval. It operates as a **6-ste",
+          "tokens_used": 414,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 2,
+          "query": "Based on the architecture from before, which component is the most innovative and why? Compare it with traditional approaches.",
+          "response": "Based solely on the provided context, the **ARD Context MMU** appears to be the most innovative component.\n\n**Why it is innovative:**\nThe ARD Context MMU implements a **6-step pipeline** (retrieve, filter, rank, compress, assemble, budget) and uses a **multi-factor scoring formula** (0.35*semantic +",
+          "tokens_used": 496,
+          "latency_ms": 0,
+          "keyword_recall": 0.8
+        },
+        {
+          "turn": 3,
+          "query": "Now that we identified the key innovation, propose a concrete improvement to its pipeline. What would you change and what impact would it have?",
+          "response": "Based solely on the provided context, the ARD Context MMU pipeline consists of the steps: retrieve, filter, rank, compress, assemble, and budget [source:src_a07d0f]. The ranking step uses a weighted scoring formula: `0.35*semantic + 0.20*keyword + 0.15*entity + 0.10*recency + 0.10*importance + 0.10*",
+          "tokens_used": 565,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 4,
+          "query": "Given your improvement from the previous step, how would it affect the transaction manager's consistency guarantees? Are there any new edge cases?",
+          "response": "Based solely on the provided context, I cannot determine what \"improvement from the previous step\" refers to, as the prior session state is truncated and does not specify any improvement. Therefore, I cannot analyze how such an improvement would affect the transaction manager's consistency guarantee",
+          "tokens_used": 631,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 5,
+          "query": "Summarize our entire discussion: the architecture, the innovation, your proposed improvement, and its impact. Trace the full decision chain. What key decisions did we make?",
+          "response": "Based solely on the provided context, I can summarize the discussion as follows:\n\n**Architecture:** The system has two key architectural components: the **ARD Context MMU** and the **ARD TransactionManager** [source:unknown, Turn 1]. The ARD Context MMU implements a 6-step pipeline (retrieve, filter",
+          "tokens_used": 703,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s2",
+      "name": "Paper Deep Analysis",
+      "condition": "with_state",
+      "consistency_score": 0.38,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "What is the main research problem addressed by state management for AI systems? Frame it as a formal research question.",
+          "response": "Based solely on the provided context, the main research problem addressed by state management for AI systems is the limitation of fixed context windows and memory staleness in large language models. This can be framed as the following formal research question:\n\n**\"How can AI systems overcome the con",
+          "tokens_used": 419,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 2,
+          "query": "Based on the problem you identified, what are the three core hypotheses (H1, H2, H3) that would prove the solution works? Explain each with its falsification condition.",
+          "response": "Based solely on the provided context, the problem identified is the limitation of fixed context windows and memory staleness in large language models. The context does not explicitly state three core hypotheses (H1, H2, H3) with falsification conditions that would prove a solution works. Therefore, ",
+          "tokens_used": 506,
+          "latency_ms": 0,
+          "keyword_recall": 0.625
+        },
+        {
+          "turn": 3,
+          "query": "For H2 specifically (Context Window as Execution Workspace), design an experiment that would provide the strongest possible evidence. What metrics, baselines, and sample sizes?",
+          "response": "Based solely on the provided context, I cannot design an experiment for H2 (Context Window as Execution Workspace) because the context does not contain any definition of H2, its falsification conditions, or any description of what \"Context Window as Execution Workspace\" entails. The prior session st",
+          "tokens_used": 573,
+          "latency_ms": 0,
+          "keyword_recall": 0.75
+        },
+        {
+          "turn": 4,
+          "query": "How does the transactional runtime (Transaction + MVCC) provide evidence for H1? What specific mechanism proves state management matters more than raw reasoning?",
+          "response": "Based solely on the provided context, I cannot answer how the transactional runtime provides evidence for H1 or what specific mechanism proves state management matters more than raw reasoning. The context does not define what H1 is, nor does it provide any hypothesis or experimental results linking ",
+          "tokens_used": 635,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        },
+        {
+          "turn": 5,
+          "query": "Design a single comprehensive experiment that would simultaneously validate H1, H2, and H3. Be specific about conditions, metrics, and expected outcomes.",
+          "response": "Based solely on the provided context, I cannot design a single comprehensive experiment to simultaneously validate H1, H2, and H3. The context does not define what H1, H2, or H3 are, nor does it provide their falsification conditions, specific metrics, or expected outcomes. Without these definitions",
+          "tokens_used": 698,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s3",
+      "name": "Design Evolution with Reversals",
+      "condition": "with_state",
+      "consistency_score": 0.352,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "We need to add real-time collaborative editing to our system. Propose an architecture extension that supports multiple concurrent writers.",
+          "response": "Based solely on the provided context, I cannot propose a complete architecture extension for real-time collaborative editing with multiple concurrent writers. The context contains information about database transaction management (WAL, MVCC, optimistic locking) [source:src_38d064][source:src_7d0927]",
+          "tokens_used": 424,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 2,
+          "query": "Wait, collaborative editing might cause too many transaction conflicts with optimistic locking. What alternative concurrency control strategy could we use instead?",
+          "response": "Based solely on the provided context, I can suggest an alternative concurrency control strategy: the **Actor model**.\n\nThe context describes the Actor model as having \"private state, async message passing, sequential processing, supervision trees\" [source:src_8c7e92]. This model avoids shared mutabl",
+          "tokens_used": 505,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 3,
+          "query": "Actually, revert to the original proposal. Can we make collaborative editing work with MVCC snapshot isolation instead? How?",
+          "response": "Based solely on the provided context, I can address how MVCC snapshot isolation could be applied to collaborative editing, but the context does not contain enough information to fully answer \"how\" to make it work for real-time collaborative editing with multiple concurrent writers.\n\nFrom the context",
+          "tokens_used": 560,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 4,
+          "query": "New constraint: we now need to support mobile clients with intermittent connectivity and local-first editing. How does this change the architecture?",
+          "response": "Based solely on the provided context, I cannot fully answer how the architecture changes to support mobile clients with intermittent connectivity and local-first editing. The context does not contain information about mobile clients, intermittent connectivity, or local-first editing strategies (such",
+          "tokens_used": 632,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        },
+        {
+          "turn": 5,
+          "query": "Given all the decisions, reversals, and constraints we discussed, what is the final recommended architecture? Trace the full evolution of our thinking.",
+          "response": "Based solely on the provided context, I cannot provide a final recommended architecture or trace the full evolution of the thinking. The context only contains fragments of the prior session (Turns 1-4) which show that the system repeatedly stated it could not answer questions due to insufficient inf",
+          "tokens_used": 698,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s4",
+      "name": "Debug Session",
+      "condition": "with_state",
+      "consistency_score": 0.425,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Users report that the system occasionally loses state after long conversations. What are the most likely causes? List at least three hypotheses.",
+          "response": "Based solely on the provided context, here are three hypotheses for why the system occasionally loses state after long conversations:\n\n1.  **Memory staleness or capacity limits:** The system may rely on a fixed-size context window (e.g., a \"Main Context\" like RAM) that becomes full or stale during l",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        },
+        {
+          "turn": 2,
+          "query": "For your top hypothesis from the list, design a diagnostic test that would confirm or rule it out. What would you instrument?",
+          "response": "Based solely on the provided context, the top hypothesis from the prior session is **\"Memory staleness or capacity limits.\"**\n\nTo design a diagnostic test that would confirm or rule out this hypothesis, I would instrument the system to monitor the **\"Main Context\"** (RAM) and **\"External Context\"** ",
+          "tokens_used": 495,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "The diagnostic reveals the issue is in the writeback step — TransactionManager.commit() sometimes fails silently. Propose a fix with proper error handling.",
+          "response": "Based solely on the provided context, the issue is that `TransactionManager.commit()` sometimes fails silently. The context describes the TransactionManager as using \"optimistic locking with begin/read_set/verify/commit/rollback\" [source:src_7d0927]. A silent failure in the commit step means the sys",
+          "tokens_used": 568,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        },
+        {
+          "turn": 4,
+          "query": "Implementing your fix introduces a new issue: duplicate events in the EventStore. How do we prevent this while keeping the fix?",
+          "response": "Based solely on the provided context, I cannot determine how to prevent duplicate events in the EventStore while keeping the fix. The context describes the EventStore as an \"immutable WAL with seq_num as MVCC version\" [source:src_7d0927], and it mentions that `TransactionManager.commit()` sometimes ",
+          "tokens_used": 626,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 5,
+          "query": "Summarize: the original bug, your diagnostic findings, the fix you proposed, the new issue it introduced, and the final resolution. What did we learn?",
+          "response": "Based solely on the provided context, I can summarize the following:\n\n- **Original bug:** The system occasionally loses state after long conversations. [source: Turn 1]\n- **Diagnostic findings:** The top hypothesis was **\"Memory staleness or capacity limits.\"** [source: Turn 2]\n- **Fix proposed:** T",
+          "tokens_used": 697,
+          "latency_ms": 0,
+          "keyword_recall": 0.625
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s5",
+      "name": "Cross-Domain Knowledge Synthesis",
+      "condition": "with_state",
+      "consistency_score": 0.4,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "What design patterns from database systems (MVCC, WAL, ACID) are most applicable to AI state management? Explain each with mapping.",
+          "response": "Based solely on the provided context, here is the mapping of database design patterns (MVCC, WAL, ACID) to AI state management:\n\n1.  **WAL (Write-Ahead Logging)**: This pattern is directly applicable to AI state management through the concept of an **immutable event store**. The context notes that a",
+          "tokens_used": 422,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "How do Rust's ownership model and Python's asyncio inform the design of concurrent state management for AI agents? Draw specific parallels.",
+          "response": "Based solely on the provided context, I can draw specific parallels between Rust's ownership model, Python's asyncio, and the design of concurrent state management for AI agents.\n\n**1. Python asyncio and Single-Threaded Cooperative Scheduling:**\nThe context states that \"Python asyncio\" uses a \"singl",
+          "tokens_used": 499,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "Synthesize the database patterns from earlier and the programming language insights into a unified set of design principles for AI state management.",
+          "response": "Based solely on the provided context, I can synthesize the database patterns and programming language insights into the following unified design principles for AI state management:\n\n**1. Immutable, Append-Only State Logging (WAL + EventStore)**\n- **Principle:** Record all state changes as an immutab",
+          "tokens_used": 566,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 4,
+          "query": "Apply your unified design principles to critique the current ARD architecture. What would you change and why?",
+          "response": "Based solely on the provided context, I can critique the ARD architecture using the unified design principles from the prior session.\n\n**Critique 1: Violation of Immutable, Append-Only State Logging (WAL + EventStore)**\n\nThe ARD architecture implements an \"optimistic locking\" mechanism via its `Tran",
+          "tokens_used": 622,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 5,
+          "query": "Write a comprehensive design manifesto for state management in AI systems, drawing on all three domains we discussed: databases, programming languages, and AI systems.",
+          "response": "Based solely on the provided context, I can synthesize the following comprehensive design manifesto for state management in AI systems, drawing from the three domains of databases, programming languages, and AI systems.\n\n### Design Manifesto for AI State Management\n\n**Principle 1: Immutable, Append-",
+          "tokens_used": 702,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s6",
+      "name": "Code Review with Iterations",
+      "condition": "with_state",
+      "consistency_score": 0.7,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Review this system design: 'The system uses a single-threaded event loop with async I/O for handling concurrent requests'. What are potential issues?",
+          "response": "Based solely on the provided context, there is not enough information to directly review the specific system design described in the query. The context mentions related concepts such as \"Python asyncio: single-threaded cooperative scheduler\" [source:source:src_77a959] and \"Actor model: private state",
+          "tokens_used": 427,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        },
+        {
+          "turn": 2,
+          "query": "Based on your review findings, propose a new architecture that addresses the concurrency bottleneck. Be specific about the threading model.",
+          "response": "Based on the provided context, I can propose a new architecture that addresses the concurrency bottleneck by combining elements from the available sources.\n\nThe primary concurrency bottleneck identified in the prior session is the \"Python asyncio: single-threaded cooperative scheduler\" [source:sourc",
+          "tokens_used": 499,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 3,
+          "query": "The team rejects your proposal because it adds too much complexity. Can you find a middle ground — something simpler that still addresses the main bottleneck?",
+          "response": "Based solely on the provided context, I cannot determine what the specific \"proposal\" was that the team rejected, nor can I identify the exact \"main bottleneck\" being addressed. The prior session state is cut off, showing only fragments like \"Python asyncio: si\" [source:unknown].\n\nHowever, from the ",
+          "tokens_used": 569,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 4,
+          "query": "Now the team asks: how would your revised proposal handle error recovery when a worker crashes mid-request?",
+          "response": "Based solely on the provided context, I cannot determine the specific details of the \"revised proposal\" or the exact architecture being discussed, as the prior session state is cut off. However, I can describe how error recovery could be handled by combining relevant concepts from the available sour",
+          "tokens_used": 621,
+          "latency_ms": 0,
+          "keyword_recall": 0.833
+        },
+        {
+          "turn": 5,
+          "query": "Summarize the entire design evolution: the original issue, your first proposal, the simplification, and the error handling addition. Trace the decision chain.",
+          "response": "Based solely on the provided context, I cannot summarize the entire design evolution, including the original issue, your first proposal, the simplification, and the error handling addition. The prior session state is fragmented and cut off, showing only partial phrases like \"Python asyncio: si\" and ",
+          "tokens_used": 699,
+          "latency_ms": 0,
+          "keyword_recall": 0.714
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s7",
+      "name": "Database Schema Migration Planning",
+      "condition": "with_state",
+      "consistency_score": 0.502,
+      "state_trace_accuracy": 0.75,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "We need to migrate a PostgreSQL database from single-node to CockroachDB distributed. What are the key differences in transaction isolation we need to consider?",
+          "response": "Based on the provided context, the key difference in transaction isolation between PostgreSQL and CockroachDB is that CockroachDB uses **serializable isolation** (the highest isolation level), whereas PostgreSQL uses MVCC with xmin/xmax tuple versioning and requires VACUUM cleanup [source:source:src",
+          "tokens_used": 430,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 2,
+          "query": "Given those isolation differences, design a migration strategy that ensures zero data loss. Include the sequence of steps.",
+          "response": "Based solely on the provided context, there is not enough information to design a complete migration strategy that ensures zero data loss.\n\nThe context only states that CockroachDB uses serializable isolation and PostgreSQL uses MVCC with xmin/xmax tuple versioning [source:source:src_6ebfa3]. It als",
+          "tokens_used": 495,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        },
+        {
+          "turn": 3,
+          "query": "What if the migration fails halfway through? Design a rollback plan that can restore the original PostgreSQL state.",
+          "response": "Based solely on the provided context, there is not enough information to design a rollback plan that can restore the original PostgreSQL state if a migration fails halfway through. The context only mentions that PostgreSQL uses MVCC with xmin/xmax tuple versioning and that CockroachDB uses serializa",
+          "tokens_used": 558,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 4,
+          "query": "The business requires < 5 minutes of downtime. Can your migration + rollback plan meet this? What would you change?",
+          "response": "Based solely on the provided context, there is not enough information to determine whether the migration + rollback plan can meet the < 5 minutes downtime requirement, or to suggest what changes would be needed.\n\nThe context only contains general technical descriptions (e.g., PostgreSQL MVCC, Cockro",
+          "tokens_used": 623,
+          "latency_ms": 0,
+          "keyword_recall": 0.429
+        },
+        {
+          "turn": 5,
+          "query": "Present the final migration plan: isolation considerations, step-by-step migration, rollback strategy, and downtime optimization. What risks remain?",
+          "response": "Based solely on the provided context, there is not enough information to present a complete final migration plan, including isolation considerations, a step-by-step migration, a rollback strategy, downtime optimization, or remaining risks.\n\nThe context only provides a few technical details:\n- Postgr",
+          "tokens_used": 697,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s8",
+      "name": "Research Paper Replication Analysis",
+      "condition": "with_state",
+      "consistency_score": 0.477,
+      "state_trace_accuracy": 0.25,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "A paper claims that 'optimistic locking outperforms pessimistic locking by 3x under low contention'. What factors could confound this result?",
+          "response": "Based solely on the provided context, there is not enough information to identify factors that could confound the claim that \"optimistic locking outperforms pessimistic locking by 3x under low contention.\" The context mentions optimistic locking and pessimistic locking in the context of an \"ARD Tran",
+          "tokens_used": 425,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "Design a replication experiment that controls for the confounding factors you identified. What hardware, workload, and metrics?",
+          "response": "Based solely on the provided context, I cannot design a replication experiment that controls for confounding factors because the prior session state explicitly states that there is **not enough information** to identify any confounding factors in the first place. The context does not contain any dat",
+          "tokens_used": 496,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        },
+        {
+          "turn": 3,
+          "query": "The replication results show only 1.5x improvement, not 3x. What could explain the discrepancy? List possible causes.",
+          "response": "Based solely on the provided context, I cannot list specific causes for the discrepancy between a 3x improvement and a 1.5x improvement. The context does not contain any information about the original experimental setup, the replication setup, or any specific factors (such as contention levels, hard",
+          "tokens_used": 559,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 4,
+          "query": "Given the discrepancy, should we still recommend optimistic locking for production systems? What caveats would you add to the recommendation?",
+          "response": "Based solely on the provided context, I cannot determine whether optimistic locking should still be recommended for production systems, nor can I list specific caveats for that recommendation.\n\nThe context contains general information about optimistic locking (e.g., it uses begin/read_set/verify/com",
+          "tokens_used": 630,
+          "latency_ms": 0,
+          "keyword_recall": 0.6
+        },
+        {
+          "turn": 5,
+          "query": "Write a one-paragraph summary for an engineering blog: the original claim, the replication attempt, the findings, and the practical recommendation.",
+          "response": "Based solely on the provided context, I cannot write the requested one-paragraph summary for an engineering blog. The context contains general information about optimistic locking, transaction management, and database systems [source:src_a07d0f, source:src_7d0927, source:src_38d064, source:src_6ebfa",
+          "tokens_used": 697,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s9",
+      "name": "API Design with Evolving Requirements",
+      "condition": "with_state",
+      "consistency_score": 0.525,
+      "state_trace_accuracy": 0.5,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "Design a REST API for a task management system. Define the endpoints, request/response formats, and error codes.",
+          "response": "Based solely on the provided context, there is **no information** about REST API design, task management systems, endpoint definitions, request/response formats, or error codes. The context discusses memory management systems (MemGPT, Letta, LongMem), retrieval-augmented generation (HyDE, Self-RAG, ",
+          "tokens_used": 418,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "New requirement: the API must support bulk operations (create/update/delete multiple tasks atomically). How does this change your design?",
+          "response": "Based solely on the provided context, there is **no information** about REST API design, task management systems, endpoint definitions, request/response formats, or error codes. The context discusses memory management systems (MemGPT, Letta, LongMem), actor models, concurrency frameworks, retrieval-",
+          "tokens_used": 498,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 3,
+          "query": "Another requirement: add real-time notifications via WebSocket when tasks change. How do you integrate this with the REST API?",
+          "response": "Based solely on the provided context, there is **no information** about REST API design, task management systems, WebSocket integration, or real-time notifications. The context discusses memory management systems (MemGPT, Letta, LongMem), database transaction mechanisms (PostgreSQL MVCC, CockroachDB",
+          "tokens_used": 561,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        },
+        {
+          "turn": 4,
+          "query": "The team wants to version the API (v1 and v2) with backward compatibility. How do you structure this across REST and WebSocket?",
+          "response": "Based solely on the provided context, there is **no information** about REST API design, WebSocket integration, API versioning strategies (v1/v2), or backward compatibility techniques. The context discusses memory management systems (MemGPT, Letta, LongMem), database transaction mechanisms (MVCC, WA",
+          "tokens_used": 626,
+          "latency_ms": 0,
+          "keyword_recall": 0.667
+        },
+        {
+          "turn": 5,
+          "query": "Write the complete API specification covering: REST endpoints (v1+v2), bulk operations, WebSocket events, versioning strategy, and error handling.",
+          "response": "Based solely on the provided context, there is **no information** about REST API design, REST endpoints (v1 or v2), bulk operations, WebSocket events, versioning strategies, or error handling. The context discusses memory management systems (MemGPT, Letta, LongMem, MemLong), database transaction mec",
+          "tokens_used": 696,
+          "latency_ms": 0,
+          "keyword_recall": 0.857
+        }
+      ]
+    },
+    {
+      "scenario_id": "mt_s10",
+      "name": "Performance Optimization Chain",
+      "condition": "with_state",
+      "consistency_score": 0.525,
+      "state_trace_accuracy": 0.0,
+      "completion_rate": 1.0,
+      "turns": [
+        {
+          "turn": 1,
+          "query": "A system processes 100 requests/second but needs to handle 1000/sec. Profile the likely bottlenecks in a Python async web service with PostgreSQL.",
+          "response": "Based solely on the provided context, I cannot fully profile the bottlenecks in a Python async web service with PostgreSQL for scaling from 100 to 1000 requests/second. The context contains some relevant technical details but lacks specific information about common bottlenecks in such a system.\n\n**W",
+          "tokens_used": 426,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 2,
+          "query": "Based on the bottleneck analysis, implement optimization #1: connection pooling. How much improvement do you expect and why?",
+          "response": "Based solely on the provided context, I cannot determine the expected improvement from implementing connection pooling as an optimization. The context does not contain any specific information about:\n\n1. The bottleneck analysis that was supposedly performed in the prior session\n2. Any baseline perfo",
+          "tokens_used": 495,
+          "latency_ms": 0,
+          "keyword_recall": 1.0
+        },
+        {
+          "turn": 3,
+          "query": "Optimization #1 only got us to 250/sec. What's the next bottleneck? Propose optimization #2 with expected gains.",
+          "response": "Based solely on the provided context, I cannot determine what the next bottleneck is or propose a specific optimization #2 with expected gains. The context does not contain any information about:\n\n1. The specific architecture or configuration of the Python async web service.\n2. The results or nature",
+          "tokens_used": 557,
+          "latency_ms": 0,
+          "keyword_recall": 0.429
+        },
+        {
+          "turn": 4,
+          "query": "Optimization #2 got us to 600/sec. We still need 1000/sec. What architectural change (not just tuning) could get us there?",
+          "response": "Based solely on the provided context, I cannot determine what architectural change would get you from 600 requests/second to 1000 requests/second. The context contains information about various systems (e.g., Python asyncio vs. Rust async, PostgreSQL MVCC vs. CockroachDB, actor models, and LLM memor",
+          "tokens_used": 625,
+          "latency_ms": 0,
+          "keyword_recall": 0.5
+        },
+        {
+          "turn": 5,
+          "query": "Summarize the optimization journey: original state (100/sec), each optimization, its impact, and the final architecture. What was the most impactful change and why?",
+          "response": "Based solely on the provided context, I cannot summarize the optimization journey from 100 requests/second to 1000 requests/second, nor can I identify the specific optimizations, their impacts, or the final architecture. The context contains general technical information about various systems (e.g.,",
+          "tokens_used": 701,
+          "latency_ms": 0,
+          "keyword_recall": 0.625
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1027 @@
+{
+  "meta": {
+    "name": "ARD Benchmark v2",
+    "version": "2.0",
+    "description": "Multi-domain benchmark for evaluating retrieval and reasoning across AI systems, database systems, and programming domains.",
+    "total_queries": 48,
+    "domains": [
+      "ai_systems",
+      "database_systems",
+      "programming"
+    ],
+    "categories": {
+      "factoid": 30,
+      "conceptual": 11,
+      "cross_document": 7
+    }
+  },
+  "queries": [
+    {
+      "query_id": "d1_fact_001",
+      "query": "What is MemGPT's two-tier memory architecture?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "easy",
+      "ground_truth_answer": "MemGPT has a two-tier memory: Main Context (analogous to RAM) containing system instructions and conversation queue, and External Context (analogous to disk) containing recall storage and archival storage.",
+      "expected_keywords": [
+        "main",
+        "context",
+        "external",
+        "archival",
+        "recall",
+        "RAM",
+        "disk"
+      ],
+      "relevant_doc_ids": [
+        "memgpt_paper"
+      ]
+    },
+    {
+      "query_id": "d1_fact_002",
+      "query": "What are the six steps of ARD's Context MMU pipeline?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "easy",
+      "ground_truth_answer": "Retrieve, Filter, Rank, Compress, Assemble, and Budget.",
+      "expected_keywords": [
+        "retrieve",
+        "filter",
+        "rank",
+        "compress",
+        "assemble",
+        "budget"
+      ],
+      "relevant_doc_ids": [
+        "ard_context_mmu"
+      ]
+    },
+    {
+      "query_id": "d1_fact_003",
+      "query": "How does LongMem solve the memory staleness problem?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "LongMem uses a frozen backbone LLM as a memory encoder so cached key-value representations never go stale as model parameters update. Only the lightweight SideNet adapter is trained.",
+      "expected_keywords": [
+        "frozen",
+        "backbone",
+        "SideNet",
+        "stale",
+        "KV",
+        "encoder",
+        "adapter"
+      ],
+      "relevant_doc_ids": [
+        "longmem_paper"
+      ]
+    },
+    {
+      "query_id": "d1_fact_004",
+      "query": "What is the key innovation of RAPTOR?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "RAPTOR builds a hierarchical tree-structured datastore through recursive clustering and LLM-based summarization of document chunks, enabling multi-scale retrieval.",
+      "expected_keywords": [
+        "tree",
+        "cluster",
+        "summarize",
+        "recursive",
+        "GMM",
+        "hierarchical"
+      ],
+      "relevant_doc_ids": [
+        "raptor_paper"
+      ]
+    },
+    {
+      "query_id": "d1_fact_005",
+      "query": "What is Letta's Memory Blocks feature?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "Memory Blocks are structured, labeled, editable units within the LLM context window that allow the agent to manage different types of information (identity, task, human) separately.",
+      "expected_keywords": [
+        "blocks",
+        "structured",
+        "labeled",
+        "editable",
+        "context",
+        "window"
+      ],
+      "relevant_doc_ids": [
+        "letta_framework"
+      ]
+    },
+    {
+      "query_id": "d1_fact_006",
+      "query": "How does ARD's TransactionManager ensure consistency?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "ARD uses optimistic locking where the TransactionManager records a read_set (keys and their seq_num at read time), verifies no concurrent modifications at commit time, and rolls back if conflicts are detected.",
+      "expected_keywords": [
+        "optimistic",
+        "lock",
+        "read_set",
+        "seq_num",
+        "verify",
+        "commit",
+        "rollback"
+      ],
+      "relevant_doc_ids": [
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d1_fact_007",
+      "query": "What is the ARD scoring formula for hybrid retrieval?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "Score = 0.35*semantic + 0.20*keyword + 0.15*entity + 0.10*recency + 0.10*importance + 0.10*structure - 0.10*token_cost - 0.20*trust_penalty",
+      "expected_keywords": [
+        "0.35",
+        "semantic",
+        "keyword",
+        "entity",
+        "recency",
+        "importance",
+        "token",
+        "trust"
+      ],
+      "relevant_doc_ids": [
+        "ard_design"
+      ]
+    },
+    {
+      "query_id": "d1_fact_008",
+      "query": "What is the LoCoMo benchmark and how did Letta perform on it?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "LoCoMo is a benchmark for long-context memory. Letta Filesystem achieved 74% accuracy with GPT-4o-mini, outperforming specialized memory tools like Mem0 (68.5%).",
+      "expected_keywords": [
+        "LoCoMo",
+        "74%",
+        "Mem0",
+        "Filesystem",
+        "memory",
+        "benchmark"
+      ],
+      "relevant_doc_ids": [
+        "letta_framework"
+      ]
+    },
+    {
+      "query_id": "d1_fact_009",
+      "query": "How does Self-RAG decide when to retrieve?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "Self-RAG uses special reflection tokens trained into the LLM to signal when retrieval is needed, what to retrieve, and how to critique its own outputs.",
+      "expected_keywords": [
+        "reflection",
+        "token",
+        "retrieve",
+        "critique",
+        "trained"
+      ],
+      "relevant_doc_ids": [
+        "self_rag_paper"
+      ]
+    },
+    {
+      "query_id": "d1_fact_010",
+      "query": "What problem does MemLong address and how?",
+      "category": "factoid",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "MemLong addresses the quadratic complexity of attention for long contexts by using an external retriever (ret-mem module) with a fine-grained controllable retrieval attention mechanism, extending context from 4K to 80K on a single GPU.",
+      "expected_keywords": [
+        "ret-mem",
+        "attention",
+        "80K",
+        "external",
+        "retriever",
+        "quadratic",
+        "GPU"
+      ],
+      "relevant_doc_ids": [
+        "memlong_paper"
+      ]
+    },
+    {
+      "query_id": "d1_conc_001",
+      "query": "Compare MemGPT's approach to memory management with ARD's transactional approach.",
+      "category": "conceptual",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "MemGPT delegates memory management to the LLM via function calls, making it probabilistic and non-deterministic. ARD provides system-level guarantees through TransactionManager with optimistic locking, MVCC versioning, and deterministic commit/rollback.",
+      "expected_keywords": [
+        "compare",
+        "MemGPT",
+        "LLM",
+        "function",
+        "deterministic",
+        "transaction",
+        "system",
+        "guarantee"
+      ],
+      "relevant_doc_ids": [
+        "memgpt_paper",
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d1_conc_002",
+      "query": "Explain why RAPTOR's hierarchical summarization is effective for multi-scale questions.",
+      "category": "conceptual",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "Multi-scale questions require both detailed (low-level) and abstract (high-level) information. RAPTOR's tree captures both: leaf nodes for detail, summary nodes for abstraction, enabling retrieval at the appropriate granularity for any question.",
+      "expected_keywords": [
+        "multi-scale",
+        "detail",
+        "abstract",
+        "tree",
+        "leaf",
+        "summary",
+        "granularity"
+      ],
+      "relevant_doc_ids": [
+        "raptor_paper"
+      ]
+    },
+    {
+      "query_id": "d1_conc_003",
+      "query": "How does the concept of 'Context Window as Execution Workspace' differ from treating it as Memory?",
+      "category": "conceptual",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "Treating context as memory implies dumping all information into it. Treating it as execution workspace means carefully selecting only what's needed for the current reasoning task — filtering, ranking, and budget-managing information as a precious computational resource.",
+      "expected_keywords": [
+        "workspace",
+        "memory",
+        "execution",
+        "filter",
+        "budget",
+        "selective",
+        "precious",
+        "resource"
+      ],
+      "relevant_doc_ids": [
+        "ard_design",
+        "ard_context_mmu"
+      ]
+    },
+    {
+      "query_id": "d1_conc_004",
+      "query": "Why does LongMem's decoupled architecture avoid catastrophic forgetting?",
+      "category": "conceptual",
+      "domain": "ai_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "By freezing the backbone LLM and only training the SideNet, LongMem preserves the model's original knowledge while adding memory retrieval capabilities. The backbone never changes, so it can't forget.",
+      "expected_keywords": [
+        "freeze",
+        "backbone",
+        "SideNet",
+        "catastrophic",
+        "forgetting",
+        "preserve",
+        "knowledge"
+      ],
+      "relevant_doc_ids": [
+        "longmem_paper"
+      ]
+    },
+    {
+      "query_id": "d1_conc_005",
+      "query": "Discuss the trade-offs between MemLong's approach (extend context) and ARD's approach (filter context).",
+      "category": "conceptual",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "MemLong extends context from 4K to 80K by modifying attention mechanisms, giving the model more raw information. ARD filters context to <3K by using a 6-step MMU pipeline, giving the model higher-quality information. The trade-off is breadth vs precision. They are complementary — a system combining both could be more powerful.",
+      "expected_keywords": [
+        "extend",
+        "filter",
+        "80K",
+        "attention",
+        "quality",
+        "breadth",
+        "precision",
+        "complementary"
+      ],
+      "relevant_doc_ids": [
+        "memlong_paper",
+        "ard_context_mmu"
+      ]
+    },
+    {
+      "query_id": "d1_cross_001",
+      "query": "How do MemGPT, LongMem, and ARD each approach the problem of limited context windows? Create a comparison table.",
+      "category": "cross_document",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "MemGPT: OS-inspired paging (LLM controls). LongMem: decoupled KV cache (frozen encoder + trainable SideNet). ARD: 6-step deterministic pipeline with explicit token budget. MemGPT is probabilistic, LongMem requires training, ARD is rule-based and auditable.",
+      "expected_keywords": [
+        "compare",
+        "MemGPT",
+        "LongMem",
+        "ARD",
+        "context",
+        "window",
+        "approach",
+        "table"
+      ],
+      "relevant_doc_ids": [
+        "memgpt_paper",
+        "longmem_paper",
+        "ard_context_mmu"
+      ]
+    },
+    {
+      "query_id": "d1_cross_002",
+      "query": "Synthesize the key innovations from RAPTOR and LongMem into a potential improvement for ARD's retrieval pipeline.",
+      "category": "cross_document",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "RAPTOR's hierarchical summarization could enhance ARD's COMPRESS step with recursive abstraction. LongMem's decoupled KV cache could serve as a high-performance underlying retrieval mechanism for ARD's KnowledgeStore. Combined: hierarchical semantic summaries stored in a frozen-encoder memory bank.",
+      "expected_keywords": [
+        "synthesis",
+        "RAPTOR",
+        "LongMem",
+        "ARD",
+        "improve",
+        "hierarchical",
+        "KV",
+        "compress"
+      ],
+      "relevant_doc_ids": [
+        "raptor_paper",
+        "longmem_paper",
+        "ard_context_mmu"
+      ]
+    },
+    {
+      "query_id": "d1_cross_003",
+      "query": "Which system — MemGPT, RAPTOR, or ARD — provides the most auditable execution trace? Justify.",
+      "category": "cross_document",
+      "domain": "ai_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "ARD provides the most auditable trace because its EventStore + TraceStore records every state change with immutable seq_num (MVCC), every retrieval step, every LLM call, and every transaction commit/rollback. MemGPT has conversation logs but no state versioning. RAPTOR has no execution trace.",
+      "expected_keywords": [
+        "auditable",
+        "trace",
+        "EventStore",
+        "MVCC",
+        "seq_num",
+        "MemGPT",
+        "RAPTOR",
+        "compare"
+      ],
+      "relevant_doc_ids": [
+        "ard_transaction",
+        "memgpt_paper",
+        "raptor_paper"
+      ]
+    },
+    {
+      "query_id": "d2_fact_001",
+      "query": "What is MVCC and why is it used in databases?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "easy",
+      "ground_truth_answer": "Multi-Version Concurrency Control (MVCC) maintains multiple versions of data to allow concurrent readers and writers without blocking. It provides snapshot isolation — each transaction sees a consistent snapshot of the database at a point in time.",
+      "expected_keywords": [
+        "MVCC",
+        "version",
+        "concurrent",
+        "snapshot",
+        "isolation",
+        "blocking",
+        "transaction"
+      ],
+      "relevant_doc_ids": [
+        "postgres_mvcc"
+      ]
+    },
+    {
+      "query_id": "d2_fact_002",
+      "query": "How does PostgreSQL implement MVCC?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "PostgreSQL uses tuple versioning with xmin/xmax transaction IDs. Each row version has creation and deletion transaction markers. Visibility is determined by comparing these with the current transaction's snapshot. Old versions are cleaned by VACUUM.",
+      "expected_keywords": [
+        "PostgreSQL",
+        "xmin",
+        "xmax",
+        "tuple",
+        "VACUUM",
+        "visibility",
+        "snapshot"
+      ],
+      "relevant_doc_ids": [
+        "postgres_mvcc"
+      ]
+    },
+    {
+      "query_id": "d2_fact_003",
+      "query": "What is Write-Ahead Logging (WAL) and why is it essential?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "WAL records all changes to a sequential log BEFORE applying them to data files. This ensures crash recovery — after a crash, the database replays the WAL to restore consistency. It also enables point-in-time recovery and replication.",
+      "expected_keywords": [
+        "WAL",
+        "log",
+        "crash",
+        "recovery",
+        "replay",
+        "write",
+        "ahead",
+        "sequential"
+      ],
+      "relevant_doc_ids": [
+        "wal_design"
+      ]
+    },
+    {
+      "query_id": "d2_fact_004",
+      "query": "How does CockroachDB differ from PostgreSQL in its architecture?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "CockroachDB is a distributed SQL database that automatically shards data across nodes using a consensus protocol (Raft). PostgreSQL is a single-node database. CockroachDB uses serializable snapshot isolation by default, while PostgreSQL defaults to read committed.",
+      "expected_keywords": [
+        "CockroachDB",
+        "distributed",
+        "Raft",
+        "shard",
+        "PostgreSQL",
+        "isolation",
+        "consensus"
+      ],
+      "relevant_doc_ids": [
+        "cockroachdb_architecture"
+      ]
+    },
+    {
+      "query_id": "d2_fact_005",
+      "query": "What are the four ACID properties?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "easy",
+      "ground_truth_answer": "Atomicity (all-or-nothing), Consistency (valid state transitions), Isolation (concurrent transactions don't interfere), Durability (committed data survives crashes).",
+      "expected_keywords": [
+        "Atomicity",
+        "Consistency",
+        "Isolation",
+        "Durability",
+        "ACID"
+      ],
+      "relevant_doc_ids": [
+        "acid_transactions"
+      ]
+    },
+    {
+      "query_id": "d2_fact_006",
+      "query": "How does a B-Tree storage engine organize data on disk?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "B-Trees organize data in balanced tree pages where each node contains multiple keys and child pointers. The tree is always balanced, with all leaves at the same depth. Pages are typically 4KB-16KB matching disk block sizes for efficient I/O.",
+      "expected_keywords": [
+        "B-Tree",
+        "page",
+        "balanced",
+        "leaf",
+        "node",
+        "disk",
+        "block",
+        "key"
+      ],
+      "relevant_doc_ids": [
+        "storage_engine"
+      ]
+    },
+    {
+      "query_id": "d2_fact_007",
+      "query": "What is the role of a query optimizer in a database?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "easy",
+      "ground_truth_answer": "The query optimizer evaluates multiple execution plans (join order, index selection, scan type) and chooses the one with the lowest estimated cost, using statistics about table sizes and data distribution.",
+      "expected_keywords": [
+        "optimizer",
+        "plan",
+        "join",
+        "index",
+        "scan",
+        "cost",
+        "statistics",
+        "estimate"
+      ],
+      "relevant_doc_ids": [
+        "query_optimizer"
+      ]
+    },
+    {
+      "query_id": "d2_fact_008",
+      "query": "Explain PostgreSQL's VACUUM process and why it's needed.",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "VACUUM reclaims storage occupied by dead tuples (old row versions no longer visible to any transaction). Without VACUUM, tables would grow infinitely due to MVCC version accumulation. Autovacuum runs automatically based on threshold settings.",
+      "expected_keywords": [
+        "VACUUM",
+        "dead",
+        "tuple",
+        "reclaim",
+        "autovacuum",
+        "storage",
+        "version",
+        "grow"
+      ],
+      "relevant_doc_ids": [
+        "postgres_mvcc"
+      ]
+    },
+    {
+      "query_id": "d2_fact_009",
+      "query": "What is snapshot isolation and how is it implemented?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "Snapshot isolation gives each transaction a consistent view of the database as of its start time. It's implemented by tracking transaction IDs and using visibility rules (e.g., a tuple is visible if its creator committed before the snapshot and it hasn't been deleted by a concurrent transaction).",
+      "expected_keywords": [
+        "snapshot",
+        "isolation",
+        "transaction",
+        "ID",
+        "visibility",
+        "concurrent",
+        "commit"
+      ],
+      "relevant_doc_ids": [
+        "postgres_mvcc",
+        "acid_transactions"
+      ]
+    },
+    {
+      "query_id": "d2_fact_010",
+      "query": "How does Raft consensus work in CockroachDB?",
+      "category": "factoid",
+      "domain": "database_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "Raft elects a leader that replicates a log of commands to followers. A write is committed when a majority of nodes acknowledge it. If the leader fails, a new leader is elected. This ensures strong consistency across distributed nodes even during failures.",
+      "expected_keywords": [
+        "Raft",
+        "leader",
+        "follower",
+        "replicate",
+        "log",
+        "majority",
+        "elect",
+        "consistency"
+      ],
+      "relevant_doc_ids": [
+        "cockroachdb_architecture"
+      ]
+    },
+    {
+      "query_id": "d2_conc_001",
+      "query": "Compare MVCC in PostgreSQL with the Event Store approach in ARD.",
+      "category": "conceptual",
+      "domain": "database_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "PostgreSQL's MVCC creates multiple physical versions of rows identified by transaction IDs. ARD's Event Store creates multiple logical versions of state entries identified by seq_num. Both provide snapshot isolation. PostgreSQL uses VACUUM for cleanup; ARD uses immutable events (no cleanup needed). PostgreSQL's versions are implicit (tuple visibility); ARD's versions are explicit and queryable via history().",
+      "expected_keywords": [
+        "MVCC",
+        "PostgreSQL",
+        "tuple",
+        "seq_num",
+        "snapshot",
+        "version",
+        "VACUUM",
+        "immutable"
+      ],
+      "relevant_doc_ids": [
+        "postgres_mvcc",
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d2_conc_002",
+      "query": "Why is WAL a better design pattern than in-place updates for reliability?",
+      "category": "conceptual",
+      "domain": "database_systems",
+      "difficulty": "medium",
+      "ground_truth_answer": "WAL writes sequentially (fast, atomic) and preserves the full history of changes. In-place updates risk corruption if a crash occurs mid-write. WAL can always be replayed to reconstruct the correct state. This is the same principle behind ARD's Event Store.",
+      "expected_keywords": [
+        "WAL",
+        "in-place",
+        "crash",
+        "replay",
+        "sequential",
+        "atomic",
+        "corruption",
+        "history"
+      ],
+      "relevant_doc_ids": [
+        "wal_design",
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d2_conc_003",
+      "query": "How does optimistic locking compare to pessimistic locking in terms of throughput and fairness?",
+      "category": "conceptual",
+      "domain": "database_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "Optimistic locking assumes conflicts are rare — it checks at commit time and retries on conflict. This gives high throughput under low contention but can cause starvation under high contention. Pessimistic locking acquires locks upfront, ensuring fairness but reducing concurrency. ARD uses optimistic locking for state writes, which is appropriate for single-user agent scenarios.",
+      "expected_keywords": [
+        "optimistic",
+        "pessimistic",
+        "lock",
+        "throughput",
+        "contention",
+        "retry",
+        "starvation",
+        "concurrency"
+      ],
+      "relevant_doc_ids": [
+        "acid_transactions",
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d2_cross_001",
+      "query": "Synthesize how MVCC, WAL, and optimistic locking work together in a database system. Map each concept to ARD's architecture.",
+      "category": "cross_document",
+      "domain": "database_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "WAL = Event Store (sequential immutable log). MVCC = seq_num versioning (multiple versions queryable). Optimistic locking = TransactionManager.verify(). Together: Event Store provides durability (WAL), seq_num provides snapshot isolation (MVCC), and TransactionManager provides concurrency control (optimistic locking).",
+      "expected_keywords": [
+        "synthesis",
+        "WAL",
+        "MVCC",
+        "optimistic",
+        "EventStore",
+        "seq_num",
+        "TransactionManager",
+        "map"
+      ],
+      "relevant_doc_ids": [
+        "wal_design",
+        "postgres_mvcc",
+        "acid_transactions",
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d2_cross_002",
+      "query": "How would you design a distributed version of ARD's StateStore using CockroachDB-inspired techniques?",
+      "category": "cross_document",
+      "domain": "database_systems",
+      "difficulty": "hard",
+      "ground_truth_answer": "Use Raft consensus to replicate the EventStore across nodes. Each node maintains its own StateStore projection. seq_num becomes globally ordered via the consensus log. Read from any node (follower reads if using snapshot isolation). Writes go through the Raft leader. Conflict detection (optimistic locking) now spans nodes — use global seq_num comparison.",
+      "expected_keywords": [
+        "distributed",
+        "Raft",
+        "replicate",
+        "consensus",
+        "EventStore",
+        "leader",
+        "follower",
+        "seq_num"
+      ],
+      "relevant_doc_ids": [
+        "cockroachdb_architecture",
+        "ard_transaction"
+      ]
+    },
+    {
+      "query_id": "d3_fact_001",
+      "query": "What is Python's asyncio event loop?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "easy",
+      "ground_truth_answer": "The asyncio event loop is a single-threaded cooperative scheduler that runs coroutines. It manages I/O operations using non-blocking system calls and callbacks, switching between tasks at await points.",
+      "expected_keywords": [
+        "event",
+        "loop",
+        "single-threaded",
+        "cooperative",
+        "coroutine",
+        "await",
+        "non-blocking"
+      ],
+      "relevant_doc_ids": [
+        "python_asyncio",
+        "event_loop"
+      ]
+    },
+    {
+      "query_id": "d3_fact_002",
+      "query": "How does Rust's async/await differ from Python's?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "Rust's async/await is zero-cost — futures are compiled to state machines with no heap allocation unless explicitly boxed. Python's coroutines always involve runtime overhead. Rust requires an external executor (tokio, async-std); Python has a built-in event loop. Both use cooperative scheduling.",
+      "expected_keywords": [
+        "Rust",
+        "zero-cost",
+        "state",
+        "machine",
+        "executor",
+        "tokio",
+        "heap",
+        "compile"
+      ],
+      "relevant_doc_ids": [
+        "rust_async"
+      ]
+    },
+    {
+      "query_id": "d3_fact_003",
+      "query": "What is a Future/Promise pattern?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "easy",
+      "ground_truth_answer": "A Future (or Promise) represents a value that will be available at some point in the future. It's a placeholder that can be awaited, chained with .then(), or polled. It decouples the producer of a value from its consumer.",
+      "expected_keywords": [
+        "Future",
+        "Promise",
+        "placeholder",
+        "await",
+        "chain",
+        "poll",
+        "producer",
+        "consumer"
+      ],
+      "relevant_doc_ids": [
+        "futures",
+        "python_asyncio"
+      ]
+    },
+    {
+      "query_id": "d3_fact_004",
+      "query": "What are Rust's Send and Sync traits?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "Send: a type can be transferred across thread boundaries. Sync: a type can be shared across thread boundaries (via immutable reference). These are automatically derived by the compiler and are the foundation of Rust's thread safety guarantees.",
+      "expected_keywords": [
+        "Send",
+        "Sync",
+        "thread",
+        "transfer",
+        "share",
+        "safety",
+        "compiler",
+        "auto"
+      ],
+      "relevant_doc_ids": [
+        "rust_async"
+      ]
+    },
+    {
+      "query_id": "d3_fact_005",
+      "query": "How does an async generator differ from a regular generator in Python?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "An async generator uses `async def` and `yield` and must be iterated with `async for`. It can await inside the generator body, making it suitable for streaming I/O-bound data. Regular generators are synchronous and cannot contain await expressions.",
+      "expected_keywords": [
+        "async",
+        "generator",
+        "yield",
+        "async_for",
+        "await",
+        "streaming",
+        "I/O",
+        "synchronous"
+      ],
+      "relevant_doc_ids": [
+        "python_asyncio"
+      ]
+    },
+    {
+      "query_id": "d3_fact_006",
+      "query": "What is a deadlock and how can it be prevented?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "easy",
+      "ground_truth_answer": "A deadlock occurs when two or more tasks each hold a resource and wait for the other's resource, creating a circular dependency. Prevention: always acquire locks in a consistent order, use timeouts, use lock-free data structures, or use deadlock detection algorithms.",
+      "expected_keywords": [
+        "deadlock",
+        "circular",
+        "lock",
+        "resource",
+        "timeout",
+        "order",
+        "prevention"
+      ],
+      "relevant_doc_ids": [
+        "concurrency_patterns"
+      ]
+    },
+    {
+      "query_id": "d3_fact_007",
+      "query": "What is the actor model of concurrency?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "The actor model treats each concurrent unit as an 'actor' that has its own private state and communicates only via asynchronous message passing. Actors process messages sequentially, avoiding shared-state concurrency issues. Examples: Erlang/OTP, Akka, actix.",
+      "expected_keywords": [
+        "actor",
+        "message",
+        "passing",
+        "private",
+        "state",
+        "sequential",
+        "Erlang",
+        "Akka"
+      ],
+      "relevant_doc_ids": [
+        "concurrency_patterns"
+      ]
+    },
+    {
+      "query_id": "d3_fact_008",
+      "query": "How does tokio's work-stealing scheduler work in Rust?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "hard",
+      "ground_truth_answer": "Tokio uses a multi-threaded work-stealing scheduler. Each worker thread has its own local task queue. When a worker's queue is empty, it 'steals' tasks from another worker's queue. This balances load without a central coordinator, achieving high throughput for async I/O.",
+      "expected_keywords": [
+        "tokio",
+        "work-stealing",
+        "queue",
+        "worker",
+        "thread",
+        "steal",
+        "balance",
+        "I/O"
+      ],
+      "relevant_doc_ids": [
+        "rust_async"
+      ]
+    },
+    {
+      "query_id": "d3_fact_009",
+      "query": "What is structured concurrency?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "Structured concurrency ensures that child tasks cannot outlive their parent scope. When a parent scope exits, all child tasks are guaranteed to have completed. This prevents resource leaks, orphaned tasks, and makes error propagation predictable. Python's asyncio.TaskGroup and Kotlin's coroutineScope implement this.",
+      "expected_keywords": [
+        "structured",
+        "concurrency",
+        "parent",
+        "child",
+        "scope",
+        "TaskGroup",
+        "leak",
+        "orphan"
+      ],
+      "relevant_doc_ids": [
+        "concurrency_patterns",
+        "python_asyncio"
+      ]
+    },
+    {
+      "query_id": "d3_fact_010",
+      "query": "What is back-pressure in streaming systems?",
+      "category": "factoid",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "Back-pressure occurs when a producer generates data faster than the consumer can process it. Solutions: bounded buffers with blocking, reactive streams (request N items at a time), rate limiting, or dropping data. Async frameworks handle this via flow control in streams.",
+      "expected_keywords": [
+        "back-pressure",
+        "producer",
+        "consumer",
+        "buffer",
+        "reactive",
+        "rate",
+        "limit",
+        "flow"
+      ],
+      "relevant_doc_ids": [
+        "concurrency_patterns"
+      ]
+    },
+    {
+      "query_id": "d3_conc_001",
+      "query": "Compare the concurrency models of Python asyncio and Go goroutines.",
+      "category": "conceptual",
+      "domain": "programming",
+      "difficulty": "hard",
+      "ground_truth_answer": "Python asyncio uses single-threaded cooperative multitasking — coroutines must explicitly yield at await points. Go uses preemptive multitasking with M:N scheduling — goroutines are multiplexed onto OS threads, and the Go runtime preempts long-running goroutines. asyncio is better for I/O-bound work; goroutines handle mixed CPU+I/O well. asyncio requires async/await syntax everywhere; goroutines are transparent.",
+      "expected_keywords": [
+        "asyncio",
+        "goroutine",
+        "cooperative",
+        "preemptive",
+        "thread",
+        "schedule",
+        "I/O",
+        "CPU"
+      ],
+      "relevant_doc_ids": [
+        "python_asyncio",
+        "concurrency_patterns"
+      ]
+    },
+    {
+      "query_id": "d3_conc_002",
+      "query": "Why does Rust's borrow checker make async code safer?",
+      "category": "conceptual",
+      "domain": "programming",
+      "difficulty": "hard",
+      "ground_truth_answer": "Rust's borrow checker prevents data races at compile time by enforcing ownership rules. In async code, futures hold references, and the compiler ensures these references don't outlive the data they point to. This prevents use-after-free, dangling pointers, and shared-mutable-state bugs in concurrent code without runtime overhead.",
+      "expected_keywords": [
+        "borrow",
+        "checker",
+        "ownership",
+        "reference",
+        "future",
+        "compile",
+        "data",
+        "race"
+      ],
+      "relevant_doc_ids": [
+        "rust_async"
+      ]
+    },
+    {
+      "query_id": "d3_conc_003",
+      "query": "When would you choose the actor model over shared-memory concurrency?",
+      "category": "conceptual",
+      "domain": "programming",
+      "difficulty": "medium",
+      "ground_truth_answer": "Choose the actor model when: (1) you need fault isolation — a crash in one actor doesn't bring down others, (2) you're building distributed systems where message passing maps naturally to network communication, (3) shared state is complex and error-prone. Choose shared-memory when: you need high throughput with low latency and the data access pattern is simple.",
+      "expected_keywords": [
+        "actor",
+        "shared",
+        "memory",
+        "fault",
+        "isolation",
+        "distributed",
+        "message",
+        "throughput"
+      ],
+      "relevant_doc_ids": [
+        "concurrency_patterns"
+      ]
+    },
+    {
+      "query_id": "d3_cross_001",
+      "query": "How do event loops (asyncio), work-stealing schedulers (tokio), and the actor model (Erlang) each address the problem of efficient concurrency? Create a comparison.",
+      "category": "cross_document",
+      "domain": "programming",
+      "difficulty": "hard",
+      "ground_truth_answer": "asyncio: single-threaded cooperative, best for I/O-heavy Python. tokio: multi-threaded work-stealing, best for mixed CPU+I/O in Rust with zero-cost futures. Erlang/actor: message-passing with supervision trees, best for distributed fault-tolerant systems. Trade-off: simplicity (asyncio) vs performance (tokio) vs reliability (actor model).",
+      "expected_keywords": [
+        "compare",
+        "asyncio",
+        "tokio",
+        "actor",
+        "event",
+        "loop",
+        "work-stealing",
+        "message"
+      ],
+      "relevant_doc_ids": [
+        "python_asyncio",
+        "rust_async",
+        "concurrency_patterns"
+      ]
+    },
+    {
+      "query_id": "d3_cross_002",
+      "query": "Synthesize patterns from database MVCC and Rust's ownership model that could improve ARD's state management.",
+      "category": "cross_document",
+      "domain": "programming",
+      "difficulty": "hard",
+      "ground_truth_answer": "From MVCC: snapshot isolation already implemented via seq_num. From Rust: the borrow checker's idea of 'mutable XOR shared' could be applied to state conflicts — a state key is either being written (mutable) OR being read by many (shared), never both. This would catch conflicts at read time rather than at commit time, reducing wasted work from aborted transactions.",
+      "expected_keywords": [
+        "synthesis",
+        "MVCC",
+        "ownership",
+        "borrow",
+        "state",
+        "conflict",
+        "read",
+        "write"
+      ],
+      "relevant_doc_ids": [
+        "postgres_mvcc",
+        "rust_async",
+        "ard_transaction"
+      ]
+    }
+  ]
+}

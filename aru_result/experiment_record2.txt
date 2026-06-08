@@ -1,0 +1,54 @@
+F:\agentplan>python run_all_experiments.py analyze
+
+Analyzing: eval_data/experiment_bge_results.json
+\begin{table}[h]
+\centering
+\caption{Retrieval and Answer Quality Across 10 Conditions (E1, n=48)}
+\label{tab:e1_results}
+\begin{tabular}{lcccccc}
+\toprule
+Condition & Tokens In & Correct. & Complete. & Concise. & Citation & Overall \\
+\midrule
+random & 181 & 1.35 & 0.83 & 4.58 & 2.58 & 2.32 \\
+bm25 & 126 & 2.44 & 1.94 & 4.50 & 2.17 & 2.71 \\
+vector & 400 & 2.52 & 1.73 & 4.40 & 2.04 & 2.64 \\
+hybrid & 400 & 2.44 & 1.75 & 4.44 & 2.17 & 2.65 \\
+hyde & 457 & 2.44 & 1.73 & 4.48 & 2.29 & 2.70 \\
+raptor & 366 & 2.33 & 1.90 & 4.35 & 2.04 & 2.54 \\
+\textbf{ard_no_mmu} & 422 & 2.88 & 2.42 & 4.54 & 3.81 & 3.26 \\
+\textbf{ard_full} & 422 & 2.85 & 2.21 & 4.69 & 4.00 & 3.27 \\
+\textbf{ard_no_filter} & 422 & 2.85 & 1.94 & 4.65 & 3.96 & 3.17 \\
+\textbf{ard_no_budget} & 422 & 2.79 & 2.21 & 4.48 & 4.00 & 3.19 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+OVERALL by Condition
+============================================================
+  ard_full             | ███████████████████████████████████ 3.27 ★
+  ard_no_mmu           | ██████████████████████████████████ 3.26
+  ard_no_budget        | ██████████████████████████████████ 3.19
+  ard_no_filter        | █████████████████████████████████ 3.17
+  bm25                 | █████████████████████████████ 2.71
+  hyde                 | ████████████████████████████ 2.70
+  hybrid               | ████████████████████████████ 2.65
+  vector               | ████████████████████████████ 2.64
+  raptor               | ███████████████████████████ 2.54
+  random               | ████████████████████████ 2.32
+
+\begin{table}[h]
+\centering
+\caption{ContextMMU Ablation Study}
+\label{tab:ablation}
+\begin{tabular}{lcccc}
+\toprule
+Configuration & Tokens & Overall & $\Delta$ from Full \\
+\midrule
+Full & 422 & 3.27 & +0.00 \\
+No Filter & 422 & 3.17 & -0.10 \\
+No Budget & 422 & 3.19 & -0.08 \\
+No Mmu & 422 & 3.26 & -0.01 \\
+\bottomrule
+\end{tabular}
+\end{table}
