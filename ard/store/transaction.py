@@ -99,43 +99,45 @@ class TransactionManager:
         if txn.status != "pending":
             raise RuntimeError(f"Transaction {txn.txn_id} is {txn.status}, not pending")
 
-        if not self.verify(txn):
+        try:
+            with self.event_store.db.transaction(immediate=True):
+                if not self.verify(txn):
+                    raise _TransactionConflict(
+                        f"Transaction {txn.txn_id} conflict: read_set changed since read."
+                        " Please retry."
+                    )
+
+                seq_nums = [
+                    self.event_store.append(event)
+                    for event in txn.write_events
+                ]
+
+                for event, seq_num in zip(txn.write_events, seq_nums):
+                    self.event_store.projections.apply(
+                        f"{event.stream}.{event.event_type}",
+                        {
+                            **event.payload,
+                            "_seq_num": seq_num,
+                            "_stream_key": event.stream_key,
+                            "event_type": event.event_type,
+                        },
+                    )
+
+                txn.status = "committed"
+                txn.completed_at = datetime.now(timezone.utc).isoformat()
+                self._save_txn(txn)
+        except _TransactionConflict as exc:
             txn.status = "rolled_back"
             txn.completed_at = datetime.now(timezone.utc).isoformat()
             self._save_txn(txn)
-            raise RuntimeError(
-                f"Transaction {txn.txn_id} conflict: read_set changed since read."
-                " Please retry."
-            )
-
-        # Append all events atomically
-        seq_nums = []
-        try:
-            for event in txn.write_events:
-                seq = self.event_store.append(event)
-                seq_nums.append(seq)
-        except Exception as e:
-            # If any append fails, the partial writes are in the event store
-            # but we mark the txn as rolled_back
-            log.error("txn_partial_failure", txn_id=txn.txn_id, error=str(e))
+            raise RuntimeError(str(exc)) from exc
+        except Exception as exc:
+            log.error("txn_atomic_failure", txn_id=txn.txn_id, error=str(exc))
             txn.status = "rolled_back"
             txn.completed_at = datetime.now(timezone.utc).isoformat()
             self._save_txn(txn)
             raise
 
-        # Apply projections synchronously
-        for i, event in enumerate(txn.write_events):
-            event_with_seq = event.with_seq(seq_nums[i])
-            self.event_store.projections.apply(
-                f"{event.stream}.{event.event_type}",
-                {**event.payload, "_seq_num": seq_nums[i],
-                 "_stream_key": event.stream_key,
-                 "event_type": event.event_type},
-            )
-
-        txn.status = "committed"
-        txn.completed_at = datetime.now(timezone.utc).isoformat()
-        self._save_txn(txn)
         log.info("txn_commit", txn_id=txn.txn_id, events=len(seq_nums))
         return seq_nums
 
@@ -164,3 +166,7 @@ class TransactionManager:
              len(txn.write_events), txn.created_at, txn.completed_at),
         )
         self.event_store.db.commit()
+
+
+class _TransactionConflict(RuntimeError):
+    """Internal signal used to roll back before persisting conflict status."""

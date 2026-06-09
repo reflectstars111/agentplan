@@ -65,6 +65,18 @@ class TestEventStore:
         seqs = event_store.append_batch(events)
         assert seqs == [1, 2, 3, 4, 5]
 
+    def test_append_batch_rolls_back_on_duplicate(self, event_store):
+        duplicate_id = "evt_duplicate"
+        events = [
+            StoreEvent(event_id=duplicate_id, stream_key="k1", payload={"v": 1}),
+            StoreEvent(event_id=duplicate_id, stream_key="k2", payload={"v": 2}),
+        ]
+
+        with pytest.raises(ValueError, match="already exists"):
+            event_store.append_batch(events)
+
+        assert event_store.count() == 0
+
     def test_cannot_reappend(self, event_store):
         evt = StoreEvent(payload={"v": 1})
         event_store.append(evt)

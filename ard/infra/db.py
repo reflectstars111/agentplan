@@ -1,7 +1,10 @@
 """SQLite connection management for ARD Phase 2."""
 
+from contextlib import contextmanager
 import sqlite3
 from pathlib import Path
+from threading import RLock
+from typing import Iterator
 
 
 class Database:
@@ -10,15 +13,18 @@ class Database:
     def __init__(self, db_path: str):
         self.db_path = db_path
         self._conn: sqlite3.Connection | None = None
+        self._transaction_depth = 0
+        self._lock = RLock()
 
     def connect(self) -> sqlite3.Connection:
-        if self._conn is None:
-            Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
-            self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
-            self._conn.row_factory = sqlite3.Row
-            self._conn.execute("PRAGMA journal_mode=WAL")
-            self._conn.execute("PRAGMA foreign_keys=ON")
-        return self._conn
+        with self._lock:
+            if self._conn is None:
+                Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+                self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
+                self._conn.row_factory = sqlite3.Row
+                self._conn.execute("PRAGMA journal_mode=WAL")
+                self._conn.execute("PRAGMA foreign_keys=ON")
+            return self._conn
 
     def init_schema(self) -> None:
         """Create all tables (Phase 1 + Phase 2)."""
@@ -27,19 +33,57 @@ class Database:
         conn.commit()
 
     def close(self) -> None:
-        if self._conn:
-            self._conn.close()
-            self._conn = None
+        with self._lock:
+            if self._conn:
+                self._conn.close()
+                self._conn = None
+                self._transaction_depth = 0
 
     def execute(self, sql: str, params=()) -> sqlite3.Cursor:
-        return self.connect().execute(sql, params)
+        with self._lock:
+            return self.connect().execute(sql, params)
 
     def commit(self) -> None:
-        if self._conn:
-            self._conn.commit()
+        with self._lock:
+            if self._conn and self._transaction_depth == 0:
+                self._conn.commit()
 
     def executemany(self, sql: str, params_list: list) -> sqlite3.Cursor:
-        return self.connect().executemany(sql, params_list)
+        with self._lock:
+            return self.connect().executemany(sql, params_list)
+
+    @property
+    def in_transaction(self) -> bool:
+        return self._transaction_depth > 0
+
+    @contextmanager
+    def transaction(self, *, immediate: bool = False) -> Iterator[sqlite3.Connection]:
+        """Run a group of writes in one SQLite transaction.
+
+        Nested callers share the outer transaction. Existing store and projection
+        code may still call ``commit()``; those calls are intentionally deferred
+        until the outermost transaction exits.
+        """
+        self._lock.acquire()
+        conn = self.connect()
+        outermost = self._transaction_depth == 0
+        try:
+            if outermost:
+                conn.execute("BEGIN IMMEDIATE" if immediate else "BEGIN")
+            self._transaction_depth += 1
+            try:
+                yield conn
+            except Exception:
+                self._transaction_depth -= 1
+                if outermost:
+                    conn.rollback()
+                raise
+            else:
+                self._transaction_depth -= 1
+                if outermost:
+                    conn.commit()
+        finally:
+            self._lock.release()
 
 
 SCHEMA_DDL = """
@@ -123,6 +167,42 @@ CREATE TABLE IF NOT EXISTS state_snapshots (
     version INTEGER NOT NULL,
     stream TEXT NOT NULL,
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ===== SemState research projections =====
+
+CREATE TABLE IF NOT EXISTS semstate_nodes (
+    state_key TEXT PRIMARY KEY,
+    value JSON NOT NULL,
+    version INTEGER NOT NULL,
+    node_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'valid',
+    producer_task TEXT,
+    source_refs JSON,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS semstate_dependencies (
+    source_key TEXT NOT NULL,
+    target_key TEXT NOT NULL,
+    source_version INTEGER NOT NULL,
+    origin TEXT NOT NULL,
+    confidence REAL NOT NULL,
+    edge_kind TEXT NOT NULL,
+    PRIMARY KEY (source_key, target_key)
+);
+CREATE INDEX IF NOT EXISTS idx_semstate_dep_target
+    ON semstate_dependencies(target_key);
+
+CREATE TABLE IF NOT EXISTS semstate_conflicts (
+    conflict_id TEXT PRIMARY KEY,
+    txn_id TEXT NOT NULL,
+    anomaly_type TEXT,
+    decision JSON NOT NULL,
+    envelope JSON NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    resolved_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS traces (

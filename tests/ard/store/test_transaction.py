@@ -10,6 +10,7 @@ from ard.infra.db import Database
 from ard.store.event import StoreEvent
 from ard.store.event_store import EventStore
 from ard.store.projections import Projections
+from ard.store.state_store import StateStore
 from ard.store.transaction import Transaction, TransactionManager
 
 
@@ -121,3 +122,31 @@ class TestTransactionManager:
         seqs = txn_mgr.commit(txn)
         assert len(seqs) == 3
         assert txn_mgr.event_store.count() == 3
+
+    def test_projection_failure_rolls_back_events_and_snapshots(self, txn_mgr):
+        state_store = StateStore(txn_mgr.event_store)
+        txn_mgr.event_store.projections.register("state.created", state_store.apply_event)
+
+        def fail_on_second(payload):
+            if payload["_stream_key"] == "k2":
+                raise RuntimeError("projection failed")
+
+        txn_mgr.event_store.projections.register("state.created", fail_on_second)
+        txn = txn_mgr.begin()
+        txn.add_event(StoreEvent(
+            stream="state", stream_key="k1",
+            event_type="created", payload={"v": 1},
+        ))
+        txn.add_event(StoreEvent(
+            stream="state", stream_key="k2",
+            event_type="created", payload={"v": 2},
+        ))
+
+        with pytest.raises(RuntimeError, match="projection failed"):
+            txn_mgr.commit(txn)
+
+        assert txn_mgr.event_store.count() == 0
+        assert state_store.read("k1") is None
+        assert state_store.read("k2") is None
+        assert txn.status == "rolled_back"
+        assert txn_mgr.get_txn(txn.txn_id)["status"] == "rolled_back"

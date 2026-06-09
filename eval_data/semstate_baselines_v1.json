@@ -1,0 +1,224 @@
+{
+  "dependency_noise": {
+    "missing_dependency": [
+      {
+        "conflict_f1": 1.0,
+        "conflict_precision": 1.0,
+        "conflict_recall": 1.0,
+        "false_rejection_rate": 0.0,
+        "final_state_correctness": 1.0,
+        "histories": 240,
+        "invalid_commit_rate": 0.0,
+        "modified_histories": 0,
+        "rate": 0.0,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.967741935483871,
+        "conflict_precision": 1.0,
+        "conflict_recall": 0.9375,
+        "false_rejection_rate": 0.0,
+        "final_state_correctness": 0.9583333333333334,
+        "histories": 240,
+        "invalid_commit_rate": 0.0625,
+        "modified_histories": 10,
+        "rate": 0.25,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.9333333333333333,
+        "conflict_precision": 1.0,
+        "conflict_recall": 0.875,
+        "false_rejection_rate": 0.0,
+        "final_state_correctness": 0.9166666666666666,
+        "histories": 240,
+        "invalid_commit_rate": 0.125,
+        "modified_histories": 20,
+        "rate": 0.5,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.896551724137931,
+        "conflict_precision": 1.0,
+        "conflict_recall": 0.8125,
+        "false_rejection_rate": 0.0,
+        "final_state_correctness": 0.875,
+        "histories": 240,
+        "invalid_commit_rate": 0.1875,
+        "modified_histories": 30,
+        "rate": 0.75,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.8571428571428571,
+        "conflict_precision": 1.0,
+        "conflict_recall": 0.75,
+        "false_rejection_rate": 0.0,
+        "final_state_correctness": 0.8333333333333334,
+        "histories": 240,
+        "invalid_commit_rate": 0.25,
+        "modified_histories": 40,
+        "rate": 1.0,
+        "repair_calls": 0
+      }
+    ],
+    "wrong_dependency": [
+      {
+        "conflict_f1": 1.0,
+        "conflict_precision": 1.0,
+        "conflict_recall": 1.0,
+        "false_rejection_rate": 0.0,
+        "final_state_correctness": 1.0,
+        "histories": 240,
+        "invalid_commit_rate": 0.0,
+        "modified_histories": 0,
+        "rate": 0.0,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.9411764705882353,
+        "conflict_precision": 0.8888888888888888,
+        "conflict_recall": 1.0,
+        "false_rejection_rate": 0.25,
+        "final_state_correctness": 0.9166666666666666,
+        "histories": 240,
+        "invalid_commit_rate": 0.0,
+        "modified_histories": 20,
+        "rate": 0.25,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.888888888888889,
+        "conflict_precision": 0.8,
+        "conflict_recall": 1.0,
+        "false_rejection_rate": 0.5,
+        "final_state_correctness": 0.8333333333333334,
+        "histories": 240,
+        "invalid_commit_rate": 0.0,
+        "modified_histories": 40,
+        "rate": 0.5,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.8421052631578948,
+        "conflict_precision": 0.7272727272727273,
+        "conflict_recall": 1.0,
+        "false_rejection_rate": 0.75,
+        "final_state_correctness": 0.75,
+        "histories": 240,
+        "invalid_commit_rate": 0.0,
+        "modified_histories": 60,
+        "rate": 0.75,
+        "repair_calls": 0
+      },
+      {
+        "conflict_f1": 0.8,
+        "conflict_precision": 0.6666666666666666,
+        "conflict_recall": 1.0,
+        "false_rejection_rate": 1.0,
+        "final_state_correctness": 0.6666666666666666,
+        "histories": 240,
+        "invalid_commit_rate": 0.0,
+        "modified_histories": 80,
+        "rate": 1.0,
+        "repair_calls": 0
+      }
+    ]
+  },
+  "full_rerun": {
+    "conflict_f1": 1.0,
+    "conflict_precision": 1.0,
+    "conflict_recall": 1.0,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 1.0,
+    "histories": 240,
+    "invalid_commit_rate": 0.0,
+    "repair_calls": 480
+  },
+  "independent_verifier": {
+    "conflict_f1": 0.6666666666666666,
+    "conflict_precision": 1.0,
+    "conflict_recall": 0.5,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 0.6666666666666666,
+    "histories": 240,
+    "invalid_commit_rate": 0.5,
+    "repair_calls": 0
+  },
+  "lww": {
+    "conflict_f1": 0.0,
+    "conflict_precision": 0.0,
+    "conflict_recall": 0.0,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 0.3333333333333333,
+    "histories": 240,
+    "invalid_commit_rate": 1.0,
+    "repair_calls": 0
+  },
+  "no_validation": {
+    "conflict_f1": 0.0,
+    "conflict_precision": 0.0,
+    "conflict_recall": 0.0,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 0.3333333333333333,
+    "histories": 240,
+    "invalid_commit_rate": 1.0,
+    "repair_calls": 0
+  },
+  "oracle_dependency": {
+    "conflict_f1": 1.0,
+    "conflict_precision": 1.0,
+    "conflict_recall": 1.0,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 1.0,
+    "histories": 240,
+    "invalid_commit_rate": 0.0,
+    "repair_calls": 0
+  },
+  "paired_cluster_bootstrap": {
+    "final_state_correctness_improvement": {
+      "ci_high": 0.5,
+      "ci_low": 0.5,
+      "clusters": 40,
+      "iterations": 2000,
+      "observed_delta": 0.5
+    },
+    "invalid_commit_rate_reduction": {
+      "ci_high": 0.5,
+      "ci_low": 0.5,
+      "clusters": 40,
+      "iterations": 2000,
+      "observed_delta": 0.5
+    }
+  },
+  "read_set_occ": {
+    "conflict_f1": 0.4,
+    "conflict_precision": 1.0,
+    "conflict_recall": 0.25,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 0.5,
+    "histories": 240,
+    "invalid_commit_rate": 0.75,
+    "repair_calls": 0
+  },
+  "semstate_full": {
+    "conflict_f1": 1.0,
+    "conflict_precision": 1.0,
+    "conflict_recall": 1.0,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 1.0,
+    "histories": 240,
+    "invalid_commit_rate": 0.0,
+    "repair_calls": 0
+  },
+  "semstate_trace_only": {
+    "conflict_f1": 0.8571428571428571,
+    "conflict_precision": 1.0,
+    "conflict_recall": 0.75,
+    "false_rejection_rate": 0.0,
+    "final_state_correctness": 0.8333333333333334,
+    "histories": 240,
+    "invalid_commit_rate": 0.25,
+    "repair_calls": 0
+  }
+}

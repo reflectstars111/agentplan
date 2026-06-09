@@ -58,11 +58,8 @@ class EventStore:
 
     def append_batch(self, events: list[StoreEvent]) -> list[int]:
         """Append multiple events atomically. Returns list of assigned seq_nums."""
-        seq_nums = []
-        for event in events:
-            seq = self.append(event)
-            seq_nums.append(seq)
-        return seq_nums
+        with self.db.transaction(immediate=True):
+            return [self.append(event) for event in events]
 
     # ── Read ───────────────────────────────────────────────
 
